@@ -117,7 +117,7 @@ xsi:schemaLocation="http://maven.apache.org/DECORATION/1.3.0 http://maven.apache
 
 		<menu name="Get" inherit="top">
 			<item name="Binary" href="dependency.html" />
-			<item name="Source" href="http://github.com/earcam/io.earcam.unexceptional" />
+			<item name="Source" href="https://github.com/earcam/io.earcam.unexceptional" />
 		</menu>
 
 		<menu name="Documentation" inherit="top">
