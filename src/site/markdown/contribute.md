@@ -11,8 +11,8 @@ updates.
 Contribute your fixes and new features back to the main codebase using
 [GitHub pull requests][github-pull-req].
 
-[github-unexceptional]: http://github.com/earcam/io.earcam.unexceptional/
-[github-pull-req]: http://help.github.com/articles/using-pull-requests
+[github-unexceptional]: https://github.com/earcam/io.earcam.unexceptional/
+[github-pull-req]: https://help.github.com/articles/using-pull-requests
 
 
 ## Donations?

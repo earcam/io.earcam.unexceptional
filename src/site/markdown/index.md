@@ -61,13 +61,13 @@ A mirror of `java.util.stream.Stream` accepting the checked variants of `java.ut
 ## Status
 
 [![Build Status](https://travis-ci.org/earcam/io.earcam.unexceptional.svg?branch=master)](https://travis-ci.org/earcam/io.earcam.unexceptional)
-[![Code Coverage](http://codecov.io/github/earcam/io.earcam.unexceptional/coverage.svg?branch=master)](https://codecov.io/github/earcam/io.earcam.unexceptional?branch=master)
+[![Code Coverage](https://codecov.io/github/earcam/io.earcam.unexceptional/coverage.svg?branch=master)](https://codecov.io/github/earcam/io.earcam.unexceptional?branch=master)
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.earcam/io.earcam.unexceptional/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.earcam/io.earcam.unexceptional)
-[![Javadoc](http://www.javadoc.io/badge/io.earcam/io.earcam.unexceptional/badge.svg?color=yellowgreen)](http://www.javadoc.io/doc/io.earcam/io.earcam.unexceptional)
+[![Javadoc](https://www.javadoc.io/badge/io.earcam/io.earcam.unexceptional/badge.svg?color=yellowgreen)](https://www.javadoc.io/doc/io.earcam/io.earcam.unexceptional)
 
 ## Licences
-[![Licence: Apache](https://img.shields.io/badge/License-Apache-yellow.svg)](http://www.apache.org/licenses/LICENSE-2.0)
+[![Licence: Apache](https://img.shields.io/badge/License-Apache-yellow.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Licence: BSD](https://img.shields.io/badge/License-BSD-yellow.svg)](https://opensource.org/licenses/BSD)
 
 [![Licence: Eclipse](https://img.shields.io/badge/License-Eclipse-yellow.svg)](https://www.eclipse.org/legal/epl-v10.html)
@@ -81,7 +81,7 @@ A mirror of `java.util.stream.Stream` accepting the checked variants of `java.ut
 	<li class="nav-header">Quick Links</li>
 	<li><a href="./dependency.html" title="Add Maven, Gradle, Ivy, SBT or download binary JAR">Include Dependency</a></li>
 	<li><a href="./examples.html" title="Usage Snippets">Sample Examples</a></li>
-	<li><a href="http://github.com/earcam/io.earcam.unexceptional/issues" title="Report Issue or Request Feature">Report Issue</a></li>
+	<li><a href="https://github.com/earcam/io.earcam.unexceptional/issues" title="Report Issue or Request Feature">Report Issue</a></li>
 </ul>
 
 

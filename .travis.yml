@@ -29,7 +29,7 @@
     "mvn clean"
   ],
   "script": [
-    "mvn -v; mvn -P analyse verify"
+    "mvn -v; mvn -P analyse,site verify site:site"
   ],
   "after_success": "bash <(curl -s https://codecov.io/bash)"
 }

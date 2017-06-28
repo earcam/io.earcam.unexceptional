@@ -188,5 +188,5 @@ With <span class="color-highlight">Un</span>exceptional:
 
 
 
-[github-unexceptional]: http://github.com/earcam/io.earcam.unexceptional/
-[github-unexceptional-examples]: http://github.com/earcam/io.earcam.unexceptional/src/example/java
+[github-unexceptional]: https://github.com/earcam/io.earcam.unexceptional/
+[github-unexceptional-examples]: https://github.com/earcam/io.earcam.unexceptional/tree/master/src/example/java/io/earcam/unexceptional/example
