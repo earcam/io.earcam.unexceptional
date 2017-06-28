@@ -24,7 +24,7 @@
 	</properties>
 
 
-	<url>http://github.com/${coordinate.username.project}</url>
+	<url>https://unexceptional.earcam.io</url>
 	<inceptionYear>2016</inceptionYear>
 
 	<scm>
