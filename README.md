@@ -6,7 +6,7 @@
 [![Code Coverage](http://codecov.io/github/earcam/io.earcam.unexceptional/coverage.svg?branch=master)](https://codecov.io/github/earcam/io.earcam.unexceptional?branch=master)
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.earcam/io.earcam.unexceptional/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.earcam/io.earcam.unexceptional)
-[![Javadoc](http://www.javadoc.io/badge/io.earcam/io.earcam.unexceptional/badge.svg?color=yellowgreen)](http://www.javadoc.io/doc/io.earcam/io.earcam.unexceptional)
+[![Javadoc](http://www.javadoc.io/badge/io.earcam/io.earcam.unexceptional.svg?color=yellowgreen)](http://www.javadoc.io/doc/io.earcam/io.earcam.unexceptional)
 
 ## Licences
 [![Licence: Apache](https://img.shields.io/badge/License-Apache-yellow.svg)](http://www.apache.org/licenses/LICENSE-2.0)
