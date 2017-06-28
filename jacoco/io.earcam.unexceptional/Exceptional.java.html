@@ -1,0 +1,793 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Exceptional.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">io.earcam.unexceptional</a> &gt; <a href="index.source.html" class="el_package">io.earcam.unexceptional</a> &gt; <span class="el_source">Exceptional.java</span></div><h1>Exceptional.java</h1><pre class="source lang-java linenums">package io.earcam.unexceptional;
+
+import static java.util.Collections.unmodifiableMap;
+
+import java.io.IOException;
+import java.io.Serializable;//NOSONAR stfu false positive
+import java.io.UncheckedIOException;
+import java.lang.Thread.UncaughtExceptionHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.UndeclaredThrowableException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLStreamHandler;
+import java.security.GeneralSecurityException;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.function.ToDoubleFunction;
+import java.util.function.ToIntBiFunction;
+import java.util.function.ToIntFunction;
+import java.util.function.ToLongFunction;
+import java.util.stream.Stream;
+
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
+import javax.annotation.concurrent.Immutable;
+
+/**
+ * &lt;p&gt;
+ * Static utility for easy conversion of checked exceptions, and invocation of methods declaring checked exceptions.
+ * &lt;/p&gt;
+ * 
+ * &lt;p&gt;
+ * There are many cases where you &lt;i&gt;know&lt;/i&gt;, within a given context that a checked exception will not be raised, but
+ * if it is, then it's certainly &lt;i&gt;game over&lt;/i&gt;.  An example being URLs in server configuration.
+ * &lt;/p&gt;
+ * 
+ * &lt;p&gt;
+ * The functionality centres around {@link java.util.function} given their beautifully broad application.  
+ * &lt;/p&gt;
+ * 
+ * &lt;p&gt;
+ * In addition, common standard library &lt;i&gt;annoyances&lt;/i&gt; are included; e.g. {@link URL}, {@link URI}, and highly 
+ * concise (re-read as terse one-liner - arguably laconic over expressive) for common IO streams usage.
+ * &lt;/p&gt;
+ * 
+ * &lt;p&gt;
+ * When dealing with {@link Stream} from an IO source (e.g. the file system), it may be preferable (to pay a 
+ * performance cost due to wrapping) and use {@link EmeticStream} which mirrors {@link Stream} functionality
+ * but with checked equivalent types.
+ * &lt;/p&gt;
+ * 
+ * &lt;h1&gt;Exceptional&lt;/h1&gt;
+ * &lt;b&gt;/ɪkˈsɛpʃ(ə)n(ə)l,ɛkˈsɛpʃ(ə)n(ə)l/&lt;/b&gt;
+ * &lt;p&gt;
+ * &lt;i&gt;adjective:&lt;/i&gt;
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * 1. unusual; not typical.
+ * &lt;/p&gt;
+ */
+@ParametersAreNonnullByDefault
+@Immutable
+public final class Exceptional implements Serializable {
+
+	private static final long serialVersionUID = -5749920534973388856L;
+
+
+	private static final Map&lt;Class&lt;? extends Throwable&gt;, Function&lt;Throwable, RuntimeException&gt;&gt; UNCHECK_MAP;
+
+	static {
+<span class="fc" id="L82">		Map&lt;Class&lt;? extends Throwable&gt;, Function&lt;Throwable, RuntimeException&gt;&gt; map = new HashMap&lt;&gt;();</span>
+		
+<span class="fc" id="L84">		map.put(                 IOException.class, e -&gt; new UncheckedIOException((IOException)e));</span>
+<span class="fc" id="L85">		map.put(    GeneralSecurityException.class, e -&gt; new UncheckedSecurityException((GeneralSecurityException)e));</span>
+<span class="fc" id="L86">		map.put(ReflectiveOperationException.class, e -&gt; new UncheckedReflectiveException((ReflectiveOperationException)e));</span>
+<span class="fc" id="L87">		map.put(        InterruptedException.class, e -&gt; new UncheckedInterruptException((InterruptedException)e));</span>
+<span class="fc" id="L88">		map.put(            RuntimeException.class, RuntimeException.class::cast);</span>
+		
+<span class="fc" id="L90">		UNCHECK_MAP = unmodifiableMap(map);</span>
+	}
+
+
+	/**
+	 * An {@link UncaughtExceptionHandler} that simply rethrows, 
+	 * wrapping in an appropriate unchecked if necessary
+	 */
+<span class="pc" id="L98">	public static final UncaughtExceptionHandler RETHROWING = (t, e) -&gt; Exceptional.rethrow(e);</span>
+
+
+	/**
+	 * An {@link UncaughtExceptionHandler} that simply swallows &lt;i&gt;all&lt;/i&gt; exceptions,
+	 * except subclasses of {@link Error}, which are rethrown.
+	 */
+<span class="fc" id="L105">	public static final UncaughtExceptionHandler SWALLOWING = (t,e) -&gt; Exceptional.swallow(e);</span>
+
+
+	private Exceptional()
+<span class="fc" id="L109">	{</span>
+<span class="fc" id="L110">		throw new IllegalStateException(&quot;Why on earth would you want to instantiate this?&quot;);</span>
+	}
+
+
+	/**
+	 * @param earl the text URL
+	 * @return a {@link URL} representation
+	 */
+	public static URL url(CharSequence earl)
+	{
+		try {
+<span class="fc" id="L121">			return new URL(earl.toString());</span>
+<span class="fc" id="L122">		} catch (MalformedURLException e) {</span>
+<span class="fc" id="L123">			throw uncheck(e);</span>
+		}
+	}
+
+
+	/**
+	 * @param protocol e.g. http, ftp, stcp
+	 * @param host hostname or IP
+	 * @param port 0 to 65536
+	 * @param path the &quot;file&quot; portion of the URL
+	 * @param handler optional URLStreamHandler
+	 * @return a {@link URL} representation
+	 */
+	public static URL url(String protocol, String host, int port, String path, @Nullable URLStreamHandler handler)
+	{
+		try {
+<span class="fc" id="L139">			return new URL(protocol, host, port, path, handler);</span>
+<span class="fc" id="L140">		} catch (MalformedURLException e) {</span>
+<span class="fc" id="L141">			throw uncheck(e);</span>
+		}
+	}
+
+
+	/**
+	 * @param ʊri the text URI (as Earl is to URL, so ʊri (as in Uri Geller) is to URI) 
+	 * @return a {@link URI} representation
+	 */
+	public static URI uri(CharSequence ʊri)   //NOSONAR utf8 is perfectly legal, thanks
+	{
+		try {
+<span class="fc" id="L153">			return new URI(ʊri.toString());</span>
+<span class="fc" id="L154">		} catch (URISyntaxException e) {</span>
+<span class="fc" id="L155">			throw uncheck(e);</span>
+		}
+	}
+
+
+	/**
+	 * Will rethrow any {@link Error}, otherwise will silently swallow, resetting the 
+	 * interrupt flag IFF {@code caught instanceof InterruptedException}
+	 *  
+	 * @param caught the caught unmentionable
+	 */
+	public static void swallow(Throwable caught)
+	{
+<span class="fc" id="L168">		resetIfInterrupt(caught);</span>
+<span class="fc bfc" id="L169" title="All 2 branches covered.">		if(caught instanceof Error) {</span>
+<span class="nc" id="L170">			rethrow(caught);</span>
+		}
+<span class="fc" id="L172">	}</span>
+
+	/**
+	 * Catching an {@link InterruptedException} clears the interrupt flag,
+	 * this merely resets the flag IFF the &lt;code&gt;thrown&lt;/code&gt; parameter is
+	 * an instance of {@link InterruptedException}.
+	 * @param thrown possible {@link InterruptedException}
+	 */
+	public static void resetIfInterrupt(Throwable thrown)
+	{
+<span class="fc bfc" id="L182" title="All 2 branches covered.">		if(thrown instanceof InterruptedException) {</span>
+<span class="fc" id="L183">			Thread.currentThread().interrupt();</span>
+		}
+<span class="fc" id="L185">	}</span>
+
+
+	/**
+	 * Directly rethrows {@link Error}s or {@link RuntimeException}s, wraps
+	 * checked exceptions appropriately
+	 * 
+	 * @param thrown the caught throwable to be rethrown as unchecked
+	 * @return actually nothing, this just allows you to write {@code throw Exceptional.rethrow(e)} for methods than have return values.
+	 * 
+	 * @see #throwAsUnchecked(Throwable)
+	 */
+	public static RuntimeException rethrow(Throwable thrown)
+	{
+<span class="fc bfc" id="L199" title="All 2 branches covered.">		if(thrown instanceof Error) {</span>
+<span class="fc" id="L200">			throw (Error)thrown;</span>
+		}
+<span class="fc" id="L202">		throw uncheck(thrown);</span>
+	}
+
+
+	/**
+	 * Invokes {@link CheckedRunnable#run()} catching any checked 
+	 * {@link Exception}s rethrowing them as unchecked.
+	 * 
+	 * @param runnable the checked runnable to run
+	 */
+	public static void run(CheckedRunnable runnable)
+	{
+		try {
+<span class="fc" id="L215">			runnable.run();</span>
+<span class="fc" id="L216">		} catch(Throwable thrown) {  //NOSONAR</span>
+<span class="nc" id="L217">			rethrow(thrown);</span>
+<span class="fc" id="L218">		}</span>
+<span class="fc" id="L219">	}</span>
+	
+
+	/**
+	 * Convert a {@link CheckedRunnable} into a {@link Runnable}
+	 * 
+	 * @param runnable the checked runnable to wrap
+	 * @return an unchecked wrapper around the &lt;code&gt;runnable&lt;/code&gt; argument
+	 */
+	public static Runnable uncheckRunnable(CheckedRunnable runnable)
+	{
+<span class="fc" id="L230">		return () -&gt; run(runnable);</span>
+	}
+
+
+	/**
+	 * Invokes {@link Callable#call()} catching any checked 
+	 * {@link Exception}s rethrowing as unchecked.
+	 * 
+	 * @param &lt;T&gt; the return type of the {@link Callable}
+	 * 
+	 * @param callable the {@link Callable} to execute
+	 * @return the result of calling the {@link Callable} 
+	 */
+	public static &lt;T&gt; T call(Callable&lt;T&gt; callable)
+	{
+		try {
+<span class="fc" id="L246">			return callable.call();</span>
+<span class="fc" id="L247">		} catch(Exception thrown) {  //NOSONAR</span>
+<span class="fc" id="L248">			throw uncheck(thrown);</span>
+		}
+	}
+
+
+	/**
+	 * Converts {@link Throwable}s to {@link RuntimeException}s.  If the supplied {@link Throwable} is 
+	 * already a {@link RuntimeException}, then it's simply cast and returned.
+	 * {@link Error} subclasses will be wrapped in an {@link UncheckedException}.
+	 * 
+	 * @param caught any {@link Throwable}
+	 * @return a {@link RuntimeException}, typically {@link UncheckedException}
+	 * @see #rethrow(Throwable)
+	 */
+	public static RuntimeException uncheck(Throwable caught)
+	{
+<span class="fc" id="L264">		return UNCHECK_MAP.entrySet().stream()</span>
+<span class="fc" id="L265">			.filter(e -&gt; e.getKey().isInstance(caught))</span>
+<span class="fc" id="L266">			.map(e -&gt; e.getValue().apply(caught))</span>
+<span class="fc" id="L267">			.findFirst()</span>
+<span class="fc" id="L268">			.orElseGet(() -&gt; new UncheckedException(caught));</span>
+	}
+
+
+	/**
+	 * Converts {@link CheckedConsumer} to {@link Consumer}
+	 * 
+	 * @param &lt;T&gt; the consumed type
+	 * 
+	 * @param consumer a consumer that declares checked exception(s)
+	 * @return a vanilla {@link java.util.function.Consumer}  
+	 */
+	public static &lt;T&gt; Consumer&lt;T&gt; uncheckConsumer(CheckedConsumer&lt;T&gt; consumer)     //NOSONAR - sonar bug; unused parameter
+	{
+<span class="fc" id="L282">		return (Consumer&lt;T&gt; &amp; Serializable) t -&gt; Exceptional.accept(consumer, t);</span>
+	}
+
+
+	/**
+	 * Invokes {@link CheckedConsumer#accept(Object)} catching any checked 
+	 * {@link Exception}s rethrowing as unchecked.
+	 * 
+	 * @param &lt;T&gt; the consumed type
+	 * 
+	 * @param consumer the consumer of the {@code value}
+	 * @param value the value to be consumed
+	 */
+	public static &lt;T&gt; void accept(CheckedConsumer&lt;T&gt; consumer, T value)
+	{
+		try {
+<span class="fc" id="L298">			consumer.accept(value);</span>
+<span class="fc" id="L299">		} catch (Throwable thrown) {  //NOSONAR</span>
+<span class="nc" id="L300">			rethrow(thrown);</span>
+<span class="fc" id="L301">		}</span>
+<span class="fc" id="L302">	}</span>
+
+
+	/**
+	 * Convert a {@link CheckedBiConsumer} into a {@link BiConsumer}.
+	 * 
+	 * @param &lt;T&gt; first argument type
+	 * @param &lt;U&gt; last argument type
+	 * 
+	 * @param consumer the checked consumer
+	 * @return an unchecked consumer wrapping the {@code consumer} argument
+	 */
+	public static &lt;T, U&gt; BiConsumer&lt;T, U&gt; uncheckBiConsumer(CheckedBiConsumer&lt;T, U&gt; consumer)     //NOSONAR - sonar bug; unused parameter
+	{
+<span class="fc" id="L316">		return (BiConsumer&lt;T, U&gt; &amp; Serializable) (t,u) -&gt; Exceptional.accept(consumer, t, u);</span>
+	}
+
+
+	/**
+	 * Invokes {@link CheckedConsumer#accept(Object)} catching any checked 
+	 * {@link Exception}s rethrowing as unchecked.
+	 * 
+	 * @param &lt;T&gt; first argument type
+	 * @param &lt;U&gt; last argument type
+	 * 
+	 * @param consumer the consumer of the {@code value}
+	 * @param t first argument to be consumed
+	 * @param u last argument to be consumed
+	 */
+	public static &lt;T, U&gt; void accept(CheckedBiConsumer&lt;T, U&gt; consumer, T t, U u)
+	{
+		try {
+<span class="fc" id="L334">			consumer.accept(t, u);</span>
+<span class="fc" id="L335">		} catch (Throwable thrown) {  //NOSONAR</span>
+<span class="nc" id="L336">			rethrow(thrown);</span>
+<span class="fc" id="L337">		}</span>
+<span class="fc" id="L338">	}</span>
+
+
+	/**
+	 * Converts a {@link CheckedFunction} into a {@link Function}.
+	 * 
+	 * @param &lt;T&gt; argument type
+	 * @param &lt;R&gt; return type
+	 * 
+	 * @param function the checked function
+	 * @return an unchecked function wrapping the {@code function} argument.
+	 */
+	public static &lt;T, R&gt; Function&lt;T, R&gt; uncheckFunction(CheckedFunction&lt;T, R&gt; function)     //NOSONAR - sonar bug; unused parameter
+	{
+<span class="fc" id="L352">		return (Function&lt;T, R&gt; &amp; Serializable) t -&gt; Exceptional.apply(function, t);</span>
+	}
+
+
+	/**
+	 * Invokes {@link CheckedFunction#apply(Object)} catching any checked 
+	 * {@link Exception}s rethrowing as unchecked.
+	 * 
+	 * @param &lt;T&gt; argument type
+	 * @param &lt;R&gt; return type
+	 * 
+	 * @param function the checked function to invoke with the {@code argument}
+	 * @param argument the argument to apply to the function
+	 * @return the result of applying {@code argument} to {@code function}
+	 */
+	public static &lt;T, R&gt; R apply(CheckedFunction&lt;T, R&gt; function, T argument)
+	{
+		try {
+<span class="fc" id="L370">			return function.apply(argument);</span>
+<span class="fc" id="L371">		} catch (Throwable thrown) {  //NOSONAR</span>
+<span class="nc" id="L372">			throw rethrow(thrown);</span>
+		}
+	}
+
+
+	/**
+	 * Convert a {@link CheckedBiFunction} into a {@link BiFunction}.
+	 * 
+	 * @param &lt;T&gt; first argument type
+	 * @param &lt;U&gt; last argument type
+	 * @param &lt;R&gt; return type
+	 * 
+	 * @param function the checked bi-function
+	 * @return an unchecked bi-function wrapping the {@code function} argument.
+	 */
+	public static &lt;T, U, R&gt; BiFunction&lt;T, U, R&gt; uncheckBiFunction(CheckedBiFunction&lt;T, U, R&gt; function)     //NOSONAR - sonar bug; unused parameter
+	{
+<span class="fc" id="L389">		return (BiFunction&lt;T, U, R&gt; &amp; Serializable) (t, u) -&gt; Exceptional.apply(function, t, u);</span>
+	}
+
+
+	/**
+	 * Invokes {@link CheckedFunction#apply(Object)} catching any checked 
+	 * {@link Exception}s rethrowing as unchecked.
+	 * 
+	 * @param &lt;T&gt; first argument type
+	 * @param &lt;U&gt; last argument type
+	 * @param &lt;R&gt; return type
+	 * 
+	 * @param function the checked function to invoke with the {@code argument}
+	 * @param t the first argument to apply to the function
+	 * @param u the second argument to apply to the function
+	 * @return the result of applying {@code function} to the arguments {@code t} and {@code u}
+	 */
+	public static &lt;T, U, R&gt; R apply(CheckedBiFunction&lt;T, U, R&gt; function, T t, U u)
+	{
+		try {
+<span class="fc" id="L409">			return function.apply(t, u);</span>
+<span class="fc" id="L410">		} catch (Throwable thrown) {  //NOSONAR</span>
+<span class="nc" id="L411">			throw rethrow(thrown);</span>
+		}
+	}
+
+
+	/**
+	 * Converts a {@link CheckedBinaryOperator} into a {@link BinaryOperator}.
+	 * 
+	 * @param &lt;T&gt; operator type
+	 * 
+	 * @param operator the checked binary operator
+	 * @return and unchecked wrapper around the {@code operator} argument
+	 */
+	public static &lt;T&gt; BinaryOperator&lt;T&gt; uncheckBinaryOperator(CheckedBinaryOperator&lt;T&gt; operator)     //NOSONAR - sonar bug; unused parameter
+	{
+<span class="fc" id="L426">		return (BinaryOperator&lt;T&gt; &amp; Serializable) (a,b) -&gt; Exceptional.apply(operator, a, b);</span>
+	}
+
+
+	/**
+	 * Converts a {@link CheckedToDoubleFunction} into a {@link ToDoubleFunction}.
+	 * 
+	 * @param &lt;T&gt; argument type
+	 * 
+	 * @param function the checked to-double-function
+	 * @return an unchecked to-double-function wrapping the {@code function} argument.
+	 */
+	public static &lt;T&gt; ToDoubleFunction&lt;T&gt; uncheckToDoubleFunction(CheckedToDoubleFunction&lt;T&gt; function)     //NOSONAR - sonar bug; unused parameter
+	{
+<span class="fc" id="L440">		return (ToDoubleFunction&lt;T&gt; &amp; Serializable) t -&gt; Exceptional.applyAsDouble(function, t);</span>
+	}
+
+
+	/**
+	 * Invokes {@link CheckedToDoubleFunction#applyAsDouble(Object)} catching any checked 
+	 * {@link Exception}s rethrowing as unchecked.
+	 * 
+	 * @param &lt;T&gt; argument type
+	 * 
+	 * @param function the checked to-double function
+	 * @param t the function argument
+	 * @return the double result of applying the {@code function} to argument {@code t}
+	 */
+	public static &lt;T&gt; double applyAsDouble(CheckedToDoubleFunction&lt;T&gt; function, T t)
+	{
+		try {
+<span class="fc" id="L457">			return function.applyAsDouble(t);</span>
+<span class="fc" id="L458">		} catch (Throwable thrown) {  //NOSONAR</span>
+<span class="nc" id="L459">			throw rethrow(thrown);</span>
+		}
+	}
+
+
+	/**
+	 * Converts a {@link CheckedToIntFunction} into a {@link ToIntFunction}.
+	 * 
+	 * @param &lt;T&gt; argument type
+	 * 
+	 * @param function the checked to-int-function
+	 * @return an unchecked to-int-function wrapping the {@code function} argument.
+	 */
+	public static &lt;T&gt; ToIntFunction&lt;T&gt; uncheckToIntFunction(CheckedToIntFunction&lt;T&gt; function)     //NOSONAR - sonar bug; unused parameter
+	{
+<span class="fc" id="L474">		return (ToIntFunction&lt;T&gt; &amp; Serializable) t -&gt; Exceptional.applyAsInt(function, t);</span>
+	}
+
+
+	/**
+	 * Invokes {@link CheckedToIntFunction#applyAsInt(Object)} catching any checked 
+	 * {@link Exception}s rethrowing as unchecked.
+	 * 
+	 * @param &lt;T&gt; argument type
+	 * 
+	 * @param function the checked to-int function
+	 * @param t the function argument
+	 * @return the int result of applying the {@code function} to argument {@code t} 
+	 */
+	public static &lt;T&gt; int applyAsInt(CheckedToIntFunction&lt;T&gt; function, T t)
+	{
+		try {
+<span class="fc" id="L491">			return function.applyAsInt(t);</span>
+<span class="fc" id="L492">		} catch (Throwable thrown) {  //NOSONAR</span>
+<span class="nc" id="L493">			throw rethrow(thrown);</span>
+		}
+	}
+
+	
+	/**
+	 * Converts a {@link CheckedToLongFunction} into a {@link ToLongFunction}.
+	 * 
+	 * @param &lt;T&gt; argument type
+	 * 
+	 * @param function the checked to-long-function
+	 * @return an unchecked to-long-function wrapping the {@code function} argument.
+	 */
+	public static &lt;T&gt; ToLongFunction&lt;T&gt; uncheckToLongFunction(CheckedToLongFunction&lt;T&gt; function)     //NOSONAR - sonar bug; unused parameter
+	{
+<span class="fc" id="L508">		return (ToLongFunction&lt;T&gt; &amp; Serializable) t -&gt; Exceptional.applyAsLong(function, t);</span>
+	}
+
+
+	/**
+	 * Invokes {@link CheckedToLongFunction#applyAsLong(Object)} catching any checked 
+	 * {@link Exception}s rethrowing as unchecked.
+	 * 
+	 * @param &lt;T&gt; argument type
+	 * 
+	 * @param function the checked to-long function
+	 * @param t the function argument
+	 * @return the long result of applying the {@code function} to argument {@code t} 
+	 */
+	public static &lt;T&gt; long applyAsLong(CheckedToLongFunction&lt;T&gt; function, T t)
+	{
+		try {
+<span class="fc" id="L525">			return function.applyAsLong(t);</span>
+<span class="fc" id="L526">		} catch (Throwable thrown) {  //NOSONAR</span>
+<span class="nc" id="L527">			throw rethrow(thrown);</span>
+		}
+	}
+
+
+	/**
+	 * Convert a {@link CheckedSupplier} into an unchecked {@link Supplier}.
+	 * 
+	 * @param &lt;T&gt; supplied type
+	 * 
+	 * @param supplier the checked supplier to wrap
+	 * @return an unchecked supplier wrapping the {@code supplier} argument
+	 */
+	public static &lt;T&gt; Supplier&lt;T&gt; uncheckSupplier(CheckedSupplier&lt;T&gt; supplier)     //NOSONAR - sonar bug; unused parameter
+	{
+<span class="fc" id="L542">		return (Supplier&lt;T&gt; &amp; Serializable) () -&gt; Exceptional.get(supplier);</span>
+	}
+
+
+	/**
+	 * Invokes {@link CheckedSupplier#get()} catching any checked 
+	 * {@link Exception}s rethrowing as unchecked.
+	 * 
+	 * @param &lt;T&gt; supplied type
+	 * 
+	 * @param supplier the checked supplier
+	 * @return the result as supplied from the {@code supplier} argument
+	 */
+	public static &lt;T&gt; T get(CheckedSupplier&lt;T&gt; supplier)
+	{
+		try {
+<span class="fc" id="L558">			return supplier.get();</span>
+<span class="fc" id="L559">		} catch (Throwable thrown) {  //NOSONAR</span>
+<span class="nc" id="L560">			throw rethrow(thrown);</span>
+		}
+	}
+
+
+	/**
+	 * Converts a {@link CheckedPredicate} into a {@link Predicate}.
+	 * 
+	 * @param &lt;T&gt; tested type
+	 * 
+	 * @param predicate the checked predicate to wrap
+	 * @return an unchecked predicate wrapping the {@code predicate} argument
+	 */
+    public static &lt;T&gt; Predicate&lt;T&gt; uncheckPredicate(CheckedPredicate&lt;T&gt; predicate)     //NOSONAR - sonar bug; unused parameter
+    {
+<span class="fc" id="L575">    	return (Predicate&lt;T&gt; &amp; Serializable) t -&gt; Exceptional.test(predicate, t);</span>
+    }
+
+
+    /**
+     * Invokes {@link CheckedPredicate#test(Object)} catching any checked 
+	 * {@link Exception}s rethrowing as unchecked.
+	 * 
+	 * @param &lt;T&gt; tested type
+	 * 
+     * @param predicate the checked predicate to test on the {@code value}
+     * @param value the value to be tested
+     * @return true IFF value passes predicate's test
+     */
+    public static &lt;T&gt; boolean test(CheckedPredicate&lt;T&gt; predicate, T value)
+    {
+    	try {
+<span class="fc" id="L592">			return predicate.test(value);</span>
+<span class="fc" id="L593">		} catch (Throwable thrown) {  //NOSONAR</span>
+<span class="nc" id="L594">			throw rethrow(thrown);</span>
+		}
+    }
+
+
+    /**
+     * Converts a {@link CheckedComparator} into an unchecked {@link Comparator}.
+     * 
+     * @param &lt;T&gt; compared type
+     * 
+     * @param comparator the checked comparator to wrap
+     * @return an unchecked comparator wrapping the {@code comparator} argument
+     */
+	public static &lt;T&gt; Comparator&lt;T&gt; uncheckComparator(CheckedComparator&lt;T&gt; comparator)     //NOSONAR - sonar bug; unused parameter
+	{
+<span class="fc" id="L609">		return (Comparator&lt;T&gt; &amp; Serializable) (a, b) -&gt; Exceptional.applyAsInt(comparator, a, b);</span>
+	}
+
+	
+	public static &lt;T, U&gt; ToIntBiFunction&lt;T, U&gt; uncheckToIntBiFunction(CheckedToIntBiFunction&lt;T, U&gt; function)     //NOSONAR - sonar bug; unused parameter
+	{
+<span class="fc" id="L615">		return (ToIntBiFunction&lt;T, U&gt; &amp; Serializable) (a, b) -&gt; Exceptional.applyAsInt(function, a, b);</span>
+	}
+
+
+	/**
+	 * Invokes {@link CheckedFunction#apply(Object)} catching any checked 
+	 * {@link Exception}s rethrowing as unchecked.
+	 * 
+	 * @param &lt;T&gt; first argument type
+	 * @param &lt;U&gt; last argument type
+	 * 
+	 * @param function the checked function to invoke with the {@code argument}
+	 * @param t the first argument to apply to the function
+	 * @param u the second argument to apply to the function
+	 * @return the result of applying {@code function} to the arguments {@code t} and {@code u}
+	 */
+	public static &lt;T, U&gt; int applyAsInt(CheckedToIntBiFunction&lt;T, U&gt; function, T t, U u)
+	{
+		try {
+<span class="fc" id="L634">			return function.applyAsInt(t, u);</span>
+<span class="fc" id="L635">		} catch (Throwable thrown) {  //NOSONAR</span>
+<span class="nc" id="L636">			throw rethrow(thrown);</span>
+		}
+	}
+	
+	
+	
+	/**
+	 * This fugly method relies on erasure to trick the compiler, allowing you to throw any checked
+	 * exception without declaring so on the surrounding method.  You are almost certainly better off
+	 * using {@link #rethrow(Throwable)}.
+	 * 
+	 * Note: this may well become an obsolete hack in future versions of Java if generics change.
+	 * 
+	 * @param throwable the {@link Throwable} to be thrown
+	 * @return this alleged return will never be received, but useful in that 
+	 * you may write &lt;code&gt;throws {@link Exceptional#throwAsUnchecked(Throwable)};&lt;/code&gt;
+	 * to placate the compiler WRT non-void method returns, and ensure Static Code 
+	 * Analysis doesn't accuse you of swallowing the exception.
+	 * 
+	 * @see #rethrow(Throwable)
+	 */
+    public static RuntimeException throwAsUnchecked(Throwable throwable)
+    {
+<span class="fc" id="L659">    	resetIfInterrupt(throwable);</span>
+<span class="nc" id="L660">        throw Exceptional.&lt;RuntimeException&gt;eraseAndThrow(throwable);</span>
+    }
+
+
+	@SuppressWarnings(&quot;unchecked&quot;)
+    private static &lt;T extends Throwable&gt; RuntimeException eraseAndThrow(Throwable throwable) throws T
+    {
+<span class="fc" id="L667">        throw (T)throwable;</span>
+    }
+
+
+    /**
+     * Attempts to unwrap invocation and reflection exceptions to their underlying cause
+     * 
+     * @param throwable to be unwrapped
+     * @return the root cause
+     */
+	public static Throwable unwrap(Throwable throwable)
+	{
+<span class="fc bfc" id="L679" title="All 2 branches covered.">		if(throwable instanceof InvocationTargetException) {</span>
+<span class="fc" id="L680">			return unwrap((InvocationTargetException)throwable);</span>
+		}
+<span class="fc bfc" id="L682" title="All 2 branches covered.">		if(throwable instanceof UndeclaredThrowableException) {</span>
+<span class="fc" id="L683">			return unwrap((UndeclaredThrowableException)throwable);</span>
+		}
+<span class="fc" id="L685">		return throwable;</span>
+	}
+
+	
+    /**
+     * @param throwable to be unwrapped
+     * @return the value of {@link UndeclaredThrowableException#getUndeclaredThrowable()}
+     */
+	public static Throwable unwrap(UndeclaredThrowableException throwable)
+	{
+		//if underlying is null the world has ended
+<span class="fc" id="L696">		Throwable underlying = throwable.getUndeclaredThrowable();</span>
+<span class="fc" id="L697">		underlying.addSuppressed(throwable);</span>
+<span class="fc" id="L698">		return underlying;</span>
+	}
+
+
+    /**
+     * @param throwable to be unwrapped
+     * @return the value of {@link InvocationTargetException#getTargetException()}
+     */
+	public static Throwable unwrap(InvocationTargetException throwable)
+	{
+		//if underlying is null the world has ended
+<span class="fc" id="L709">		Throwable underlying = throwable.getCause();</span>
+<span class="fc" id="L710">		underlying.addSuppressed(throwable);</span>
+<span class="fc" id="L711">		return underlying;</span>
+	}
+
+
+	/**
+	 * Ultra-shorthand for {@link AutoCloseable}/{@link java.io.Closeable}, obvious use for {@link java.io.InputStream}
+	 * 
+	 * @param &lt;C&gt; {@link AutoCloseable} type
+	 * @param &lt;T&gt; {@code create} function argument type
+	 * @param &lt;R&gt; the result type
+	 * 
+	 * @param create a function applying {@code t} to produce an {@link AutoCloseable} of type {@code &lt;C&gt;}
+	 * @param t the argument to apply to the {@code create} function
+	 * @param convert a function applied to the {@link AutoCloseable} to produce the result 
+	 * @return the result of applying the {@code convert} function
+	 */
+	public static &lt;C extends AutoCloseable, T, R&gt; R closeAfterApplying(CheckedFunction&lt;T, C&gt; create, T t, CheckedFunction&lt;C, R&gt; convert)
+	{
+<span class="fc" id="L729">		C closeable = Exceptional.apply(create, t);</span>
+<span class="fc" id="L730">		return closeAfterApplying(closeable, convert);</span>
+	}
+
+
+	/**
+	 * Applies the function to the closeable, returning the result and closing the closable - checked exceptions are 
+	 * rethrown as unchecked.
+	 * 
+ 	 * @param &lt;C&gt; the auto-closeable type, to be created, consumed and closed
+	 * @param &lt;R&gt; the result type
+	 * 
+	 * @param closeable the closeable subject of the {@code convert} function
+	 * @param convert the function consuming the closeable and supplying the result
+	 * @return the result of applying {@code convert} function to the {@code closeable} argument
+	 */
+	public static &lt;C extends AutoCloseable, R&gt; R closeAfterApplying(C closeable, CheckedFunction&lt;C, R&gt; convert)
+	{
+<span class="fc" id="L747">		try(C autoClose = closeable) {</span>
+<span class="fc" id="L748">			return Exceptional.apply(convert, autoClose);</span>
+<span class="pc bpc" id="L749" title="4 of 8 branches missed.">		} catch(Exception e) {</span>
+<span class="fc" id="L750">			throw uncheck(e);</span>
+		}
+	}
+
+
+	/**
+	 * Applies the {@code create} function to {@code t}, resulting in a {@link AutoCloseable} which is closed after being consumed.
+	 * Checked exceptions are rethrown as unchecked.
+	 * 
+	 * @param &lt;C&gt; the auto-closeable type, to be created, consumed and closed
+	 * @param &lt;T&gt; the function's argument type, used to create the auto-closeable
+	 * 
+	 * @param create the function creating the {@link AutoCloseable}
+	 * @param t the argument that the {@code create} function is applied to
+	 * @param consume the consumer of the {@link AutoCloseable}
+	 */
+	public static &lt;C extends AutoCloseable, T&gt; void closeAfterAccepting(CheckedFunction&lt;T, C&gt; create, T t, CheckedConsumer&lt;C&gt; consume)
+	{
+<span class="fc" id="L768">		C closeable = Exceptional.apply(create, t);</span>
+<span class="fc" id="L769">		closeAfterAccepting(closeable, consume);</span>
+<span class="fc" id="L770">	}</span>
+
+
+	/**
+	 * Consumes the {@code closeable} before closing.  Checked exceptions are rethrown as unchecked.
+	 * 
+	 * @param &lt;C&gt; the auto-closeable type
+	 * 
+	 * @param closeable  the closeable to be consumed and closed
+	 * @param consume the consumer of the {@link AutoCloseable}
+	 */
+	public static &lt;C extends AutoCloseable&gt; void closeAfterAccepting(C closeable, CheckedConsumer&lt;C&gt; consume)
+	{
+<span class="fc" id="L783">		try(C autoClose = closeable) {</span>
+<span class="fc" id="L784">			Exceptional.accept(consume, autoClose);</span>
+<span class="pc bpc" id="L785" title="4 of 8 branches missed.">		} catch(InterruptedException e) {</span>
+<span class="nc" id="L786">			Thread.currentThread().interrupt();</span>
+<span class="nc" id="L787">			throw uncheck(e);</span>
+<span class="fc" id="L788">		} catch(Exception e) {</span>
+<span class="fc" id="L789">			throw uncheck(e);</span>
+<span class="fc" id="L790">		}</span>
+<span class="fc" id="L791">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

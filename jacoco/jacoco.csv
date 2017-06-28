@@ -1,0 +1,15 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+io.earcam.unexceptional,io.earcam.unexceptional,CheckedFunction,0,26,0,0,0,4,0,4,0,4
+io.earcam.unexceptional,io.earcam.unexceptional,Exceptional,79,470,8,18,15,107,9,69,1,64
+io.earcam.unexceptional,io.earcam.unexceptional,CheckedComparator,0,180,0,2,0,27,0,24,0,23
+io.earcam.unexceptional,io.earcam.unexceptional,UncheckedException,0,13,0,0,0,6,0,3,0,3
+io.earcam.unexceptional,io.earcam.unexceptional,UncheckedInterruptException,0,6,0,0,0,3,0,1,0,1
+io.earcam.unexceptional,io.earcam.unexceptional,EmeticStream,0,182,0,4,0,29,0,30,0,28
+io.earcam.unexceptional,io.earcam.unexceptional,CheckedRunnable,0,14,0,0,0,5,0,2,0,2
+io.earcam.unexceptional,io.earcam.unexceptional,CheckedBinaryOperator,0,34,0,4,0,4,0,6,0,4
+io.earcam.unexceptional,io.earcam.unexceptional,UncheckedSecurityException,0,4,0,0,0,2,0,1,0,1
+io.earcam.unexceptional,io.earcam.unexceptional,UncheckedReflectiveException,0,4,0,0,0,2,0,1,0,1
+io.earcam.unexceptional,io.earcam.unexceptional,CheckedBiConsumer,0,18,0,0,0,5,0,2,0,2
+io.earcam.unexceptional,io.earcam.unexceptional,CheckedConsumer,0,14,0,0,0,5,0,2,0,2
+io.earcam.unexceptional,io.earcam.unexceptional,CheckedBiFunction,0,16,0,0,0,2,0,2,0,2
+io.earcam.unexceptional,io.earcam.unexceptional,CheckedPredicate,0,55,0,10,0,5,0,11,0,6

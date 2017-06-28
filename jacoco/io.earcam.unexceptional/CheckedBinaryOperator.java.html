@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CheckedBinaryOperator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">io.earcam.unexceptional</a> &gt; <a href="index.source.html" class="el_package">io.earcam.unexceptional</a> &gt; <span class="el_source">CheckedBinaryOperator.java</span></div><h1>CheckedBinaryOperator.java</h1><pre class="source lang-java linenums">package io.earcam.unexceptional;
+
+import static java.util.Objects.requireNonNull;
+
+import java.io.Serializable;//NOSONAR stfu false positive (suspect Sonar Squid is looking at bytecode here? as erasure of all but left-most bound where multiple bounds occur, see casts of return types in maxBy/minBy)
+import java.util.Comparator;
+import java.util.Objects;
+
+import javax.annotation.Nonnull;
+
+/**
+ * A checked parallel of {@link java.util.function.BinaryOperator}
+ * 
+ * @param &lt;T&gt; arguments and return type
+ * 
+ * @see java.util.function.BinaryOperator
+ */
+@FunctionalInterface
+public interface CheckedBinaryOperator&lt;T&gt; extends CheckedBiFunction&lt;T, T, T&gt; {
+
+	/**
+	 * See {@link java.util.function.BinaryOperator#minBy(Comparator)}
+	 *
+	 * @param &lt;T&gt; arguments and return type
+	 * 
+	 * @param comparator the comparator used to determine the minimum.
+	 * @return a {@link CheckedBinaryOperator}
+	 * @throws NullPointerException if {@code comparator} is {@code null}
+	 */
+	public static &lt;T&gt; CheckedBinaryOperator&lt;T&gt; minBy(@Nonnull CheckedComparator&lt;? super T&gt; comparator)
+	{
+<span class="fc" id="L32">		requireNonNull(comparator);</span>
+<span class="fc bfc" id="L33" title="All 2 branches covered.">		return (CheckedBinaryOperator&lt;T&gt; &amp; Serializable) (a, b) -&gt; comparator.compare(a, b) &lt; 0 ? a : b;</span>
+	}
+
+
+	/**
+	 * See {@link java.util.function.BinaryOperator#maxBy(Comparator)}
+	 * 
+	 * @param &lt;T&gt; arguments and return type
+	 * 
+	 * @param comparator the comparator used to determine the maximum.
+	 * @return a {@link CheckedBinaryOperator}
+	 * @throws NullPointerException if {@code comparator} is {@code null}
+	 */
+	public static &lt;T&gt; CheckedBinaryOperator&lt;T&gt; maxBy(@Nonnull CheckedComparator&lt;? super T&gt; comparator)
+	{
+<span class="fc" id="L48">		Objects.requireNonNull(comparator);</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">		return (CheckedBinaryOperator&lt;T&gt; &amp; Serializable) (a, b) -&gt; comparator.compare(a, b) &gt; 0 ? a : b;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

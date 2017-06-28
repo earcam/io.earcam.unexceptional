@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CheckedFunction.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">io.earcam.unexceptional</a> &gt; <a href="index.source.html" class="el_package">io.earcam.unexceptional</a> &gt; <span class="el_source">CheckedFunction.java</span></div><h1>CheckedFunction.java</h1><pre class="source lang-java linenums">package io.earcam.unexceptional;
+
+import java.util.Objects;
+
+
+/**
+ * A checked parallel of {@link java.util.function.Function}
+ * @param &lt;T&gt; argument type
+ * @param &lt;R&gt; return type
+ * 
+ * @see java.util.function.Function
+ */
+@FunctionalInterface
+public interface CheckedFunction&lt;T, R&gt; {
+
+    /**
+     * See {@link java.util.function.Function#apply(Object)}
+     * 
+     * @param t the function argument
+     * @return the function result
+	 * @throws Throwable any throwable
+	 */
+	public abstract R apply(T t) throws Throwable;  //NOSONAR
+
+
+    /**
+     * See {@link java.util.function.Function#compose(java.util.function.Function)}
+     * 
+     * @param &lt;V&gt; the type of input to the {@code before} function, and to the
+     *           composed function
+     * @param before the function to apply before this function is applied
+     * @return a composed function that first applies the {@code before}
+     * function and then applies this function
+     * @throws NullPointerException if {@code before} is {@code null}
+     *
+     * @see java.util.function.Function#compose(java.util.function.Function)
+     */
+	public default &lt;V&gt; CheckedFunction&lt;V, R&gt; compose(CheckedFunction&lt;? super V, ? extends T&gt; before)
+    {
+<span class="fc" id="L40">        Objects.requireNonNull(before);</span>
+<span class="fc" id="L41">        return (V v) -&gt; apply(before.apply(v));</span>
+    }
+
+
+    /**
+     * See {@link java.util.function.Function#andThen(java.util.function.Function)}
+     * 
+     * @param &lt;V&gt; the type of output of the {@code after} function, and of the
+     *           composed function
+     * @param after the function to apply after this function is applied
+     * @return a composed function that first applies this function and then
+     * applies the {@code after} function
+     * @throws NullPointerException if {@code after} is {@code null}
+     */
+	public default &lt;V&gt; CheckedFunction&lt;T, V&gt; andThen(CheckedFunction&lt;? super R, ? extends V&gt; after)
+    {
+<span class="fc" id="L57">        Objects.requireNonNull(after);</span>
+<span class="fc" id="L58">        return (T t) -&gt; after.apply(apply(t));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

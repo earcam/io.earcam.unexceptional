@@ -1,0 +1,24 @@
+-classpath
+'/data/repository/maven/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar'
+-encoding
+'UTF-8'
+-protected
+-sourcepath
+'/tmp/io.earcam.unexceptional/src/main/java:/tmp/io.earcam.unexceptional/target/generated-sources/annotations'
+-author
+-bottom
+'Copyright &#169; 2016&#x2013;2017 <a href="http://earcam.io">earcam</a>. All rights reserved.'
+-charset
+'UTF-8'
+-d
+'/tmp/io.earcam.unexceptional/target/site/apidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'io.earcam.unexceptional 0.2.0 API'
+-linkoffline
+'http://docs.oracle.com/javase/8/docs/api' '/tmp/io.earcam.unexceptional/target/javadoc-bundle-options'
+-use
+-version
+-windowtitle
+'io.earcam.unexceptional 0.2.0 API'

@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EmeticStream.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">io.earcam.unexceptional</a> &gt; <a href="index.source.html" class="el_package">io.earcam.unexceptional</a> &gt; <span class="el_source">EmeticStream.java</span></div><h1>EmeticStream.java</h1><pre class="source lang-java linenums">package io.earcam.unexceptional;
+
+import static io.earcam.unexceptional.Exceptional.*;
+
+import java.io.Serializable;//NOSONAR stfu false positive
+import java.util.Optional;
+import java.util.stream.Collector;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
+import java.util.stream.Stream;
+
+/**
+ * &lt;p&gt;
+ * {@link EmeticStream} provides a functional parallel to {@link Stream}, with methods taking checked equivalents of {@link java.util.function} 
+ * &lt;/p&gt;
+ *  
+ * &lt;h1&gt;emetic&lt;/h1&gt;
+ * &lt;b&gt;/ɪˈmɛtɪk/&amp;nbsp;&lt;/b&gt;
+ * &lt;p&gt;
+ * &lt;i&gt;adjective:&lt;/i&gt;
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ *  1. (of a substance) causing vomiting.
+ * &lt;/p&gt;
+ * 
+ * @param &lt;T&gt; the element type of this stream
+ */
+@FunctionalInterface
+public interface EmeticStream&lt;T&gt; {
+
+
+	/**
+	 * @return the wrapped stream
+	 */
+	public abstract Stream&lt;T&gt; mapToStream();
+
+
+	/**
+	 * @param function the checked function which, when applied to the {@code value} produces the {@link Stream}
+	 * to be returned
+	 * @param value argument for the function
+	 * @return the {@link Stream} result of applying {@code function} to {@code value}
+	 * 
+	 * @param &lt;T&gt; the function's argument type
+	 * @param &lt;R&gt; the element type of this stream
+	 */
+	public static &lt;T, R&gt; EmeticStream&lt;R&gt; emesis(CheckedFunction&lt;T, Stream&lt;R&gt;&gt; function, T value)
+	{
+<span class="fc" id="L50">		return emesis(apply(function, value));</span>
+	}
+	
+
+	/**
+	 * Wrap a stream in order to invoke check functions on it
+	 * 
+	 * @param stream the underlying {@link Stream}
+	 * @return an {@link EmeticStream}
+	 * 
+ 	 * @param &lt;T&gt; the {@code stream}'s element type 
+	 */
+	public static &lt;T&gt; EmeticStream&lt;T&gt; emesis(Stream&lt;T&gt; stream)     //NOSONAR - sonar bug; unused parameter
+	{
+<span class="fc" id="L64">		return (EmeticStream&lt;T&gt; &amp; Serializable) () -&gt; stream; </span>
+	}
+
+
+	/**
+	 * @return a parallel emetic stream
+	 * 
+	 * @see Stream#parallel()
+	 */
+	public default EmeticStream&lt;T&gt; parallel()
+	{
+<span class="fc bfc" id="L75" title="All 2 branches covered.">		return mapToStream().isParallel() ? this : emesis(mapToStream().parallel());</span>
+	}
+
+
+	/**
+	 * @return a sequential emetic stream
+	 * 
+	 * @see Stream#sequential()
+	 */
+	public default EmeticStream&lt;T&gt; sequential()
+	{
+<span class="fc bfc" id="L86" title="All 2 branches covered.">		return !mapToStream().isParallel() ? this : emesis(mapToStream().sequential());</span>
+	}
+	
+
+	/**
+	 * @param predicate a non-interfering and stateless, checked predicate 𝗣 to apply 
+	 * to all elements in the stream 𝕊
+	 * @return ∀ e ∈ 𝕊: 𝗣(e)
+	 * 
+	 * @see Stream#allMatch(java.util.function.Predicate)
+	 */
+	public default boolean allMatch(CheckedPredicate&lt;? super T&gt; predicate)
+	{
+<span class="fc" id="L99">		return mapToStream().allMatch(uncheckPredicate(predicate));</span>
+	}
+	
+	
+	/**
+	 * @param predicate a non-interfering and stateless, checked predicate 𝗣 to apply 
+	 * to all elements in the stream 𝕊
+	 * @return ∃ e ∈ 𝕊: 𝗣(e)
+	 * 
+	 * @see Stream#anyMatch(java.util.function.Predicate)
+	 */
+	public default boolean anyMatch(CheckedPredicate&lt;? super T&gt; predicate)
+	{
+<span class="fc" id="L112">		return mapToStream().anyMatch(uncheckPredicate(predicate));</span>
+	}
+	
+	
+	/**
+	 * @param collector {@link Collector} performing reduction and supplying result
+	 * @return the result 
+	 * 
+	 * @param &lt;A&gt; mutable accumulator type
+	 * @param &lt;R&gt; reduction result type
+	 * 
+	 * @see Stream#collect(Collector)
+	 */
+	public default &lt;R, A&gt; R collect(Collector&lt;? super T, A, R&gt; collector)
+	{
+<span class="fc" id="L127">		return mapToStream().collect(collector);</span>
+	}
+	
+	
+	/**
+	 * @param supplier creates a new (potentially partial) result container 
+	 * @param accumulator associative, non-interfering, stateless function, adding element to result
+	 * @param combiner combines the accumulated results
+	 * @return the collected result
+	 * 
+	 * @param &lt;R&gt; result type
+	 * 
+	 * @see Stream#collect(java.util.function.Supplier, java.util.function.BiConsumer, java.util.function.BiConsumer)
+	 */
+	public default &lt;R&gt; R collect(CheckedSupplier&lt;R&gt; supplier, CheckedBiConsumer&lt;R, ? super T&gt; accumulator, CheckedBiConsumer&lt;R, R&gt; combiner)
+	{
+<span class="fc" id="L143">		return mapToStream().collect(uncheckSupplier(supplier), uncheckBiConsumer(accumulator), uncheckBiConsumer(combiner));</span>
+	}
+	
+	
+	/**
+	 * @param predicate a non-interfering, stateless predicate determining which elements travel down{@code Stream}
+	 * @return the new {@link EmeticStream}
+	 * 
+	 * @see Stream#filter(java.util.function.Predicate)
+	 */
+	public default EmeticStream&lt;T&gt; filter(CheckedPredicate&lt;? super T&gt; predicate)
+	{
+<span class="fc" id="L155">		return emesis(mapToStream().filter(uncheckPredicate(predicate)));</span>
+	}
+	
+	
+	/**
+	 * @param &lt;R&gt; element type of the new stream
+	 * 
+	 * @param mapper a non-interfering, stateless function transforming {@code &lt;T&gt;} to {@code Stream&lt;R&gt;}
+	 * @return the new {@link EmeticStream}
+	 * 
+	 * @see Stream#flatMap(java.util.function.Function)
+	 */
+	public default &lt;R&gt; EmeticStream&lt;R&gt; flatMap(CheckedFunction&lt;? super T, ? extends Stream&lt;? extends R&gt;&gt; mapper)
+	{
+<span class="fc" id="L169">		return emesis(mapToStream().flatMap(uncheckFunction(mapper)));</span>
+	}
+	
+	
+	/**
+	 * @param mapper a non-interfering, stateless function transforming {@code &lt;T&gt;} to {@code DoubleStream}
+	 * @return the new {@link DoubleStream}
+	 * 
+	 * @see Stream#flatMapToDouble(java.util.function.Function)
+	 */
+	public default DoubleStream flatMapToDouble(CheckedFunction&lt;? super T, ? extends DoubleStream&gt; mapper)
+	{
+<span class="fc" id="L181">		return mapToStream().flatMapToDouble(uncheckFunction(mapper));</span>
+	}
+	
+
+	/**
+	 * @param mapper a non-interfering, stateless function transforming {@code &lt;T&gt;} to {@code IntStream}
+	 * @return the new {@link IntStream}
+	 * 
+	 * @see Stream#flatMapToInt(java.util.function.Function)
+	 */
+	public default IntStream flatMapToInt(CheckedFunction&lt;? super T, ? extends IntStream&gt; mapper)
+	{
+<span class="fc" id="L193">		return mapToStream().flatMapToInt(uncheckFunction(mapper));</span>
+	}
+
+
+	/**
+	 * @param mapper a non-interfering, stateless function transforming {@code &lt;T&gt;} to {@code LongStream}
+	 * @return the new {@link EmeticStream}
+	 * 
+	 * @see Stream#flatMapToLong(java.util.function.Function)
+	 */
+	public default LongStream flatMapToLong(CheckedFunction&lt;? super T, ? extends LongStream&gt; mapper)
+	{
+<span class="fc" id="L205">		return mapToStream().flatMapToLong(uncheckFunction(mapper));</span>
+	}
+
+
+	/**
+	 * @param action a non-interfering action to apply to each element
+	 * @see Stream#forEach(java.util.function.Consumer)
+	 */
+	public default void forEach(CheckedConsumer&lt;? super T&gt; action)
+	{
+<span class="fc" id="L215">		mapToStream().forEach(uncheckConsumer(action));</span>
+<span class="fc" id="L216">	}</span>
+
+
+	/**
+	 * @param action a non-interfering action to apply to each element
+	 * @see Stream#forEachOrdered(java.util.function.Consumer)
+	 */
+	public default void forEachOrdered(CheckedConsumer&lt;? super T&gt; action)
+	{
+<span class="fc" id="L225">		mapToStream().forEachOrdered(uncheckConsumer(action));</span>
+<span class="fc" id="L226">	}</span>
+
+	
+	/**
+	 * @param &lt;R&gt; the element type of returned {@link Stream}
+	 * 
+	 * @param mapper a non-interfering, stateless function transforming {@code &lt;T&gt;} to {@code &lt;R&gt;}
+	 * @return the new {@link EmeticStream}
+	 * 
+	 * @see Stream#map(java.util.function.Function)
+	 */
+	public default &lt;R&gt; EmeticStream&lt;R&gt; map(CheckedFunction&lt;? super T, ? extends R&gt; mapper)
+	{
+<span class="fc" id="L239">		return emesis(mapToStream().map(uncheckFunction(mapper)));</span>
+	}
+	
+	
+	/**
+	 * @param mapper a non-interfering, stateless function transforming {@code &lt;T&gt;} to {@code double}
+	 * @return the new {@link EmeticStream}
+	 * 
+	 * @see Stream#mapToDouble(java.util.function.ToDoubleFunction)
+	 */
+	public default DoubleStream mapToDouble(CheckedToDoubleFunction&lt;? super T&gt; mapper)
+	{
+<span class="fc" id="L251">		return mapToStream().mapToDouble(uncheckToDoubleFunction(mapper));</span>
+	}
+	
+	
+	/**
+	 * @param mapper a non-interfering, stateless function transforming {@code &lt;T&gt;} to {@code int}
+	 * @return the new {@link EmeticStream}
+	 * 
+	 * @see Stream#mapToInt(java.util.function.ToIntFunction)
+	 */
+	public default IntStream mapToInt(CheckedToIntFunction&lt;? super T&gt; mapper)
+	{
+<span class="fc" id="L263">		return mapToStream().mapToInt(uncheckToIntFunction(mapper));</span>
+	}
+	
+	
+	/**
+	 * @param mapper a non-interfering, stateless function transforming {@code &lt;T&gt;} to {@code long}
+	 * @return the new {@link EmeticStream}
+	 * 
+	 * @see Stream#mapToLong(java.util.function.ToLongFunction)
+	 */
+	public default LongStream mapToLong(CheckedToLongFunction&lt;? super T&gt; mapper)
+	{
+<span class="fc" id="L275">		return mapToStream().mapToLong(uncheckToLongFunction(mapper));</span>
+	}
+
+	
+	/**
+	 * @param comparator a non-interfering, stateless comparator
+	 * @return an {@link Optional} as per {@link Stream#max(java.util.Comparator)}
+	 * 
+	 * @see Stream#max(java.util.Comparator)
+	 */
+	public default Optional&lt;T&gt; max(CheckedComparator&lt;? super T&gt; comparator)
+	{
+<span class="fc" id="L287">		return mapToStream().max(uncheckComparator(comparator));</span>
+	}
+
+	
+	/**
+	 * @param comparator a non-interfering, stateless comparator
+	 * @return an {@link Optional} as per {@link Stream#max(java.util.Comparator)}
+
+	 * @see Stream#min(java.util.Comparator)
+	 */
+	public default Optional&lt;T&gt; min(CheckedComparator&lt;? super T&gt; comparator)
+	{
+<span class="fc" id="L299">		return mapToStream().min(uncheckComparator(comparator));</span>
+	}
+
+
+	/**
+	 * @param predicate a non-interfering, stateless, checked predicate 𝗣 to apply 
+	 * to all elements in the stream 𝕊
+	 * 
+	 * @return ∄ e ∈ 𝕊: 𝗣(e)
+	 * 
+	 * @see Stream#noneMatch(java.util.function.Predicate)
+	 */
+	public default boolean noneMatch(CheckedPredicate&lt;? super T&gt; predicate)
+	{
+<span class="fc" id="L313">		return mapToStream().noneMatch(uncheckPredicate(predicate));</span>
+	}
+	
+
+	/**
+	 * @param action non-interfering action applied to elements of the underlying Stream
+	 * @return the new EmeticStream
+	 * 
+	 * @see Stream#peek(java.util.function.Consumer)
+	 */
+	public default EmeticStream&lt;T&gt; peek(CheckedConsumer&lt;? super T&gt; action)
+	{
+<span class="fc" id="L325">		return emesis(mapToStream().peek(uncheckConsumer(action)));</span>
+	}
+	
+	
+	/**
+	 * 
+	 * @param accumulator an associative, non-interfering and stateless function
+	 * @return the reduction
+	 * 
+	 * @see Stream#reduce(java.util.function.BinaryOperator)
+	 */
+	public default Optional&lt;T&gt; reduce(CheckedBinaryOperator&lt;T&gt; accumulator)
+	{
+<span class="fc" id="L338">		return mapToStream().reduce(uncheckBinaryOperator(accumulator));</span>
+	}
+	
+	
+	/**
+	 * 
+	 * @param identity seed value for accumulator
+	 * @param accumulator an associative, non-interfering and stateless function
+	 * @return the reduction
+	 * 
+	 * @see Stream#reduce(Object, java.util.function.BinaryOperator)
+	 */
+	public default T reduce(T identity, CheckedBinaryOperator&lt;T&gt; accumulator)
+	{
+<span class="fc" id="L352">		return mapToStream().reduce(identity, uncheckBinaryOperator(accumulator));</span>
+	}
+
+
+	/**
+	 * 
+	 * @param comparator non-interfering, stateless comparator to sort
+	 * @return an emetic stream wrapping the underlying sorted stream
+	 * 
+	 * @see Stream#sorted(java.util.Comparator)
+	 */
+	public default EmeticStream&lt;T&gt; sorted(CheckedComparator&lt;? super T&gt; comparator)
+	{
+<span class="fc" id="L365">		return emesis(mapToStream().sorted(Exceptional.uncheckComparator(comparator)));</span>
+	}
+
+
+	/**
+	 * @return count of elements in this stream
+	 * 
+	 * @see Stream#count()
+	 */
+	public default long count()
+	{
+<span class="fc" id="L376">		return mapToStream().count();</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

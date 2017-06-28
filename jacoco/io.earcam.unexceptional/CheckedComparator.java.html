@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CheckedComparator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">io.earcam.unexceptional</a> &gt; <a href="index.source.html" class="el_package">io.earcam.unexceptional</a> &gt; <span class="el_source">CheckedComparator.java</span></div><h1>CheckedComparator.java</h1><pre class="source lang-java linenums">package io.earcam.unexceptional;
+
+import static io.earcam.unexceptional.Exceptional.apply;
+
+import java.io.Serializable; //NOSONAR sonar false positive (suspect Sonar Squid is looking at bytecode here? as erasure of all but left-most bound where multiple bounds occur, see casts of return types in maxBy/minBy)
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Objects;
+
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
+
+/**
+ * A checked equivalent of {@link java.util.Comparator}, also extends {@link CheckedToIntBiFunction}
+ * 
+ * @param &lt;T&gt; the type to compare
+ * 
+ * @see java.util.Comparator
+ */
+@FunctionalInterface
+public interface CheckedComparator&lt;T&gt; extends CheckedToIntBiFunction&lt;T, T&gt; {
+
+	public default int applyAsInt(T t, T u) throws Throwable
+	{
+<span class="fc" id="L25">		return compare(t, u);</span>
+	}
+	
+	/**
+	 * See {@link java.util.Comparator#compare(Object, Object)}
+	 * 
+     * @param o1 first object to compare.
+     * @param o2 second object to compare.
+     * @return a negative integer, zero, or a positive integer as the
+     *         first argument is less than, equal to, or greater than the
+     *         second, respectively.
+	 * @throws Throwable any throwable
+	 */
+	public abstract int compare(T o1, T o2) throws Throwable; // NOSONAR
+
+	/**
+	 * See {@link java.util.Comparator#reversed()}
+	 * 
+	 * @return an unchecked comparator of the reverse order to {@code this}
+	 */
+	public default Comparator&lt;T&gt; reversed()
+	{
+<span class="fc" id="L47">		return Collections.reverseOrder(Exceptional.uncheckComparator(this));</span>
+	}
+
+
+	/**
+	 * See {@link java.util.Comparator#thenComparing(Comparator)}
+	 * 
+	 * @param other the next comparator to be chained (IFF {@code this.compare(a, b)} returns zero)
+	 * @return the chained {@link CheckedComparator}
+	 * @throws NullPointerException if {@code other} is {@code null}
+	 */
+	public default CheckedComparator&lt;T&gt; thenComparing(@Nonnull CheckedComparator&lt;? super T&gt; other)
+	{
+<span class="fc" id="L60">		Objects.requireNonNull(other);</span>
+<span class="fc" id="L61">		return (CheckedComparator&lt;T&gt; &amp; Serializable) (c1, c2) -&gt; {</span>
+<span class="fc" id="L62">			int res = compare(c1, c2);//NOSONAR stfu false positive</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">			return (res == 0) ? other.compare(c1, c2) : res;</span>
+		};
+	}
+
+
+	/**
+	 * See {@link java.util.Comparator#thenComparing(java.util.function.Function, Comparator)}
+	 * 
+	 * @param &lt;U&gt; the type of the sort key
+	 * 
+	 * @param keyExtractor function used to extract sort key
+	 * @param keyComparator comparator used to compare extracted key
+	 * @return the chained {@link CheckedComparator}
+	 * 
+	 * @see #thenComparing(CheckedComparator)
+	 */
+	public default &lt;U&gt; CheckedComparator&lt;T&gt; thenComparing(CheckedFunction&lt;? super T, ? extends U&gt; keyExtractor, CheckedComparator&lt;? super U&gt; keyComparator)
+	{
+<span class="fc" id="L81">		return thenComparing(comparing(keyExtractor, keyComparator));</span>
+	}
+
+
+	/**
+	 * See {@link java.util.Comparator#thenComparing(java.util.function.Function)}
+	 * 
+	 * @param &lt;U&gt; the type of the {@link Comparable} sort key
+	 * 
+	 * @param keyExtractor function used to extract sort key.
+	 * @return the chained {@link CheckedComparator}
+	 * 
+	 * @see #thenComparing(CheckedComparator)
+	 */
+	public default &lt;U extends Comparable&lt;? super U&gt;&gt; CheckedComparator&lt;T&gt; thenComparing(CheckedFunction&lt;? super T, ? extends U&gt; keyExtractor)
+	{
+<span class="fc" id="L97">		return thenComparing(comparing(keyExtractor));</span>
+	}
+
+
+	/**
+	 * See {@link java.util.Comparator#thenComparingInt(java.util.function.ToIntFunction)}
+	 * 
+	 * @param keyExtractor function used to extract primitive {@code int} sort key.
+	 * @return the chained {@link CheckedComparator}
+	 * 
+	 * @see #thenComparing(CheckedComparator)
+	 */
+	public default CheckedComparator&lt;T&gt; thenComparingInt(CheckedToIntFunction&lt;? super T&gt; keyExtractor)
+	{
+<span class="fc" id="L111">		return thenComparing(comparingInt(keyExtractor));</span>
+	}
+
+
+	/**
+	 * See {@link java.util.Comparator#thenComparingLong(java.util.function.ToLongFunction)}
+	 * 
+	 * @param keyExtractor function used to extract primitive {@code long} sort key.
+	 * @return the chained {@link CheckedComparator}
+	 * 
+	 * @see #thenComparing(CheckedComparator)
+	 */
+	public default CheckedComparator&lt;T&gt; thenComparingLong(CheckedToLongFunction&lt;? super T&gt; keyExtractor)
+	{
+<span class="fc" id="L125">		return thenComparing(comparingLong(keyExtractor));</span>
+	}
+
+
+	/**
+	 * See {@link java.util.Comparator#thenComparingDouble(java.util.function.ToDoubleFunction)}
+	 * 
+	 * @param keyExtractor function used to extract primitive {@code double} sort key.
+	 * @return the chained {@link CheckedComparator}
+	 * @see #thenComparing(CheckedComparator)
+	 */
+	public default CheckedComparator&lt;T&gt; thenComparingDouble(CheckedToDoubleFunction&lt;? super T&gt; keyExtractor)
+	{
+<span class="fc" id="L138">		return thenComparing(comparingDouble(keyExtractor));</span>
+	}
+
+
+	/**
+	 * See {@link java.util.Comparator#comparing(java.util.function.Function, Comparator)}
+	 * 
+	 * @return the chained {@link CheckedComparator}
+	 * 
+     * @param &lt;T&gt; the type of element to be compared
+     * @param &lt;U&gt; the type of the sort key
+     * 
+	 * @param keyExtractor function used to extract sort key.
+	 * @param keyComparator comparator used to compare extracted key.
+     * @return a comparator that compares by an extracted key using the specified {@code CheckedComparator}.
+     * @throws NullPointerException if either argument is {@code null}.
+	 */
+	@ParametersAreNonnullByDefault
+	public static &lt;T, U&gt; CheckedComparator&lt;T&gt; comparing(CheckedFunction&lt;? super T, ? extends U&gt; keyExtractor, CheckedComparator&lt;? super U&gt; keyComparator)
+	{
+<span class="fc" id="L158">		Objects.requireNonNull(keyExtractor);</span>
+<span class="fc" id="L159">		Objects.requireNonNull(keyComparator);</span>
+<span class="fc" id="L160">		return (CheckedComparator&lt;T&gt; &amp; Serializable) (c1, c2) -&gt; </span>
+<span class="fc" id="L161">				keyComparator.compare(apply(keyExtractor, c1), apply(keyExtractor, c2));</span>
+	}
+
+
+	/**
+	 * See {@link java.util.Comparator#comparing(java.util.function.Function)}
+	 * 
+     * @param &lt;T&gt; the type of element to be compared.
+     * @param &lt;U&gt; the type of the sort key.
+     * @param  keyExtractor the function used to extract the  sort key.
+     * @return a comparator that compares by an extracted key.
+     * @throws NullPointerException if the argument is {@code null}.
+	 */
+	public static &lt;T, U extends Comparable&lt;? super U&gt;&gt; CheckedComparator&lt;T&gt; comparing(@Nonnull CheckedFunction&lt;? super T, ? extends U&gt; keyExtractor)
+	{
+<span class="fc" id="L176">		Objects.requireNonNull(keyExtractor);</span>
+<span class="fc" id="L177">		return (CheckedComparator&lt;T&gt; &amp; Serializable) (c1, c2) -&gt; </span>
+<span class="fc" id="L178">				Exceptional.get(() -&gt; keyExtractor.apply(c1).compareTo(keyExtractor.apply(c2)));</span>
+	}
+
+
+	/**
+	 * See {@link java.util.Comparator#comparingInt(java.util.function.ToIntFunction)}
+	 * 
+     * @param &lt;T&gt; the type of element to be compared.
+     * 
+     * @param  keyExtractor the function used to extract primitive {@code int} sort key.
+     * @return a checked comparator that compares by an extracted key.
+     * @throws NullPointerException if the argument is {@code null}.
+     * 
+     * @see #comparing(CheckedFunction)
+	 */
+	public static &lt;T&gt; CheckedComparator&lt;T&gt; comparingInt(@Nonnull CheckedToIntFunction&lt;? super T&gt; keyExtractor)
+	{
+<span class="fc" id="L195">		Objects.requireNonNull(keyExtractor);</span>
+<span class="fc" id="L196">		return (CheckedComparator&lt;T&gt; &amp; Serializable) (c1, c2) -&gt; </span>
+<span class="fc" id="L197">				Exceptional.get(() -&gt; Integer.compare(keyExtractor.applyAsInt(c1), keyExtractor.applyAsInt(c2)));</span>
+	}
+
+
+	/**
+	 * See {@link java.util.Comparator#comparingLong(java.util.function.ToLongFunction)}
+	 * 
+     * @param &lt;T&gt; the type of element to be compared.
+     * 
+     * @param  keyExtractor the function used to extract primitive {@code long} sort key.
+     * @return a checked comparator that compares by an extracted key.
+     * @throws NullPointerException if the argument is {@code null}.
+     * 
+     * @see #comparing(CheckedFunction)
+	 */
+	public static &lt;T&gt; CheckedComparator&lt;T&gt; comparingLong(@Nonnull CheckedToLongFunction&lt;? super T&gt; keyExtractor)
+	{
+<span class="fc" id="L214">		Objects.requireNonNull(keyExtractor);</span>
+<span class="fc" id="L215">		return (CheckedComparator&lt;T&gt; &amp; Serializable) (c1, c2) -&gt; </span>
+<span class="fc" id="L216">			Exceptional.get(() -&gt; Long.compare(keyExtractor.applyAsLong(c1), keyExtractor.applyAsLong(c2)));</span>
+	}
+
+
+	/**
+	 * See {@link java.util.Comparator#comparingDouble(java.util.function.ToDoubleFunction)}
+	 * 
+     * @param &lt;T&gt; the type of element to be compared.
+     * 
+     * @param  keyExtractor the function used to extract primitive {@code double} sort key.
+     * @return a checked comparator that compares by an extracted key.
+     * @throws NullPointerException if the argument is {@code null}.
+     * 
+     * @see #comparing(CheckedFunction)
+	 */
+	public static &lt;T&gt; CheckedComparator&lt;T&gt; comparingDouble(@Nonnull CheckedToDoubleFunction&lt;? super T&gt; keyExtractor)
+	{
+<span class="fc" id="L233">		Objects.requireNonNull(keyExtractor);</span>
+<span class="fc" id="L234">		return (CheckedComparator&lt;T&gt; &amp; Serializable) (c1, c2) -&gt; </span>
+<span class="fc" id="L235">				Exceptional.get(() -&gt; Double.compare(keyExtractor.applyAsDouble(c1), keyExtractor.applyAsDouble(c2)));</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>
