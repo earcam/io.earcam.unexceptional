@@ -1,0 +1,30 @@
+#set($h2 = '##')
+#set($h3 = '###')
+
+
+${h2} Dependency 
+
+${h2} Maven
+
+		<dependency>
+			<groupId>io.earcam</groupId>
+			<artifactId>io.earcam.unexceptional</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+${h2} Gradle
+
+		compile group: 'io.earcam', name: 'io.earcam.unexceptional', version: '${project.version}'
+
+${h2} Ivy
+
+		<dependency org="io.earcam" name="io.earcam.unexceptional" rev="${project.version}" />
+		
+${h2} SBT
+
+		libraryDependencies += "io.earcam" % "io.earcam.unexceptional" % "${project.version}"
+
+${h2} Download
+
+Download [jar](http://search.maven.org/remotecontent?filepath=io/earcam/io.earcam.unexceptional/${project.version}/io.earcam.unexceptional-${project.version}.jar) directly,
+or browse [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22io.earcam%22%20AND%20a%3A%22io.earcam.unexceptional%22).
