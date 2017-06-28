@@ -5,13 +5,15 @@
   "cache": {
     "directories": [
       "$HOME/.m2/repository",
-      "$HOME/apache-maven-3.5.0"
+      "$HOME/apache-maven-3.5.0",
+      ""
     ]
   },
   "addons": {
     "apt": {
       "packages": [
-        "graphviz"
+        "graphviz",
+        "oracle-java8-installer"
       ]
     },
   },
@@ -27,6 +29,6 @@
     "mvn clean"
   ],
   "script": [
-    "mvn verify"
+    "mvn -v; mvn verify"
   ]
 }
