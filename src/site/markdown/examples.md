@@ -65,7 +65,7 @@ With <span class="color-highlight">Un</span>exceptional, you can just write:
 
 #### Invocation
 
-Invoking Checked Functional Types And Method Handles Without wrapping in try-catch
+Invoking checked functional types and method handles without wrapping in try-catch.
 
 As an alternative to converting functional types, you can just invoke directly.  
 
@@ -85,7 +85,7 @@ Given the contrived `parse` method from previous example, you can use <span clas
 
 #### Free Server Port Finder
 
-We would traditionally write this method (using Java 7's try-with-resource) as:
+Without <span class="color-highlight">Un</span>exceptional we would write this method (using Java 7's try-with-resource and `java.io.UncheckedIOException` from Java 8) as:
 
 	import java.net.ServerSocket;
 	

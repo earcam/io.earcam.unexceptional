@@ -1,6 +1,14 @@
 
 
 /*
+Fix for solarized light bg colour
+*/
+
+div.source pre {
+	background-color: #fdf6e3;
+}
+
+/*
 Bug fix for drop-down menu on mobile devices - see https://github.com/andriusvelykis/reflow-maven-skin/issues/41#issuecomment-141996185
 */
 .dropdown-backdrop {
