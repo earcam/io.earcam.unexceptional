@@ -16,5 +16,6 @@ public interface CheckedToDoubleFunction<T> {
 	 * @return double result of applying argument
 	 * @throws Throwable any throwable
 	 */
-    public abstract double applyAsDouble(T value) throws Throwable;  //NOSONAR
+	@SuppressWarnings("squid:S00112")
+    public abstract double applyAsDouble(T value) throws Throwable;
 }

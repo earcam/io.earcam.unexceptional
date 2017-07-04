@@ -17,6 +17,7 @@ public interface CheckedToIntBiFunction<T, U> {
      * @return the function result
      * @throws Throwable Any throwable
      */
-    int applyAsInt(T t, U u) throws Throwable;		//NOSONAR
+	@SuppressWarnings("squid:S00112")
+    int applyAsInt(T t, U u) throws Throwable;
 
 }

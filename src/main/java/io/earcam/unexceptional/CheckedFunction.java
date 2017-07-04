@@ -20,7 +20,8 @@ public interface CheckedFunction<T, R> {
      * @return the function result
 	 * @throws Throwable any throwable
 	 */
-	public abstract R apply(T t) throws Throwable;  //NOSONAR
+	@SuppressWarnings("squid:S00112")
+	public abstract R apply(T t) throws Throwable;
 
 
     /**

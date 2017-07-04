@@ -14,5 +14,6 @@ public interface CheckedSupplier<T> {
 	 * @return result
 	 * @throws Throwable any throwable
 	 */
-	public abstract T get() throws Throwable;  //NOSONAR
+	@SuppressWarnings("squid:S00112")
+	public abstract T get() throws Throwable;
 }

@@ -2,9 +2,9 @@
 #set($h3 = '###')
 
 
-${h2} Dependency 
+${h2} Dependency Management
 
-${h2} Maven
+${h3} Maven
 
 		<dependency>
 			<groupId>io.earcam</groupId>
@@ -12,15 +12,15 @@ ${h2} Maven
 			<version>${project.version}</version>
 		</dependency>
 
-${h2} Gradle
+${h3} Gradle
 
 		compile group: 'io.earcam', name: 'io.earcam.unexceptional', version: '${project.version}'
 
-${h2} Ivy
+${h3} Ivy
 
 		<dependency org="io.earcam" name="io.earcam.unexceptional" rev="${project.version}" />
 		
-${h2} SBT
+${h3} SBT
 
 		libraryDependencies += "io.earcam" % "io.earcam.unexceptional" % "${project.version}"
 

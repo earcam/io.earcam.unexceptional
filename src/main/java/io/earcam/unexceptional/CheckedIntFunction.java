@@ -15,5 +15,6 @@ public interface CheckedIntFunction<R> {
 	 * @return result
 	 * @throws Throwable any throwable
 	 */
-	public abstract R apply(int value) throws Throwable;  //NOSONAR
+	@SuppressWarnings("squid:S00112")
+	public abstract R apply(int value) throws Throwable;
 }

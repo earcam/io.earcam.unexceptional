@@ -1,0 +1,19 @@
+machine: 
+  java: 
+    version: oraclejdk8
+dependencies: 
+  cache_directories: 
+    - ~/opt/maven/
+  override: 
+    - "mvn -v"
+  pre: 
+    - "mkdir ~/opt/maven/"
+    - "if [ ! -d \"$DIRECTORY\" ]; then"
+    - "wget http://mirror.ox.ac.uk/sites/rsync.apache.org/maven/maven-3/3.5.0/binaries/apache-maven-3.5.0-bin.tar.gz"
+    - "tar -xvzf apache-maven-3.5.0-bin.tar.gz"
+    - "mv apache-maven-3.5.0 ~/opt/maven/3.5.0"
+    - fi
+    - "export PATH=~/opt/maven/3.5.0/bin:${PATH}"
+  test: 
+    override: 
+      - "mvn -P analyse,site clean install"

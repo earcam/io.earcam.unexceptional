@@ -3,7 +3,7 @@ package io.earcam.unexceptional;
 import static java.util.Collections.unmodifiableMap;
 
 import java.io.IOException;
-import java.io.Serializable;//NOSONAR stfu false positive
+import java.io.Serializable;
 import java.io.UncheckedIOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -147,7 +147,8 @@ public final class Exceptional implements Serializable {
 	 * @param ʊri the text URI (as Earl is to URL, so ʊri (as in Uri Geller) is to URI) 
 	 * @return a {@link URI} representation
 	 */
-	public static URI uri(CharSequence ʊri)   //NOSONAR utf8 is perfectly legal, thanks
+	@SuppressWarnings("squid:S00117")  //utf8 in a parameter name is fine by me
+	public static URI uri(CharSequence ʊri)
 	{
 		try {
 			return new URI(ʊri.toString());
@@ -213,7 +214,7 @@ public final class Exceptional implements Serializable {
 	{
 		try {
 			runnable.run();
-		} catch(Throwable thrown) {  //NOSONAR
+		} catch(@SuppressWarnings("squid:S00112") Throwable thrown) {
 			rethrow(thrown);
 		}
 	}
@@ -244,7 +245,7 @@ public final class Exceptional implements Serializable {
 	{
 		try {
 			return callable.call();
-		} catch(Exception thrown) {  //NOSONAR
+		} catch(Exception thrown) {  //NO SONAR
 			throw uncheck(thrown);
 		}
 	}
@@ -277,7 +278,8 @@ public final class Exceptional implements Serializable {
 	 * @param consumer a consumer that declares checked exception(s)
 	 * @return a vanilla {@link java.util.function.Consumer}  
 	 */
-	public static <T> Consumer<T> uncheckConsumer(CheckedConsumer<T> consumer)     //NOSONAR - sonar bug; unused parameter
+	@SuppressWarnings("squid:S1905") //SonarQube false positives
+	public static <T> Consumer<T> uncheckConsumer(CheckedConsumer<T> consumer)
 	{
 		return (Consumer<T> & Serializable) t -> Exceptional.accept(consumer, t);
 	}
@@ -296,7 +298,7 @@ public final class Exceptional implements Serializable {
 	{
 		try {
 			consumer.accept(value);
-		} catch (Throwable thrown) {  //NOSONAR
+		} catch (@SuppressWarnings("squid:S00112") Throwable thrown) {
 			rethrow(thrown);
 		}
 	}
@@ -311,7 +313,8 @@ public final class Exceptional implements Serializable {
 	 * @param consumer the checked consumer
 	 * @return an unchecked consumer wrapping the {@code consumer} argument
 	 */
-	public static <T, U> BiConsumer<T, U> uncheckBiConsumer(CheckedBiConsumer<T, U> consumer)     //NOSONAR - sonar bug; unused parameter
+	@SuppressWarnings("squid:S1905") //SonarQube false positives
+	public static <T, U> BiConsumer<T, U> uncheckBiConsumer(CheckedBiConsumer<T, U> consumer)
 	{
 		return (BiConsumer<T, U> & Serializable) (t,u) -> Exceptional.accept(consumer, t, u);
 	}
@@ -332,7 +335,7 @@ public final class Exceptional implements Serializable {
 	{
 		try {
 			consumer.accept(t, u);
-		} catch (Throwable thrown) {  //NOSONAR
+		} catch (@SuppressWarnings("squid:S00112") Throwable thrown) { 
 			rethrow(thrown);
 		}
 	}
@@ -347,7 +350,8 @@ public final class Exceptional implements Serializable {
 	 * @param function the checked function
 	 * @return an unchecked function wrapping the {@code function} argument.
 	 */
-	public static <T, R> Function<T, R> uncheckFunction(CheckedFunction<T, R> function)     //NOSONAR - sonar bug; unused parameter
+	@SuppressWarnings("squid:S1905") //SonarQube false positives
+	public static <T, R> Function<T, R> uncheckFunction(CheckedFunction<T, R> function)
 	{
 		return (Function<T, R> & Serializable) t -> Exceptional.apply(function, t);
 	}
@@ -368,7 +372,7 @@ public final class Exceptional implements Serializable {
 	{
 		try {
 			return function.apply(argument);
-		} catch (Throwable thrown) {  //NOSONAR
+		} catch (@SuppressWarnings("squid:S00112") Throwable thrown) { 
 			throw rethrow(thrown);
 		}
 	}
@@ -384,7 +388,8 @@ public final class Exceptional implements Serializable {
 	 * @param function the checked bi-function
 	 * @return an unchecked bi-function wrapping the {@code function} argument.
 	 */
-	public static <T, U, R> BiFunction<T, U, R> uncheckBiFunction(CheckedBiFunction<T, U, R> function)     //NOSONAR - sonar bug; unused parameter
+	@SuppressWarnings("squid:S1905") //SonarQube false positives
+	public static <T, U, R> BiFunction<T, U, R> uncheckBiFunction(CheckedBiFunction<T, U, R> function)
 	{
 		return (BiFunction<T, U, R> & Serializable) (t, u) -> Exceptional.apply(function, t, u);
 	}
@@ -407,7 +412,7 @@ public final class Exceptional implements Serializable {
 	{
 		try {
 			return function.apply(t, u);
-		} catch (Throwable thrown) {  //NOSONAR
+		} catch (@SuppressWarnings("squid:S00112") Throwable thrown) { 
 			throw rethrow(thrown);
 		}
 	}
@@ -421,7 +426,8 @@ public final class Exceptional implements Serializable {
 	 * @param operator the checked binary operator
 	 * @return and unchecked wrapper around the {@code operator} argument
 	 */
-	public static <T> BinaryOperator<T> uncheckBinaryOperator(CheckedBinaryOperator<T> operator)     //NOSONAR - sonar bug; unused parameter
+	@SuppressWarnings("squid:S1905") //SonarQube false positives
+	public static <T> BinaryOperator<T> uncheckBinaryOperator(CheckedBinaryOperator<T> operator)
 	{
 		return (BinaryOperator<T> & Serializable) (a,b) -> Exceptional.apply(operator, a, b);
 	}
@@ -435,7 +441,8 @@ public final class Exceptional implements Serializable {
 	 * @param function the checked to-double-function
 	 * @return an unchecked to-double-function wrapping the {@code function} argument.
 	 */
-	public static <T> ToDoubleFunction<T> uncheckToDoubleFunction(CheckedToDoubleFunction<T> function)     //NOSONAR - sonar bug; unused parameter
+	@SuppressWarnings("squid:S1905") //SonarQube false positives
+	public static <T> ToDoubleFunction<T> uncheckToDoubleFunction(CheckedToDoubleFunction<T> function)
 	{
 		return (ToDoubleFunction<T> & Serializable) t -> Exceptional.applyAsDouble(function, t);
 	}
@@ -455,7 +462,7 @@ public final class Exceptional implements Serializable {
 	{
 		try {
 			return function.applyAsDouble(t);
-		} catch (Throwable thrown) {  //NOSONAR
+		} catch (@SuppressWarnings("squid:S00112") Throwable thrown) { 
 			throw rethrow(thrown);
 		}
 	}
@@ -469,7 +476,8 @@ public final class Exceptional implements Serializable {
 	 * @param function the checked to-int-function
 	 * @return an unchecked to-int-function wrapping the {@code function} argument.
 	 */
-	public static <T> ToIntFunction<T> uncheckToIntFunction(CheckedToIntFunction<T> function)     //NOSONAR - sonar bug; unused parameter
+	@SuppressWarnings("squid:S1905") //SonarQube false positives
+	public static <T> ToIntFunction<T> uncheckToIntFunction(CheckedToIntFunction<T> function)
 	{
 		return (ToIntFunction<T> & Serializable) t -> Exceptional.applyAsInt(function, t);
 	}
@@ -489,7 +497,7 @@ public final class Exceptional implements Serializable {
 	{
 		try {
 			return function.applyAsInt(t);
-		} catch (Throwable thrown) {  //NOSONAR
+		} catch (@SuppressWarnings("squid:S00112") Throwable thrown) { 
 			throw rethrow(thrown);
 		}
 	}
@@ -503,7 +511,8 @@ public final class Exceptional implements Serializable {
 	 * @param function the checked to-long-function
 	 * @return an unchecked to-long-function wrapping the {@code function} argument.
 	 */
-	public static <T> ToLongFunction<T> uncheckToLongFunction(CheckedToLongFunction<T> function)     //NOSONAR - sonar bug; unused parameter
+	@SuppressWarnings("squid:S1905") //SonarQube false positives
+	public static <T> ToLongFunction<T> uncheckToLongFunction(CheckedToLongFunction<T> function)
 	{
 		return (ToLongFunction<T> & Serializable) t -> Exceptional.applyAsLong(function, t);
 	}
@@ -523,7 +532,7 @@ public final class Exceptional implements Serializable {
 	{
 		try {
 			return function.applyAsLong(t);
-		} catch (Throwable thrown) {  //NOSONAR
+		} catch (@SuppressWarnings("squid:S00112") Throwable thrown) { 
 			throw rethrow(thrown);
 		}
 	}
@@ -537,7 +546,8 @@ public final class Exceptional implements Serializable {
 	 * @param supplier the checked supplier to wrap
 	 * @return an unchecked supplier wrapping the {@code supplier} argument
 	 */
-	public static <T> Supplier<T> uncheckSupplier(CheckedSupplier<T> supplier)     //NOSONAR - sonar bug; unused parameter
+	@SuppressWarnings("squid:S1905") //SonarQube false positives
+	public static <T> Supplier<T> uncheckSupplier(CheckedSupplier<T> supplier)
 	{
 		return (Supplier<T> & Serializable) () -> Exceptional.get(supplier);
 	}
@@ -556,7 +566,7 @@ public final class Exceptional implements Serializable {
 	{
 		try {
 			return supplier.get();
-		} catch (Throwable thrown) {  //NOSONAR
+		} catch (@SuppressWarnings("squid:S00112") Throwable thrown) { 
 			throw rethrow(thrown);
 		}
 	}
@@ -570,7 +580,8 @@ public final class Exceptional implements Serializable {
 	 * @param predicate the checked predicate to wrap
 	 * @return an unchecked predicate wrapping the {@code predicate} argument
 	 */
-    public static <T> Predicate<T> uncheckPredicate(CheckedPredicate<T> predicate)     //NOSONAR - sonar bug; unused parameter
+	@SuppressWarnings("squid:S1905") //SonarQube false positives
+    public static <T> Predicate<T> uncheckPredicate(CheckedPredicate<T> predicate)
     {
     	return (Predicate<T> & Serializable) t -> Exceptional.test(predicate, t);
     }
@@ -590,7 +601,7 @@ public final class Exceptional implements Serializable {
     {
     	try {
 			return predicate.test(value);
-		} catch (Throwable thrown) {  //NOSONAR
+		} catch (@SuppressWarnings("squid:S00112") Throwable thrown) { 
 			throw rethrow(thrown);
 		}
     }
@@ -604,13 +615,15 @@ public final class Exceptional implements Serializable {
      * @param comparator the checked comparator to wrap
      * @return an unchecked comparator wrapping the {@code comparator} argument
      */
-	public static <T> Comparator<T> uncheckComparator(CheckedComparator<T> comparator)     //NOSONAR - sonar bug; unused parameter
+    @SuppressWarnings("squid:S1905") //SonarQube false positives
+	public static <T> Comparator<T> uncheckComparator(CheckedComparator<T> comparator)
 	{
 		return (Comparator<T> & Serializable) (a, b) -> Exceptional.applyAsInt(comparator, a, b);
 	}
 
 	
-	public static <T, U> ToIntBiFunction<T, U> uncheckToIntBiFunction(CheckedToIntBiFunction<T, U> function)     //NOSONAR - sonar bug; unused parameter
+    @SuppressWarnings("squid:S1905") //SonarQube false positives
+	public static <T, U> ToIntBiFunction<T, U> uncheckToIntBiFunction(CheckedToIntBiFunction<T, U> function)
 	{
 		return (ToIntBiFunction<T, U> & Serializable) (a, b) -> Exceptional.applyAsInt(function, a, b);
 	}
@@ -628,11 +641,12 @@ public final class Exceptional implements Serializable {
 	 * @param u the second argument to apply to the function
 	 * @return the result of applying {@code function} to the arguments {@code t} and {@code u}
 	 */
+    @SuppressWarnings("squid:S00112")  //necessary to declare Throwable
 	public static <T, U> int applyAsInt(CheckedToIntBiFunction<T, U> function, T t, U u)
 	{
 		try {
 			return function.applyAsInt(t, u);
-		} catch (Throwable thrown) {  //NOSONAR
+		} catch (@SuppressWarnings("squid:S00112") Throwable thrown) {
 			throw rethrow(thrown);
 		}
 	}

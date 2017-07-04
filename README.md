@@ -2,11 +2,15 @@
 
 ## Status
 
-[![Build Status](https://travis-ci.org/earcam/io.earcam.unexceptional.svg?branch=master)](https://travis-ci.org/earcam/io.earcam.unexceptional)
-[![Code Coverage](http://codecov.io/github/earcam/io.earcam.unexceptional/coverage.svg?branch=master)](https://codecov.io/github/earcam/io.earcam.unexceptional?branch=master)
+[![Travis CI](https://travis-ci.org/earcam/io.earcam.unexceptional.svg?branch=master)](https://travis-ci.org/earcam/io.earcam.unexceptional)
+[![Circle CI](https://circleci.com/gh/earcam/io.earcam.unexceptional.svg?style=svg)
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.earcam/io.earcam.unexceptional/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.earcam/io.earcam.unexceptional)
-[![Javadoc](http://www.javadoc.io/badge/io.earcam/io.earcam.unexceptional.svg?color=yellowgreen)](http://www.javadoc.io/doc/io.earcam/io.earcam.unexceptional)
+[![JavaDoc](http://www.javadoc.io/badge/io.earcam/io.earcam.unexceptional.svg?color=green)](http://www.javadoc.io/doc/io.earcam/io.earcam.unexceptional)
+
+[![CodeCov](http://codecov.io/github/earcam/io.earcam.unexceptional/coverage.svg?branch=master)](https://codecov.io/github/earcam/io.earcam.unexceptional?branch=master)
+[![Sonar Quality Gate](https://sonarcloud.io/api/badges/gate?key=io.earcam:io.earcam.unexceptional)](https://sonarcloud.io/dashboard?id=io.earcam%3Aio.earcam.unexceptional)
+
 
 ## Licences
 [![Licence: Apache](https://img.shields.io/badge/License-Apache-yellow.svg)](http://www.apache.org/licenses/LICENSE-2.0)

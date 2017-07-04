@@ -24,7 +24,8 @@ public interface CheckedBiFunction<T, U, R> {
 	 * @return result of applying {@code this} function.
 	 * @throws Throwable a possible checked exception
 	 */
-	public abstract R apply(T t, U u) throws Throwable; // NOSONAR
+	@SuppressWarnings("squid:S00112")
+	public abstract R apply(T t, U u) throws Throwable;
 
 
 	/**

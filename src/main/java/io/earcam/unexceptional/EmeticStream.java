@@ -2,7 +2,7 @@ package io.earcam.unexceptional;
 
 import static io.earcam.unexceptional.Exceptional.*;
 
-import java.io.Serializable;//NOSONAR stfu false positive
+import java.io.Serializable;   //NOSONAR SonarQube false positive - putting @SuppressWarnings("squid:UselessImportCheck") on class has no effect, can't put at package level either
 import java.util.Optional;
 import java.util.stream.Collector;
 import java.util.stream.DoubleStream;
@@ -59,7 +59,8 @@ public interface EmeticStream<T> {
 	 * 
  	 * @param <T> the {@code stream}'s element type 
 	 */
-	public static <T> EmeticStream<T> emesis(Stream<T> stream)     //NOSONAR - sonar bug; unused parameter
+	@SuppressWarnings("squid:S1905") //SonarQube false positive
+	public static <T> EmeticStream<T> emesis(Stream<T> stream)
 	{
 		return (EmeticStream<T> & Serializable) () -> stream; 
 	}

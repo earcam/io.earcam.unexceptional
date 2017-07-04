@@ -16,5 +16,6 @@ public interface CheckedToIntFunction<T> {
 	 * @return int result of applying argument
 	 * @throws Throwable any throwable
 	 */
-    public abstract int applyAsInt(T value) throws Throwable;  //NOSONAR
+	@SuppressWarnings("squid:S00112")
+    public abstract int applyAsInt(T value) throws Throwable;
 }

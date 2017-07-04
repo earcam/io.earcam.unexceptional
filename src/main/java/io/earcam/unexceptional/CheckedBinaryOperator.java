@@ -27,6 +27,7 @@ public interface CheckedBinaryOperator<T> extends CheckedBiFunction<T, T, T> {
 	 * @return a {@link CheckedBinaryOperator}
 	 * @throws NullPointerException if {@code comparator} is {@code null}
 	 */
+	@SuppressWarnings("squid:S1905") //SonarQube false positive
 	public static <T> CheckedBinaryOperator<T> minBy(@Nonnull CheckedComparator<? super T> comparator)
 	{
 		requireNonNull(comparator);
@@ -43,6 +44,7 @@ public interface CheckedBinaryOperator<T> extends CheckedBiFunction<T, T, T> {
 	 * @return a {@link CheckedBinaryOperator}
 	 * @throws NullPointerException if {@code comparator} is {@code null}
 	 */
+	@SuppressWarnings("squid:S1905") //SonarQube false positive
 	public static <T> CheckedBinaryOperator<T> maxBy(@Nonnull CheckedComparator<? super T> comparator)
 	{
 		Objects.requireNonNull(comparator);

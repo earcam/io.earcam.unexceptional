@@ -20,7 +20,8 @@ public interface CheckedConsumer<T> {
      * @param t the input argument
 	 * @throws Exception a possible checked exception
 	 */
-	public abstract void accept(T t) throws Throwable;  //NOSONAR
+	@SuppressWarnings("squid:S00112")
+	public abstract void accept(T t) throws Throwable;
 
     /**
      * See {@link java.util.function.Consumer#andThen(Consumer)}

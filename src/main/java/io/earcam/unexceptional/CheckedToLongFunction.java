@@ -15,5 +15,6 @@ public interface CheckedToLongFunction<T> {
 	 * @return long result of applying argument
 	 * @throws Throwable any throwable
 	 */
-    public abstract long applyAsLong(T value) throws Throwable;  //NOSONAR
+	@SuppressWarnings("squid:S00112")
+    public abstract long applyAsLong(T value) throws Throwable;
 }

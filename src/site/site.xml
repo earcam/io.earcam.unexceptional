@@ -8,7 +8,6 @@ xsi:schemaLocation="http://maven.apache.org/DECORATION/1.3.0 http://maven.apache
 		<groupId>lt.velykis.maven.skins</groupId>
 		<artifactId>reflow-maven-skin</artifactId>
 		<version>1.1.1</version>
-		<!-- <version>${version.reflow}</version> -->
 	</skin>
 
 	<bannerLeft>
@@ -148,6 +147,8 @@ xsi:schemaLocation="http://maven.apache.org/DECORATION/1.3.0 http://maven.apache
 			<item name="JDepend" href="jdepend-report.html" />
 			<item name="Dependency Analysis" href="dependency-analysis.html" />
 			<item name="3rd Party Licences" href="third-party-report.html" />
+			<item name="All Reports" href="project-reports.html" />
+			<item name="SonarQube" href="https://sonarcloud.io/dashboard?id=io.earcam%3Aio.earcam.unexceptional" />
 		</menu>
 	</body>
 </project>
