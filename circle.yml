@@ -16,4 +16,4 @@ dependencies:
     - "wget https://raw.githubusercontent.com/earcam/io.earcam.maven/master/io.earcam.maven.toolchain/src/main/resources/toolchain/continuous-integration-hotspot-linux-debian-amd64.xml -O  ~/.m2/toolchains.xml"
   test: 
     override: 
-      - "mvn -P analyse clean install"
+      - "mvn -U -P analyse clean install"
