@@ -1,0 +1,19 @@
+machine: 
+  java: 
+    version: oraclejdk8
+dependencies: 
+  cache_directories: 
+    - "$HOME/.m2"
+    - "$HOME/apache-maven-3.5.0"
+  override: 
+    - "mvn -v"
+    - "sudo ln -s /usr/lib/jvm/jdk1.8.0 /usr/lib/jvm/java-8-oracle"
+  pre:
+    - "mkdir -p $HOME/.m2/repository"
+    - "export M2_HOME=$HOME/apache-maven-3.5.0"
+    - "if [ ! -d $M2_HOME/bin ]; then curl https://archive.apache.org/dist/maven/maven-3/3.5.0/binaries/apache-maven-3.5.0-bin.tar.gz | tar zxf - -C $HOME; fi"
+    - "export PATH=$M2_HOME/bin:$PATH"
+    - "wget https://raw.githubusercontent.com/earcam/io.earcam.maven/master/io.earcam.maven.toolchain/src/main/resources/toolchain/continuous-integration-hotspot-linux-debian-amd64.xml -O  ~/.m2/toolchains.xml"
+  test: 
+    override: 
+      - "mvn -P analyse clean install"

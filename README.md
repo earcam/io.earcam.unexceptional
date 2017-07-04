@@ -3,7 +3,7 @@
 ## Status
 
 [![Travis CI](https://travis-ci.org/earcam/io.earcam.unexceptional.svg?branch=master)](https://travis-ci.org/earcam/io.earcam.unexceptional)
-[![Circle CI](https://circleci.com/gh/earcam/io.earcam.unexceptional.svg?style=svg)
+[![Circle CI](https://circleci.com/gh/earcam/io.earcam.unexceptional.svg?style=svg)](https://circleci.com/gh/earcam/io.earcam.unexceptional)
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.earcam/io.earcam.unexceptional/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.earcam/io.earcam.unexceptional)
 [![JavaDoc](http://www.javadoc.io/badge/io.earcam/io.earcam.unexceptional.svg?color=green)](http://www.javadoc.io/doc/io.earcam/io.earcam.unexceptional)
