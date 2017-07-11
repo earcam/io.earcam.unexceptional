@@ -1,63 +1,43 @@
-# Unexceptional
 
-<p>
-/ʌnɪkˈsɛpʃ(ə)n(ə)l,ʌnɛkˈsɛpʃ(ə)n(ə)l/&nbsp;&nbsp;<span title="Pronunciation" style="display:inline-block;"><input src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAQAAAC1QeVaAAAAi0lEQVQokWNgQAYyQFzGsIJBnwED8DNcBpK+DM8YfjMUokqxMRxg+A9m8TJsBLLSEFKMDCuBAv/hCncxfGWQhUn2gaVAktkMXkBSHmh0OwNU8D9csoHhO4MikN7BcAGb5H+GYiDdCTQYq2QubkkkY/E6CLtXdiJ7BTMQMnAHXxFm6IICvhwY8AYQLgCw2U9d90B8BAAAAABJRU5ErkJggg==" width="14" height="14" type="image" onclick="pronounce('unexceptional--_gb_1.mp3')" />
-</span>
-</p>
+A small cohesive module, leveraging Java 8 functional capabilities to remove most of the boiler-plate of handling checked exceptions.  
 
-_adjective:_ 
-	not out of the ordinary; usual.
 
-_synonyms:_
-	ordinary, average, typical, common, everyday, run-of-the-mill, middle-of-the-road, stock, mediocre, so-so, pedestrian, unremarkable, undistinguished, indifferent, unimpressive.
-    
+<ul class="nav nav-list">
+	<li class="nav-header">Unexceptional</li>
+	<li>/ʌnɪkˈsɛpʃ(ə)n(ə)l,ʌnɛkˈsɛpʃ(ə)n(ə)l/&nbsp;&nbsp;<span title="Pronunciation" style="display:inline-block;"><input src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAQAAAC1QeVaAAAAi0lEQVQokWNgQAYyQFzGsIJBnwED8DNcBpK+DM8YfjMUokqxMRxg+A9m8TJsBLLSEFKMDCuBAv/hCncxfGWQhUn2gaVAktkMXkBSHmh0OwNU8D9csoHhO4MikN7BcAGb5H+GYiDdCTQYq2QubkkkY/E6CLtXdiJ7BTMQMnAHXxFm6IICvhwY8AYQLgCw2U9d90B8BAAAAABJRU5ErkJggg==" width="14" height="14" type="image" onclick="pronounce('unexceptional--_gb_1.mp3')" /></span></li>
+	<li><i>adjective:</i> not out of the ordinary; usual.</li>
+	<li><i>synonyms:</i> ordinary, average, typical, common, everyday, run-of-the-mill, middle-of-the-road, stock, mediocre, so-so, pedestrian, unremarkable, undistinguished, indifferent, unimpressive.</li>
+</ul>
 
-## Description
+<br/>
 
-A small cohesive module, leveraging Java 8 functional capabilities to remove some of the boiler-plate of handling checked exceptions.  
+<ul class="nav nav-list">
+	<li class="nav-header">Emetic</li>
+	<li>/ɪˈmɛtɪk/&nbsp;&nbsp;<span title="Pronunciation" style="display:inline-block;"><input src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAQAAAC1QeVaAAAAi0lEQVQokWNgQAYyQFzGsIJBnwED8DNcBpK+DM8YfjMUokqxMRxg+A9m8TJsBLLSEFKMDCuBAv/hCncxfGWQhUn2gaVAktkMXkBSHmh0OwNU8D9csoHhO4MikN7BcAGb5H+GYiDdCTQYq2QubkkkY/E6CLtXdiJ7BTMQMnAHXxFm6IICvhwY8AYQLgCw2U9d90B8BAAAAABJRU5ErkJggg==" width="14" height="14" type="image" onclick="pronounce('emetic--_gb_1.8.mp3')" /></span></li>
+	<li><i>adjective:</i> (of a substance) causing vomiting.</li>
+</ul>
 
-Comprising of:
+<br/>
+
+
+This module consists of:
  
 0. Types equivalent to those found in [java.util.function][package-summary-java-util-function] but with checked methods (declaring `Throwable`)
 0. Static helper class, **Exceptional**, numerous utility methods covering:
-    * Unchecking method handles to functional interfaces from the `java.util.function` family
-    * Invoking checked lambdas/method-references without the need for try-catch
-    * Converting checked exceptions to unchecked equivalents
-    * A dirty compiler trick for throwing a checked exception as unchecked (you should never need this)
-0. Simple wrapper **EmeticStream** around `java.util.stream.Stream` with similar methods taking checked functional types
+    * Convert checked method handles to `java.util.function`al interfaces
+    * Invoke checked functional types without `try-catch`
+    * Concise IO stream usage (re-read as terse one-liner - arguably laconic over expressive), condensing _create-operate-close_.
+    * _Dirty_ compiler trick; throwing a checked exception as unchecked
+    * Factories for some common types where the constructor declares a checked exception (e.g. java.net.URI, java.net.URL)
+    * Convert checked exceptions to unchecked equivalents
+    * _Swallow_ exceptions (accepts throwables, but only swallows exceptions - errors are rethrown)  
+    * Unwrap reflective exceptions
+    
+0. Simple mirror **EmeticStream**, wrapping `java.util.stream.Stream` providing equivalent methods taking checked functional types (terminates immediately on exception)
 
 The intended use of this library is to make code more concise when handling checked exceptions for the **impossible** (logically we *know* this cannot occur) or **unrecoverable** (we've no alternative and cannot degrade with grace, game over) cases.
 
-Please use responsibly, always consider if a raised exception can actually be handled, and if not, then could it be wrapped with a more contextual type/message? (be considerate to readers of logs, unlucky users and your future self).
-
-
-### Exceptional
-
-A static utility class, with methods to:
-
-* Convert checked exceptions to unchecked
-* Invoke checked methods (via method-handle), automatically wrapping checked exceptions with appropriate unchecked equivalent
-* Throw checked exceptions without declaring (not advisable)
-* Unwrap reflective exceptions
-* Factories for some common types where the constructor declares a checked exception (e.g. java.net.URI, java.net.URL)
-* Highly concise handling for most common IO stream usage (re-read as terse one-liner - arguably laconic over expressive), condensing create-operate-close into a single call.
-* Method to _swallow_ exceptions (accepting throwables, but only swallowing exceptions - errors are  rethrown)  
-
-
-### EmeticStream
-
-**Emetic**
-<p>
-/ɪˈmɛtɪk/&nbsp;&nbsp;<span title="Pronunciation" style="display:inline-block;"><input src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAQAAAC1QeVaAAAAi0lEQVQokWNgQAYyQFzGsIJBnwED8DNcBpK+DM8YfjMUokqxMRxg+A9m8TJsBLLSEFKMDCuBAv/hCncxfGWQhUn2gaVAktkMXkBSHmh0OwNU8D9csoHhO4MikN7BcAGb5H+GYiDdCTQYq2QubkkkY/E6CLtXdiJ7BTMQMnAHXxFm6IICvhwY8AYQLgCw2U9d90B8BAAAAABJRU5ErkJggg==" width="14" height="14" type="image" onclick="pronounce('emetic--_gb_1.8.mp3')" />
-</span>
-</p>
-
-_adjective:_
-	(of a substance) causing vomiting.
-
-A mirror of `java.util.stream.Stream` accepting the checked variants of `java.util.function`.  Terminates immediately on exception.
-
-
+Please use responsibly, always consider if a raised exception can actually be handled, and if not, then could it be propagated with a more contextual type/message?  Be considerate to readers of logs, unlucky users and your future self.
 
 ----
 
@@ -73,12 +53,14 @@ A mirror of `java.util.stream.Stream` accepting the checked variants of `java.ut
 
 <ul class="nav nav-list">
 	<li class="nav-header">Status</li>
-	<li><a class="externalLink" href="https://travis-ci.org/earcam/io.earcam.unexceptional" title="Travis CI"><img src="https://travis-ci.org/earcam/io.earcam.unexceptional.svg?branch=master" alt="Travis CI" /></a></li>
-	<li><a class="externalLink" href="https://circleci.com/gh/earcam/io.earcam.unexceptional" title="Circle CI"><img src="https://circleci.com/gh/earcam/io.earcam.unexceptional.svg?style=svg" alt="Circle CI" /></a></li>
 	<li><a class="externalLink" href="https://maven-badges.herokuapp.com/maven-central/io.earcam/io.earcam.unexceptional" title="Maven Central"><img src="https://maven-badges.herokuapp.com/maven-central/io.earcam/io.earcam.unexceptional/badge.svg" alt="Maven Central" /></a></li>
-	<li><a class="externalLink" href="http://www.javadoc.io/doc/io.earcam/io.earcam.unexceptional" title="JavaDoc"><img src="http://www.javadoc.io/badge/io.earcam/io.earcam.unexceptional.svg?color=green" alt="JavaDoc" /></a></li>
+	<li><a class="externalLink" href="http://www.javadoc.io/doc/io.earcam/io.earcam.unexceptional" title="JavaDoc"><img src="https://www.javadoc.io/badge/io.earcam/io.earcam.unexceptional.svg?color=green" alt="JavaDoc" /></a></li>
+	<li><a class="externalLink" href="https://travis-ci.org/earcam/io.earcam.unexceptional" title="Travis CI"><img src="https://travis-ci.org/earcam/io.earcam.unexceptional.svg?branch=master" alt="Travis CI" /></a></li>
+	<!-- shelving Circle CI for now
+	<li><a class="externalLink" href="https://circleci.com/gh/earcam/io.earcam.unexceptional" title="Circle CI"><img src="https://circleci.com/gh/earcam/io.earcam.unexceptional.svg?style=svg" alt="Circle CI" /></a></li>
+	-->
 	<li><a class="externalLink" href="https://sonarcloud.io/dashboard?id=io.earcam%3Aio.earcam.unexceptional" title="SonarQube Quality Gate"><img src="https://sonarcloud.io/api/badges/gate?key=io.earcam%3Aio.earcam.unexceptional" alt="Sonar Quality Gate" /></a></li>
-	<li><a class="externalLink" href="https://codecov.io/github/earcam/io.earcam.unexceptional?branch=master" title="CodeCov"><img src="http://codecov.io/github/earcam/io.earcam.unexceptional/coverage.svg?branch=master" alt="CodeCov" /></a></li>
+	<li><a class="externalLink" href="https://codecov.io/github/earcam/io.earcam.unexceptional?branch=master" title="CodeCov"><img src="https://codecov.io/github/earcam/io.earcam.unexceptional/coverage.svg?branch=master" alt="CodeCov" /></a></li>
 </ul>
 
 <br/>

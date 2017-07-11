@@ -1,0 +1,6 @@
+#set($h2 = '##')
+
+${h2} Download
+
+Download [jar](https://search.maven.org/remotecontent?filepath=io/earcam/io.earcam.unexceptional/${project.version}/io.earcam.unexceptional-${project.version}.jar) directly,
+or browse [Maven Central](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22io.earcam%22%20AND%20a%3A%22io.earcam.unexceptional%22).

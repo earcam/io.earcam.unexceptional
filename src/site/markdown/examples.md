@@ -1,6 +1,55 @@
-## Examples
+## Sample Examples
 
-Some examples are available in the [src/example/java][github-unexceptional-examples] directory of the [github project][github-unexceptional], a few sample snippets reproduced below:
+<ul class="nav nav-list">
+	<li class="nav-header">sample</li>
+	<li>/ˈsɑːmp(ə)l/&nbsp;&nbsp;<span title="Pronunciation" style="display:inline-block;"><input src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAQAAAC1QeVaAAAAi0lEQVQokWNgQAYyQFzGsIJBnwED8DNcBpK+DM8YfjMUokqxMRxg+A9m8TJsBLLSEFKMDCuBAv/hCncxfGWQhUn2gaVAktkMXkBSHmh0OwNU8D9csoHhO4MikN7BcAGb5H+GYiDdCTQYq2QubkkkY/E6CLtXdiJ7BTMQMnAHXxFm6IICvhwY8AYQLgCw2U9d90B8BAAAAABJRU5ErkJggg==" width="14" height="14" type="image" onclick="pronounce('sample--_gb_1.mp3')" /></span></li>
+	<li><i>noun:</i>
+		<ol>
+			<li>
+				a small part or quantity intended to show what the whole is like<br/>
+				<i>synonyms:</i> 	representative, illustrative, selected, specimen, test, trial, typifying, typical
+			</li>
+			<li>a sound or piece of music created by sampling</li>
+		</ol>
+	</li>
+	<li><i>verb:</i>
+		<ol>
+			<li>
+				take a sample or samples of (something) for analysis<br/>
+			</li>
+			<li>ascertain the momentary value of (an analogue signal) many times a second so as to convert the signal to digital form</li>
+		</ol>
+	</li>
+</ul>
+
+<br/>
+
+<ul class="nav nav-list">
+	<li class="nav-header">example</li>
+	<li>/ɪɡˈzɑːmp(ə)l,ɛɡˈzɑːmp(ə)l//&nbsp;&nbsp;<span title="Pronunciation" style="display:inline-block;"><input src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAQAAAC1QeVaAAAAi0lEQVQokWNgQAYyQFzGsIJBnwED8DNcBpK+DM8YfjMUokqxMRxg+A9m8TJsBLLSEFKMDCuBAv/hCncxfGWQhUn2gaVAktkMXkBSHmh0OwNU8D9csoHhO4MikN7BcAGb5H+GYiDdCTQYq2QubkkkY/E6CLtXdiJ7BTMQMnAHXxFm6IICvhwY8AYQLgCw2U9d90B8BAAAAABJRU5ErkJggg==" width="14" height="14" type="image" onclick="pronounce('example--_gb_1.mp3')" /></span></li>
+	<li><i>noun:</i>
+		<ol>
+			<li>
+				a thing characteristic of its kind or illustrating a general rule<br/>
+				<i>synonyms:</i> 	specimen, sample, exemplar, exemplification, instance, case, representative case, typical case, case in point, illustration
+			</li>
+			<li>
+				a person or thing regarded in terms of their fitness to be imitated<br/>
+				<i>synonyms:</i> precedent, lead, guide, model, pattern, blueprint, template, paradigm, exemplar, ideal, standard 	
+			</li>
+		</ol>
+	</li>
+	<li><i>verb:</i>
+		<ol>
+			<li>be illustrated or exemplified</li>
+		</ol>
+	</li>
+</ul>
+
+<br/>
+
+
+Exemplars are available in the [src/example/java][github-unexceptional-examples] directory of the [github project][github-unexceptional], a few sample snippets reproduced below:
 
 
 ### General Examples

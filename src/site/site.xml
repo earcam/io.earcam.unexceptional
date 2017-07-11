@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Unexceptional"
-  xmlns="http://maven.apache.org/DECORATION/1.3.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:schemaLocation="http://maven.apache.org/DECORATION/1.3.0 http://maven.apache.org/xsd/decoration-1.3.0.xsd">
+<project name="Example" xmlns="http://maven.apache.org/DECORATION/1.7.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/DECORATION/1.7.0 http://maven.apache.org/xsd/decoration-1.7.0.xsd">
 
 	<skin>
+		<groupId>io.earcam.maven</groupId>
+		<artifactId>io.earcam.maven.site.skin</artifactId>
+		<version>2.0.8-SNAPSHOT</version>
+		
+		<!--
 		<groupId>lt.velykis.maven.skins</groupId>
 		<artifactId>reflow-maven-skin</artifactId>
 		<version>1.1.1</version>
+		-->
 	</skin>
 
 	<bannerLeft>
@@ -23,18 +27,21 @@ xsi:schemaLocation="http://maven.apache.org/DECORATION/1.3.0 http://maven.apache
 	<googleAnalyticsAccountId>UA-101439214-1</googleAnalyticsAccountId>
 
 	<custom>
+		<!--
 		<reflowSkin>
+		-->
+		<earcamSkin>
 			<protocolRelativeURLs>true</protocolRelativeURLs>
 			<smoothScroll>true</smoothScroll>
 			<theme>default</theme>
-			<highlightJs>true</highlightJs>  <!-- reflow uses highlight.js v7.5 -->
-			<highlightJsTheme>solarized_light</highlightJsTheme>
+			<highlightJs>true</highlightJs>
+			<highlightJsTheme>solarized-light</highlightJsTheme>
 			<absoluteResourceURL>https://unexceptional.earcam.io</absoluteResourceURL>
 
 			<brand>
 				<name>
 					<![CDATA[
-          				Un<span class="color-highlight">exceptional</span>
+						<span style="color:black">Un</span><span class="color-highlight">exceptional</span>
           			]]>
           		</name>
 				<href>https://unexceptional.earcam.io</href>
@@ -44,6 +51,7 @@ xsi:schemaLocation="http://maven.apache.org/DECORATION/1.3.0 http://maven.apache
 					Checked Exception Handling For Exceptionally <span class="color-highlight">Un</span>exceptional Cases
           		]]>				
 			</slogan>
+			<skinAttribution>false</skinAttribution>
 			<titleTemplate>%2$s | %1$s</titleTemplate>
 			<toc>sidebar</toc>
 			<tocTopMax>24</tocTopMax>
@@ -106,17 +114,65 @@ xsi:schemaLocation="http://maven.apache.org/DECORATION/1.3.0 http://maven.apache
 			</pages>
 
 			<endContent>
+			
+				<div id="google_translate_element"></div><script type="text/javascript">
+				function googleTranslateElementInit() {
+				  new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE, gaTrack: true, gaId: 'UA-101485227-1'}, 'google_translate_element');
+				}
+				</script>
+				<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>			
+			
 				<script src="$resourcePath/js/unexceptional.js"></script>
 			</endContent>
 
+		<!--
 		</reflowSkin>
+		-->
+		</earcamSkin>
 	</custom>
 
 	<body>
 
+		<!--  meta description is added from project.description -->
+		<head><![CDATA[
+		<link rel="author" href="https://plus.google.com/+CasparMacRae"/>
+		
+		<meta name="keywords" content="exception, checked exception, uncheck, boiler plate, try catch, java, maven, functional, stream"/>
+		
+		<meta name="twitter:card" content="summary" />
+		<meta name="twitter:site" content="@caspar_macrae" />
+		<meta name="twitter:title" content="Unexceptional" />
+		<meta name="twitter:description" content="${project.description}" />
+		
+		<meta name="og:type" content="website" />
+		<meta name="og:title" content="Unexceptional" />
+		<meta name="og:description" content="${project.description}" />
+		
+
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/ico/apple-icon-57x57.png"/>
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/ico/apple-icon-60x60.png"/>
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/ico/apple-icon-72x72.png"/>
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/ico/apple-icon-76x76.png"/>
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/ico/apple-icon-114x114.png"/>
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/ico/apple-icon-120x120.png"/>
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/ico/apple-icon-144x144.png"/>
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/ico/apple-icon-152x152.png"/>
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/ico/apple-icon-180x180.png"/>
+		<link rel="icon" type="image/png" sizes="192x192"  href="/img/ico/android-icon-192x192.png"/>
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/ico/favicon-32x32.png"/>
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/ico/favicon-96x96.png"/>
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/ico/favicon-16x16.png"/>
+		<link rel="manifest" href="img/ico/manifest.json"/>
+		<meta name="msapplication-TileColor" content="#ffffff"/>
+		<meta name="msapplication-TileImage" content="/img/ico/ms-icon-144x144.png"/>
+		<meta name="theme-color" content="#ffffff"/>
+		]]>
+		</head>
+
 		<menu name="Get" inherit="top">
-			<item name="Binary" href="dependency.html" />
 			<item name="Source" href="https://github.com/earcam/io.earcam.unexceptional" />
+			<item name="Dependency Management" href="dependency-info.html" />
+			<item name="Download" href="download.html" />
 		</menu>
 
 		<menu name="Documentation" inherit="top">
@@ -146,9 +202,12 @@ xsi:schemaLocation="http://maven.apache.org/DECORATION/1.3.0 http://maven.apache
 			<item name="Jacoco Test Coverage" href="jacoco/index.html" />
 			<item name="JDepend" href="jdepend-report.html" />
 			<item name="Dependency Analysis" href="dependency-analysis.html" />
+			<item name="Semantic Version Analysis" href="revapi-report.html" />
 			<item name="3rd Party Licences" href="third-party-report.html" />
-			<item name="All Reports" href="project-reports.html" />
 			<item name="SonarQube" href="https://sonarcloud.io/dashboard?id=io.earcam%3Aio.earcam.unexceptional" />
+			<item name="SourceGraph" href="https://sourcegraph.com/github.com/earcam/io.earcam.unexceptional" />
+			<item name="Bespoke Reports" href="project-reports.html" />
+			<item name="Standard Maven Reports" href="project-info.html" />
 		</menu>
 	</body>
 </project>

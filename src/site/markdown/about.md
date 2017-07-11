@@ -1,4 +1,4 @@
-
+# About
 
 ## Roadmap
 
@@ -71,7 +71,7 @@ so I [KISS](https://en.wikipedia.org/wiki/KISS_principle)ed it goodbye and unrol
 
 #### Sonar
 
-Used Sonar 6.4 during development, the issues raised are either:
+Used Sonar 6.0 during development, the issues raised are either:
 
 * Regarding methods declaring `throws Throwable` and `catch` statements catching `Throwable`.  These have just been marked with only `//NOSONAR` in the source, as ordinarily this is a code smell.
 * Bugs in Sonar (or the wide collection a libraries it leverages).  These have been marked with `//NOSONAR and some explanation`.
