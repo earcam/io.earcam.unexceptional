@@ -76,7 +76,7 @@ Used Sonar 6.0 during development, the issues raised are either:
 * Regarding methods declaring `throws Throwable` and `catch` statements catching `Throwable`.  These have just been marked with only `//NOSONAR` in the source, as ordinarily this is a code smell.
 * Bugs in Sonar (or the wide collection a libraries it leverages).  These have been marked with `//NOSONAR and some explanation`.
 
-At time of writing I've switched to SonarQube 6.4, and now have 26 more false positives - both tiring of adding `//NOSONAR blah blah` and trying to be a good OSS citizen - created a SonarQube JIRA account,
+At time of writing I've switched to SonarQube 6.4, and now have 26 more false positives - both tiring of adding `//NOSONAR blah blah` and trying to be a good <abbr title="Open-Source Software">OSS</abbr> citizen - created a SonarQube JIRA account,
 only to find you [cannot create SonarQube issues](http://sonarqube-archive.15.x6.nabble.com/How-to-create-Jira-issues-td5034356.html) only report via mailing list (fair enough, very widely used project must 
 get a lot of spam issues).
 

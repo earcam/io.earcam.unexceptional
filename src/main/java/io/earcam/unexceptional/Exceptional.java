@@ -157,6 +157,14 @@ public final class Exceptional implements Serializable {
 		}
 	}
 
+	public static URI uri(URL earl)
+	{
+		try {
+			return earl.toURI();
+		} catch (URISyntaxException e) {
+			throw uncheck(e);
+		}
+	}
 
 	/**
 	 * Will rethrow any {@link Error}, otherwise will silently swallow, resetting the 
