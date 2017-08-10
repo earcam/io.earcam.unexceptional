@@ -1,5 +1,7 @@
 package io.earcam.unexceptional.example;
 
+//EARCAM_SNIPPET_BEGIN: import
+
 import static java.nio.file.Paths.get;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.equalTo;
@@ -16,6 +18,8 @@ import java.util.List;
 
 import org.junit.Test;
 
+//EARCAM_SNIPPET_END: import
+
 public class FileListExample {
 
 	@Test
@@ -30,6 +34,7 @@ public class FileListExample {
 	}
 
 
+	//EARCAM_SNIPPET_BEGIN: listFiles
 	// Using vanilla Stream API (in a manner that would distress Dijkstra)
 	public static List<String> listFiles(Path path)
 	{
@@ -59,4 +64,5 @@ public class FileListExample {
 		}
 		return a;
 	}
+	//EARCAM_SNIPPET_END: listFiles
 }

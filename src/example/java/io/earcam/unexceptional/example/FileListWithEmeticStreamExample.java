@@ -1,5 +1,7 @@
 package io.earcam.unexceptional.example;
 
+//EARCAM_SNIPPET_BEGIN: import
+
 import static io.earcam.unexceptional.EmeticStream.emesis;
 import static java.nio.file.Paths.get;
 import static java.util.stream.Collectors.toList;
@@ -13,6 +15,8 @@ import java.nio.file.Path;
 import java.util.List;
 
 import org.junit.Test;
+
+//EARCAM_SNIPPET_END: import
 
 public class FileListWithEmeticStreamExample {
 
@@ -28,6 +32,7 @@ public class FileListWithEmeticStreamExample {
 	}
 
 
+	//EARCAM_SNIPPET_BEGIN: listFiles
 	//Using EmeticStream (less efficient on GC, more efficient on the eye)
 	static List<String> listFiles(Path path)
 	{
@@ -38,4 +43,5 @@ public class FileListWithEmeticStreamExample {
 			.map(Object::toString)
 			.collect(toList());
 	}
+	//EARCAM_SNIPPET_END: listFiles
 }

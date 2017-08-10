@@ -1,5 +1,7 @@
 package io.earcam.unexceptional.example;
 
+//EARCAM_SNIPPET_BEGIN: import
+
 import static io.earcam.unexceptional.Exceptional.apply;
 import static io.earcam.unexceptional.Exceptional.uncheckFunction;
 import static java.nio.file.Paths.get;
@@ -16,6 +18,8 @@ import java.util.List;
 
 import org.junit.Test;
 
+//EARCAM_SNIPPET_END: import
+
 public class FileListWithExceptionalExample {
 
 	@Test
@@ -30,6 +34,7 @@ public class FileListWithExceptionalExample {
 	}
 
 
+	//EARCAM_SNIPPET_BEGIN: listFiles
 	// Using static imports from Exceptional
 	static List<String> listFiles(Path path)
 	{
@@ -41,4 +46,5 @@ public class FileListWithExceptionalExample {
 			.map(Object::toString)
 			.collect(toList());
 	}
+	//EARCAM_SNIPPET_END: listFiles
 }

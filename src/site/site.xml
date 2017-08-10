@@ -48,7 +48,7 @@
 			</brand>
 			<slogan>
 				<![CDATA[
-					Checked Exception Handling For Exceptionally <span class="color-highlight">Un</span>exceptional Cases
+					Checked Exception Handling For <span class="color-highlight">Un</span>exceptional Cases
           		]]>				
 			</slogan>
 			<skinAttribution>false</skinAttribution>
@@ -76,6 +76,20 @@
 						<sidebar />
 					</sections>
 				</index>
+
+				<examples2>
+					<!-- Override the title -->
+					<titleTemplate>Examples</titleTemplate>
+					<breadcrumbs>false</breadcrumbs>
+					<toc>false</toc>
+					<markPageHeader>false</markPageHeader>
+					<sections>
+						<body/>
+						<columns>3</columns>
+						<columns>2</columns>
+					</sections>
+				</examples2>
+
 				<contribute>
 					<breadcrumbs>false</breadcrumbs>
 				</contribute>

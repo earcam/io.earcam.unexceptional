@@ -43,7 +43,7 @@ public class ExceptionalExample {
 	@Test
 	public void convertFunctional()
 	{
-
+		//EARCAM_SNIPPET_BEGIN: convertFunctional_without
 		ToIntFunction<String> a = value -> {
 			try {
 				return parse(value);
@@ -51,10 +51,11 @@ public class ExceptionalExample {
 				throw new UncheckedIOException(e);
 			}
 		};
+		//EARCAM_SNIPPET_END: convertFunctional_without
 
-
+		//EARCAM_SNIPPET_BEGIN: convertFunctional_exceptional
 		ToIntFunction<String> b = Exceptional.uncheckToIntFunction(ExceptionalExample::parse);
-
+		//EARCAM_SNIPPET_END: convertFunctional_exceptional
 
 		assertThat(a.applyAsInt("42"), is( equalTo( b.applyAsInt("42") )));
 	}
