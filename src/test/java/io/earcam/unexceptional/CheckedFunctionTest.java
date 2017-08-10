@@ -8,7 +8,6 @@ import org.junit.Test;
 
 public class CheckedFunctionTest {
 
-	
 	private final CheckedFunction<Integer, Integer> plusOne = t -> t + 1;
 	private final CheckedFunction<Integer, Integer> timesTwo = t -> t * 2;
 
@@ -16,14 +15,14 @@ public class CheckedFunctionTest {
 	@Test
 	public void composeAppliesBefore() throws Throwable
 	{
-		assertThat(plusOne.compose(timesTwo).apply(1), is( 3 ));
+		assertThat(plusOne.compose(timesTwo).apply(1), is(3));
 	}
 
 
 	@Test
 	public void andThenAppliesAfter() throws Throwable
 	{
-		assertThat(plusOne.andThen(timesTwo).apply(1), is( 4 ));
+		assertThat(plusOne.andThen(timesTwo).apply(1), is(4));
 	}
 
 
@@ -33,7 +32,7 @@ public class CheckedFunctionTest {
 		try {
 			plusOne.andThen(null);
 			fail();
-		} catch(NullPointerException npe) {}		
+		} catch(NullPointerException npe) {}
 	}
 
 
@@ -43,6 +42,6 @@ public class CheckedFunctionTest {
 		try {
 			plusOne.compose(null);
 			fail();
-		} catch(NullPointerException npe) {}		
+		} catch(NullPointerException npe) {}
 	}
 }

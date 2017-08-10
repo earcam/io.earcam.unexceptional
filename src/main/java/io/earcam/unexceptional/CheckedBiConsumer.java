@@ -33,7 +33,7 @@ public interface CheckedBiConsumer<T, U> {
 	 * @return the composite {@link CheckedBiConsumer}
 	 * @throws NullPointerException if {@code after} is {@code null}
 	 */
-	@SuppressWarnings("squid:S1905") //SonarQube false positives
+	@SuppressWarnings("squid:S1905") // SonarQube false positives
 	public default CheckedBiConsumer<T, U> andThen(@Nonnull CheckedBiConsumer<? super T, ? super U> after)
 	{
 		Objects.requireNonNull(after);

@@ -1,6 +1,13 @@
 # Contribute
 
-Contributions and bug reports welcome, tests even more so.  Please follow these [contribution guidelines][contribution-guidelines].
+Contributions and bug reports welcome, tests even more so.  Please follow these handy [contribution guidelines][contribution-guidelines].
+
+Please see the [section on building][about-building] as modifications will fail the build if they do not conform to formatting conventions 
+(there's a Maven profile that trivially fixes this).
+
+Please follow semantic versioning principles, the build will fail if you don't
+
+(Tested pull-requests that do not require major version bumps are well received) 
 
 
 ## Fork and be happy
@@ -17,7 +24,7 @@ for someone/somewhere deserving.  Share the love.
 
 
 
-
+[about-building]: /about.html#Building
 [github-unexceptional]: https://github.com/earcam/io.earcam.unexceptional/
 [contribution-guidelines]: https://github.com/necolas/issue-guidelines/blob/master/CONTRIBUTING.md 
 [random-act-of-kindness]: https://www.randomactsofkindness.org/kindness-ideas

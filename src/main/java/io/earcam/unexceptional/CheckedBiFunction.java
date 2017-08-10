@@ -33,7 +33,7 @@ public interface CheckedBiFunction<T, U, R> {
 	 * 
 	 * @param <V> the return type of the {@code after} parameter
 	 * 
-	 * @param after the {@link CheckedFunction} to be chained (taking result of {@code this} as argument) 
+	 * @param after the {@link CheckedFunction} to be chained (taking result of {@code this} as argument)
 	 * @return the composite {@link CheckedBiFunction}
 	 * @throws NullPointerException if {@code after} is {@code null}
 	 */

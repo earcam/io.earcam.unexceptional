@@ -11,8 +11,10 @@ import org.hamcrest.TypeSafeMatcher;
 
 final class SerialCodec {
 
-	private SerialCodec() {}
-	
+	private SerialCodec()
+	{}
+
+
 	public static byte[] serialize(Object object)
 	{
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -25,7 +27,8 @@ final class SerialCodec {
 	public static <T> T deserialize(byte[] serialized, Class<T> type)
 	{
 		ByteArrayInputStream bais = new ByteArrayInputStream(serialized);
-		// using type.cast fails for lambdas:    return type.cast(Exceptional.closing(ObjectInputStream::new, bais, ObjectInputStream::readObject));
+		// using type.cast fails for lambdas:
+		// return type.cast(Exceptional.closing(ObjectInputStream::new, bais, ObjectInputStream::readObject));
 		return (T) Exceptional.closeAfterApplying(ObjectInputStream::new, bais, ObjectInputStream::readObject);
 	}
 
@@ -45,6 +48,7 @@ final class SerialCodec {
 			{
 				description.appendText(" serializable");
 			}
+
 
 			@Override
 			protected boolean matchesSafely(Object item)

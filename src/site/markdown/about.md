@@ -1,5 +1,20 @@
 # About
 
+## Building 
+
+This project uses [maven-toolchains-plugin][maven-toolchains-plugin], so you'll need to [setup toolchains][maven-toolchains-plugin-setup].  
+Examples for various OS/architectures can be found [here][maven-central-earcam-toolchain] 
+
+With toolchains configured, run `mvn clean install`.
+
+When modifying the code beware/be-aware the build will fail if Maven POMs, Java source or Javascript source aren't formatted according to conventions (Apache 
+Maven's standards for POMs, my own undocumented formatting for source).  To auto-format the lot, simply run `mvn -P tidy clean install`.
+
+To run PiTest use `mvn -P analyze clean install`
+
+To run against SonarQube use `mvn -P analyze clean install org.sonarsource.scanner.maven:sonar-maven-plugin:LATEST:sonar`
+
+
 ## Roadmap
 
 General direction without target dates.
@@ -101,3 +116,10 @@ IMO javac should generate a warning/error on compiling an implementation of Auto
 	[WARNING] ... Exceptional.java ... auto-closeable resource C has a member method close() that could throw InterruptedException
 
 Further annoyance as the compiler does no analysis for this warning - so even if you explicitly catch `InterruptedException` and add `Thread.currentThread().interrupt()` your build log will still be polluted with this noddy warning.
+
+
+
+
+[maven-toolchains-plugin]: http://maven.apache.org/plugins/maven-toolchains-plugin/
+[maven-toolchains-plugin-setup]: https://maven.apache.org/guides/mini/guide-using-toolchains.html
+[maven-central-earcam-toolchain]: http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22io.earcam.maven.toolchain%22

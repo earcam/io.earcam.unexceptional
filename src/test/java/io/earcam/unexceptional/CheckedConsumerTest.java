@@ -13,31 +13,33 @@ import org.junit.rules.ExpectedException;
 
 public class CheckedConsumerTest {
 
-	
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
-	
-	
+
 	class NiceStubCheckedConsumer implements CheckedConsumer<String> {
 
 		String t;
-		
+
+
 		@Override
 		public void accept(String t)
 		{
 			this.t = t;
-			
+
 		}
-		
+
 	}
+
 	class NastyStubCheckedConsumer implements CheckedConsumer<String> {
 
 		Exception chuck;
-		
+
+
 		NastyStubCheckedConsumer(Exception chuck)
 		{
 			this.chuck = chuck;
 		}
+
 
 		@Override
 		public void accept(String t) throws Exception
@@ -51,11 +53,11 @@ public class CheckedConsumerTest {
 	public void andThenReturnsAnUncheckedConsumer() throws Throwable
 	{
 		IOException wobbly = new IOException("boom!");
-		
-		expectedException.expect( sameInstance( wobbly ));
-		
+
+		expectedException.expect(sameInstance(wobbly));
+
 		CheckedConsumer<String> uncheckedConsumer = new NiceStubCheckedConsumer().andThen(new NastyStubCheckedConsumer(wobbly));
-		
+
 		uncheckedConsumer.accept("no chance");
 	}
 
@@ -64,7 +66,7 @@ public class CheckedConsumerTest {
 	public void andThenRequiresNonNullCheckedConsumer()
 	{
 		expectedException.expect(NullPointerException.class);
-		
+
 		new NiceStubCheckedConsumer().andThen(null);
 	}
 
@@ -72,13 +74,13 @@ public class CheckedConsumerTest {
 	@Test
 	public void andThenInvokesAcceptOnBothCheckedConsumer() throws Throwable
 	{
-		
+
 		NiceStubCheckedConsumer a = new NiceStubCheckedConsumer();
 		NiceStubCheckedConsumer b = new NiceStubCheckedConsumer();
-		
+
 		String t = "hello";
 		a.andThen(b).accept(t);
-		
+
 		assertThat(a.t, is(t));
 		assertThat(b.t, is(t));
 	}
@@ -89,8 +91,8 @@ public class CheckedConsumerTest {
 	{
 		String t = "hello";
 		IOException wobbly = new IOException("goodbye");
-		expectedException.expect( sameInstance( wobbly ));
-		
+		expectedException.expect(sameInstance(wobbly));
+
 		NiceStubCheckedConsumer nice = new NiceStubCheckedConsumer();
 		CheckedConsumer<String> nasty = new NastyStubCheckedConsumer(wobbly);
 
@@ -107,15 +109,15 @@ public class CheckedConsumerTest {
 	{
 		String t = "hello";
 		IOException wobbly = new IOException("goodbye");
-		expectedException.expect( sameInstance( wobbly ));
-		
+		expectedException.expect(sameInstance(wobbly));
+
 		CheckedConsumer<String> nasty = new NastyStubCheckedConsumer(wobbly);
 		NiceStubCheckedConsumer nice = new NiceStubCheckedConsumer();
 
 		try {
 			nasty.andThen(nice).accept(t);
 		} finally {
-			assertThat(nice.t, is( nullValue() ));
+			assertThat(nice.t, is(nullValue()));
 		}
 	}
 }

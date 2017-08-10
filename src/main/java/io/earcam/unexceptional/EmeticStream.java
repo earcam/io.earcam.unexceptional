@@ -12,23 +12,23 @@ import java.util.stream.Stream;
 
 /**
  * <p>
- * {@link EmeticStream} provides a functional parallel to {@link Stream}, with methods taking checked equivalents of {@link java.util.function} 
+ * {@link EmeticStream} provides a functional parallel to {@link Stream}, with methods taking checked equivalents of
+ * {@link java.util.function}
  * </p>
- *  
+ * 
  * <h1>emetic</h1>
  * <b>/ɪˈmɛtɪk/&nbsp;</b>
  * <p>
  * <i>adjective:</i>
  * </p>
  * <p>
- *  1. (of a substance) causing vomiting.
+ * 1. (of a substance) causing vomiting.
  * </p>
  * 
  * @param <T> the element type of this stream
  */
 @FunctionalInterface
 public interface EmeticStream<T> {
-
 
 	/**
 	 * @return the wrapped stream
@@ -49,7 +49,7 @@ public interface EmeticStream<T> {
 	{
 		return emesis(apply(function, value));
 	}
-	
+
 
 	/**
 	 * Wrap a stream in order to invoke check functions on it
@@ -57,12 +57,12 @@ public interface EmeticStream<T> {
 	 * @param stream the underlying {@link Stream}
 	 * @return an {@link EmeticStream}
 	 * 
- 	 * @param <T> the {@code stream}'s element type 
+	 * @param <T> the {@code stream}'s element type
 	 */
-	@SuppressWarnings("squid:S1905") //SonarQube false positive
+	@SuppressWarnings("squid:S1905") // SonarQube false positive
 	public static <T> EmeticStream<T> emesis(Stream<T> stream)
 	{
-		return (EmeticStream<T> & Serializable) () -> stream; 
+		return (EmeticStream<T> & Serializable) () -> stream;
 	}
 
 
@@ -86,10 +86,10 @@ public interface EmeticStream<T> {
 	{
 		return !mapToStream().isParallel() ? this : emesis(mapToStream().sequential());
 	}
-	
+
 
 	/**
-	 * @param predicate a non-interfering and stateless, checked predicate 𝗣 to apply 
+	 * @param predicate a non-interfering and stateless, checked predicate 𝗣 to apply
 	 * to all elements in the stream 𝕊
 	 * @return ∀ e ∈ 𝕊: 𝗣(e)
 	 * 
@@ -99,10 +99,10 @@ public interface EmeticStream<T> {
 	{
 		return mapToStream().allMatch(uncheckPredicate(predicate));
 	}
-	
-	
+
+
 	/**
-	 * @param predicate a non-interfering and stateless, checked predicate 𝗣 to apply 
+	 * @param predicate a non-interfering and stateless, checked predicate 𝗣 to apply
 	 * to all elements in the stream 𝕊
 	 * @return ∃ e ∈ 𝕊: 𝗣(e)
 	 * 
@@ -112,11 +112,11 @@ public interface EmeticStream<T> {
 	{
 		return mapToStream().anyMatch(uncheckPredicate(predicate));
 	}
-	
-	
+
+
 	/**
 	 * @param collector {@link Collector} performing reduction and supplying result
-	 * @return the result 
+	 * @return the result
 	 * 
 	 * @param <A> mutable accumulator type
 	 * @param <R> reduction result type
@@ -127,10 +127,10 @@ public interface EmeticStream<T> {
 	{
 		return mapToStream().collect(collector);
 	}
-	
-	
+
+
 	/**
-	 * @param supplier creates a new (potentially partial) result container 
+	 * @param supplier creates a new (potentially partial) result container
 	 * @param accumulator associative, non-interfering, stateless function, adding element to result
 	 * @param combiner combines the accumulated results
 	 * @return the collected result
@@ -143,8 +143,8 @@ public interface EmeticStream<T> {
 	{
 		return mapToStream().collect(uncheckSupplier(supplier), uncheckBiConsumer(accumulator), uncheckBiConsumer(combiner));
 	}
-	
-	
+
+
 	/**
 	 * @param predicate a non-interfering, stateless predicate determining which elements travel down{@code Stream}
 	 * @return the new {@link EmeticStream}
@@ -155,8 +155,8 @@ public interface EmeticStream<T> {
 	{
 		return emesis(mapToStream().filter(uncheckPredicate(predicate)));
 	}
-	
-	
+
+
 	/**
 	 * @param <R> element type of the new stream
 	 * 
@@ -169,8 +169,8 @@ public interface EmeticStream<T> {
 	{
 		return emesis(mapToStream().flatMap(uncheckFunction(mapper)));
 	}
-	
-	
+
+
 	/**
 	 * @param mapper a non-interfering, stateless function transforming {@code <T>} to {@code DoubleStream}
 	 * @return the new {@link DoubleStream}
@@ -181,7 +181,7 @@ public interface EmeticStream<T> {
 	{
 		return mapToStream().flatMapToDouble(uncheckFunction(mapper));
 	}
-	
+
 
 	/**
 	 * @param mapper a non-interfering, stateless function transforming {@code <T>} to {@code IntStream}
@@ -226,7 +226,7 @@ public interface EmeticStream<T> {
 		mapToStream().forEachOrdered(uncheckConsumer(action));
 	}
 
-	
+
 	/**
 	 * @param <R> the element type of returned {@link Stream}
 	 * 
@@ -239,8 +239,8 @@ public interface EmeticStream<T> {
 	{
 		return emesis(mapToStream().map(uncheckFunction(mapper)));
 	}
-	
-	
+
+
 	/**
 	 * @param mapper a non-interfering, stateless function transforming {@code <T>} to {@code double}
 	 * @return the new {@link EmeticStream}
@@ -251,8 +251,8 @@ public interface EmeticStream<T> {
 	{
 		return mapToStream().mapToDouble(uncheckToDoubleFunction(mapper));
 	}
-	
-	
+
+
 	/**
 	 * @param mapper a non-interfering, stateless function transforming {@code <T>} to {@code int}
 	 * @return the new {@link EmeticStream}
@@ -263,8 +263,8 @@ public interface EmeticStream<T> {
 	{
 		return mapToStream().mapToInt(uncheckToIntFunction(mapper));
 	}
-	
-	
+
+
 	/**
 	 * @param mapper a non-interfering, stateless function transforming {@code <T>} to {@code long}
 	 * @return the new {@link EmeticStream}
@@ -276,7 +276,7 @@ public interface EmeticStream<T> {
 		return mapToStream().mapToLong(uncheckToLongFunction(mapper));
 	}
 
-	
+
 	/**
 	 * @param comparator a non-interfering, stateless comparator
 	 * @return an {@link Optional} as per {@link Stream#max(java.util.Comparator)}
@@ -288,11 +288,11 @@ public interface EmeticStream<T> {
 		return mapToStream().max(uncheckComparator(comparator));
 	}
 
-	
+
 	/**
 	 * @param comparator a non-interfering, stateless comparator
 	 * @return an {@link Optional} as per {@link Stream#max(java.util.Comparator)}
-
+	 * 
 	 * @see Stream#min(java.util.Comparator)
 	 */
 	public default Optional<T> min(CheckedComparator<? super T> comparator)
@@ -302,7 +302,7 @@ public interface EmeticStream<T> {
 
 
 	/**
-	 * @param predicate a non-interfering, stateless, checked predicate 𝗣 to apply 
+	 * @param predicate a non-interfering, stateless, checked predicate 𝗣 to apply
 	 * to all elements in the stream 𝕊
 	 * 
 	 * @return ∄ e ∈ 𝕊: 𝗣(e)
@@ -313,7 +313,7 @@ public interface EmeticStream<T> {
 	{
 		return mapToStream().noneMatch(uncheckPredicate(predicate));
 	}
-	
+
 
 	/**
 	 * @param action non-interfering action applied to elements of the underlying Stream
@@ -325,8 +325,8 @@ public interface EmeticStream<T> {
 	{
 		return emesis(mapToStream().peek(uncheckConsumer(action)));
 	}
-	
-	
+
+
 	/**
 	 * 
 	 * @param accumulator an associative, non-interfering and stateless function
@@ -338,8 +338,8 @@ public interface EmeticStream<T> {
 	{
 		return mapToStream().reduce(uncheckBinaryOperator(accumulator));
 	}
-	
-	
+
+
 	/**
 	 * 
 	 * @param identity seed value for accumulator

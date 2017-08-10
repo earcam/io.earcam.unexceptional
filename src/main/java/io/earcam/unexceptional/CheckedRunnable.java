@@ -15,7 +15,7 @@ import javax.annotation.Nonnull;
  */
 @FunctionalInterface
 public interface CheckedRunnable {
-	
+
 	/**
 	 * See {@link Runnable#run()}
 	 * 
@@ -30,11 +30,11 @@ public interface CheckedRunnable {
 	 * @return a composite checked runnable of this and then after
 	 * @throws NullPointerException if {@code after} is {@code null}
 	 */
-	@SuppressWarnings("squid:S1905") //SonarQube false positive
+	@SuppressWarnings("squid:S1905") // SonarQube false positive
 	public default CheckedRunnable andThen(@Nonnull CheckedRunnable after)
 	{
 		Objects.requireNonNull(after);
-		return (CheckedRunnable & Serializable)  () -> {
+		return (CheckedRunnable & Serializable) () -> {
 			run();
 			after.run();
 		};

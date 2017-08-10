@@ -14,11 +14,11 @@ import org.junit.Test;
 
 public class CheckedBiConsumerTest {
 
-	
 	public class NiceBiConsumer implements CheckedBiConsumer<String, Integer> {
 
 		private String t;
 		private Integer u;
+
 
 		@Override
 		public void accept(String t, Integer u) throws Throwable
@@ -26,22 +26,32 @@ public class CheckedBiConsumerTest {
 			this.t = t;
 			this.u = u;
 		}
-		
-		public String getT(){ return t; }
-		public Integer getU(){ return u; }
+
+
+		public String getT()
+		{
+			return t;
+		}
+
+
+		public Integer getU()
+		{
+			return u;
+		}
 	}
 
-	
 	public class NastyBiConsumer extends NiceBiConsumer {
-		
+
 		private Exception exception;
+
 
 		NastyBiConsumer(Exception exception)
 		{
 			this.exception = exception;
-			
+
 		}
-		
+
+
 		@Override
 		public void accept(String t, Integer u) throws Throwable
 		{
@@ -50,30 +60,29 @@ public class CheckedBiConsumerTest {
 		}
 	}
 
-	
+
 	@Test
 	public void andThenInvokesSequentially() throws Throwable
 	{
 		NiceBiConsumer a = new NiceBiConsumer();
 		NiceBiConsumer b = new NiceBiConsumer();
 		NiceBiConsumer c = new NiceBiConsumer();
-		
+
 		String tea = "tea";
 		int forTwo = 42;
 		a.andThen(b).andThen(c).accept(tea, forTwo);
-		
+
 		assertThat(a, consumed(tea, forTwo));
 		assertThat(b, consumed(tea, forTwo));
 		assertThat(c, consumed(tea, forTwo));
 	}
-	
-	
+
+
 	private static Matcher<CheckedBiConsumer<String, Integer>> consumed(String t, Integer u)
 	{
 		return Matchers.allOf(
-				Matchers.hasProperty("t", is( equalTo( t ))),
-				Matchers.hasProperty("u", is( equalTo( u )))
-		);
+				Matchers.hasProperty("t", is(equalTo(t))),
+				Matchers.hasProperty("u", is(equalTo(u))));
 	}
 
 
@@ -84,10 +93,10 @@ public class CheckedBiConsumerTest {
 		NiceBiConsumer nice = new NiceBiConsumer();
 		NastyBiConsumer nasty = new NastyBiConsumer(chuck);
 		NiceBiConsumer notCalled = new NiceBiConsumer();
-		
+
 		String t = "one-oh-one";
 		int u = 101;
-		
+
 		try {
 			nice.andThen(nasty).andThen(notCalled).accept(t, u);
 			fail();
@@ -108,6 +117,6 @@ public class CheckedBiConsumerTest {
 		try {
 			new NiceBiConsumer().andThen(after);
 			fail();
-		} catch(NullPointerException npe) {}		
+		} catch(NullPointerException npe) {}
 	}
 }

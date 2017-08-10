@@ -7,12 +7,12 @@ import java.util.List;
 
 public class NayMock implements InvocationHandler {
 
-	
 	public static class Invocation {
-		
+
 		Object proxy;
 		String name;
 		Object[] args;
+
 
 		public Invocation(Object proxy, String name, Object[] args)
 		{
@@ -21,8 +21,7 @@ public class NayMock implements InvocationHandler {
 			this.args = args;
 		}
 	}
-	
-	
+
 	List<Invocation> invocations = new ArrayList<>();
 
 

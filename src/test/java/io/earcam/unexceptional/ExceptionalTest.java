@@ -50,18 +50,18 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-
 public class ExceptionalTest {
 
-	
 	private static final class ThrowsAtClosingTime implements Closeable {
-		
+
 		private IOException exception;
+
 
 		public ThrowsAtClosingTime(IOException exception)
 		{
 			this.exception = exception;
 		}
+
 
 		@Override
 		public void close() throws IOException
@@ -70,10 +70,8 @@ public class ExceptionalTest {
 		}
 	};
 
-	
-	
 	@Rule
-    public ExpectedException thrown = ExpectedException.none();
+	public ExpectedException thrown = ExpectedException.none();
 
 
 	@Before
@@ -88,12 +86,14 @@ public class ExceptionalTest {
 	{
 		assumeFalse(currentThread().isInterrupted());
 		try {
-			get(() -> { throw new InterruptedException("Excuse me"); });
+			get(() -> {
+				throw new InterruptedException("Excuse me");
+			});
 			fail();
 		} catch(Exception e) {
 			assertThat(e, instanceOf(UncheckedInterruptException.class));
 			assertThat(e.getCause(), instanceOf(InterruptedException.class));
-			assertThat(currentThread().isInterrupted(), is( true ));
+			assertThat(currentThread().isInterrupted(), is(true));
 		}
 	}
 
@@ -107,7 +107,7 @@ public class ExceptionalTest {
 		} catch(Exception e) {
 			swallow(e);
 		}
-		assertThat(currentThread().isInterrupted(), is( true ));
+		assertThat(currentThread().isInterrupted(), is(true));
 	}
 
 
@@ -115,24 +115,26 @@ public class ExceptionalTest {
 	public void swallowRethrowsErrors()
 	{
 		OutOfMemoryError oom = new OutOfMemoryError("Not really");
-		thrown.expect( sameInstance( oom ));
-		
+		thrown.expect(sameInstance(oom));
+
 		swallow(oom);
 	}
 
-	
+
 	@Test
 	public void doesNotSetInterrupt()
 	{
 		assumeFalse(currentThread().isInterrupted());
-		
+
 		try {
-			CheckedRunnable executable = () -> { throw new ReflectiveOperationException("Think back"); };
+			CheckedRunnable executable = () -> {
+				throw new ReflectiveOperationException("Think back");
+			};
 			run(executable);
 			fail();
 		} catch(Exception e) {
 			assertThat(e, instanceOf(UncheckedReflectiveException.class));
-			assertThat(currentThread().isInterrupted(), is( false ));
+			assertThat(currentThread().isInterrupted(), is(false));
 		}
 	}
 
@@ -141,7 +143,7 @@ public class ExceptionalTest {
 	public void throwCheckedAsUnchecked()
 	{
 		IOException ioe = new IOException("check this out");
-		thrown.expect(is( ioe ));
+		thrown.expect(is(ioe));
 
 		throwAsUnchecked(ioe);
 	}
@@ -153,8 +155,8 @@ public class ExceptionalTest {
 		try {
 			throwAsUnchecked(new InterruptedException("Terribly sorry to butt in, but..."));
 			fail();
-		}catch(Exception e) {}
-		assertThat(Thread.currentThread().isInterrupted(), is( true ));
+		} catch(Exception e) {}
+		assertThat(Thread.currentThread().isInterrupted(), is(true));
 	}
 
 
@@ -162,12 +164,14 @@ public class ExceptionalTest {
 	public void uncheckedConsumerThrows()
 	{
 		Exception kaboom = new IOException();
-		thrown.expect( is( instanceOf( UncheckedIOException.class )));
-		thrown.expectCause( is( sameInstance( kaboom )));
-		
-		CheckedConsumer<String> checked = (t) -> { throw kaboom; };
+		thrown.expect(is(instanceOf(UncheckedIOException.class)));
+		thrown.expectCause(is(sameInstance(kaboom)));
+
+		CheckedConsumer<String> checked = (t) -> {
+			throw kaboom;
+		};
 		Consumer<String> consumer = uncheckConsumer(checked);
-		
+
 		consumer.accept("oh yeah");
 	}
 
@@ -176,13 +180,15 @@ public class ExceptionalTest {
 	public void uncheckedConsumerDoesNotThrow()
 	{
 		final AtomicReference<String> accepted = new AtomicReference<String>("");
-		CheckedConsumer<String> checked = (t) -> { accepted.set(t); };
+		CheckedConsumer<String> checked = (t) -> {
+			accepted.set(t);
+		};
 
 		Consumer<String> consumer = uncheckConsumer(checked);
 		String passed = "oh noes";
 		consumer.accept(passed);
-		
-		assertThat(accepted.get(), is( equalTo( passed )));
+
+		assertThat(accepted.get(), is(equalTo(passed)));
 	}
 
 
@@ -190,12 +196,14 @@ public class ExceptionalTest {
 	public void uncheckedSupplierThrows()
 	{
 		Exception kaboom = new IOException();
-		thrown.expect( is( instanceOf( UncheckedIOException.class )));
-		thrown.expectCause( is( sameInstance( kaboom )));
-		
-		CheckedSupplier<String> checked = () -> { throw kaboom; };
+		thrown.expect(is(instanceOf(UncheckedIOException.class)));
+		thrown.expectCause(is(sameInstance(kaboom)));
+
+		CheckedSupplier<String> checked = () -> {
+			throw kaboom;
+		};
 		Supplier<String> consumer = uncheckSupplier(checked);
-		
+
 		consumer.get();
 	}
 
@@ -207,8 +215,8 @@ public class ExceptionalTest {
 		CheckedSupplier<String> checked = () -> supplied;
 
 		Supplier<String> unchecked = uncheckSupplier(checked);
-		
-		assertThat(unchecked.get(), is( equalTo( supplied )));
+
+		assertThat(unchecked.get(), is(equalTo(supplied)));
 	}
 
 
@@ -216,12 +224,14 @@ public class ExceptionalTest {
 	public void uncheckedBiConsumerThrows()
 	{
 		Exception kaboom = new IOException();
-		thrown.expect( is( instanceOf( UncheckedIOException.class )));
-		thrown.expectCause( is( sameInstance( kaboom )));
-		
-		CheckedBiConsumer<String, String> checked = (a,b) -> { throw kaboom; };
+		thrown.expect(is(instanceOf(UncheckedIOException.class)));
+		thrown.expectCause(is(sameInstance(kaboom)));
+
+		CheckedBiConsumer<String, String> checked = (a, b) -> {
+			throw kaboom;
+		};
 		BiConsumer<String, String> consumer = uncheckBiConsumer(checked);
-		
+
 		consumer.accept("oh", "noes");
 	}
 
@@ -230,12 +240,14 @@ public class ExceptionalTest {
 	public void uncheckedBiConsumerDoesNotThrow()
 	{
 		final StringBuilder accepted = new StringBuilder();
-		CheckedBiConsumer<String, String> checked = (a, b) -> { accepted.append(a).append(b); };
+		CheckedBiConsumer<String, String> checked = (a, b) -> {
+			accepted.append(a).append(b);
+		};
 
 		BiConsumer<String, String> consumer = uncheckBiConsumer(checked);
 		consumer.accept("oh", "yeah");
-		
-		assertThat(accepted, hasToString( equalTo( "ohyeah" )));
+
+		assertThat(accepted, hasToString(equalTo("ohyeah")));
 	}
 
 
@@ -243,12 +255,14 @@ public class ExceptionalTest {
 	public void uncheckedBiFunctionThrows()
 	{
 		Exception kaboom = new IOException();
-		thrown.expect( is( instanceOf( UncheckedIOException.class )));
-		thrown.expectCause( is( sameInstance( kaboom )));
-		
-		CheckedBiFunction<String, String, Integer> checked = (a,b) -> { throw kaboom; };
+		thrown.expect(is(instanceOf(UncheckedIOException.class)));
+		thrown.expectCause(is(sameInstance(kaboom)));
+
+		CheckedBiFunction<String, String, Integer> checked = (a, b) -> {
+			throw kaboom;
+		};
 		BiFunction<String, String, Integer> func = uncheckBiFunction(checked);
-		
+
 		func.apply("oh", "noes");
 	}
 
@@ -256,12 +270,12 @@ public class ExceptionalTest {
 	@Test
 	public void uncheckedBiFunctionDoesNotThrow()
 	{
-		CheckedBiFunction<String, String, Integer> checked = (a, b) -> a.length()+b.length();
+		CheckedBiFunction<String, String, Integer> checked = (a, b) -> a.length() + b.length();
 
 		BiFunction<String, String, Integer> biFunction = uncheckBiFunction(checked);
 		Integer applied = biFunction.apply("oh", "yeah");
-		
-		assertThat(applied, is( equalTo( 6 )));
+
+		assertThat(applied, is(equalTo(6)));
 	}
 
 
@@ -269,12 +283,14 @@ public class ExceptionalTest {
 	public void uncheckedBinaryOperatorThrows()
 	{
 		Exception kaboom = new IOException();
-		thrown.expect( is( instanceOf( UncheckedIOException.class )));
-		thrown.expectCause( is( sameInstance( kaboom )));
-		
-		CheckedBinaryOperator<Integer> checked = (a,b) -> { throw kaboom; };
+		thrown.expect(is(instanceOf(UncheckedIOException.class)));
+		thrown.expectCause(is(sameInstance(kaboom)));
+
+		CheckedBinaryOperator<Integer> checked = (a, b) -> {
+			throw kaboom;
+		};
 		BinaryOperator<Integer> consumer = uncheckBinaryOperator(checked);
-		
+
 		consumer.apply(2, 2);
 	}
 
@@ -282,11 +298,11 @@ public class ExceptionalTest {
 	@Test
 	public void uncheckedPredicateDoesNotThrow()
 	{
-		CheckedPredicate<Integer> isEven = i -> i%2==0;
+		CheckedPredicate<Integer> isEven = i -> i % 2 == 0;
 
 		Predicate<Integer> predicate = uncheckPredicate(isEven);
 
-		assertThat(predicate.test(2), is( true ));
+		assertThat(predicate.test(2), is(true));
 	}
 
 
@@ -294,12 +310,14 @@ public class ExceptionalTest {
 	public void uncheckedPredicateThrows()
 	{
 		Exception kaboom = new IOException();
-		thrown.expect( is( instanceOf( UncheckedIOException.class )));
-		thrown.expectCause( is( sameInstance( kaboom )));
-		
-		CheckedPredicate<Integer> checked = i -> { throw kaboom; };
+		thrown.expect(is(instanceOf(UncheckedIOException.class)));
+		thrown.expectCause(is(sameInstance(kaboom)));
+
+		CheckedPredicate<Integer> checked = i -> {
+			throw kaboom;
+		};
 		Predicate<Integer> predicate = uncheckPredicate(checked);
-		
+
 		predicate.test(2);
 	}
 
@@ -307,12 +325,12 @@ public class ExceptionalTest {
 	@Test
 	public void uncheckedBinaryOperatorDoesNotThrow()
 	{
-		CheckedBinaryOperator<Integer> add = (a,b) -> a+b;
+		CheckedBinaryOperator<Integer> add = (a, b) -> a + b;
 
 		BinaryOperator<Integer> op = uncheckBinaryOperator(add);
 		Integer applied = op.apply(2, 2);
-		
-		assertThat(applied, is( equalTo( 4 )));
+
+		assertThat(applied, is(equalTo(4)));
 	}
 
 
@@ -320,12 +338,14 @@ public class ExceptionalTest {
 	public void uncheckedFunctionThrows()
 	{
 		Exception kaboom = new IOException();
-		thrown.expect( is( instanceOf( UncheckedIOException.class )));
-		thrown.expectCause( is( sameInstance( kaboom )));
-		
-		CheckedFunction<String, Integer> checked = a -> { throw kaboom; };
+		thrown.expect(is(instanceOf(UncheckedIOException.class)));
+		thrown.expectCause(is(sameInstance(kaboom)));
+
+		CheckedFunction<String, Integer> checked = a -> {
+			throw kaboom;
+		};
 		Function<String, Integer> func = uncheckFunction(checked);
-		
+
 		func.apply("oops");
 	}
 
@@ -337,8 +357,8 @@ public class ExceptionalTest {
 
 		Function<String, Integer> function = uncheckFunction(checked);
 		Integer applied = function.apply("42");
-		
-		assertThat(applied, is( equalTo( 42 )));
+
+		assertThat(applied, is(equalTo(42)));
 	}
 
 
@@ -346,12 +366,14 @@ public class ExceptionalTest {
 	public void uncheckedToIntFunctionThrows()
 	{
 		Exception kaboom = new IOException();
-		thrown.expect( is( instanceOf( UncheckedIOException.class )));
-		thrown.expectCause( is( sameInstance( kaboom )));
-		
-		CheckedToIntFunction<String> checked = a -> { throw kaboom; };
+		thrown.expect(is(instanceOf(UncheckedIOException.class)));
+		thrown.expectCause(is(sameInstance(kaboom)));
+
+		CheckedToIntFunction<String> checked = a -> {
+			throw kaboom;
+		};
 		ToIntFunction<String> func = uncheckToIntFunction(checked);
-		
+
 		func.applyAsInt("oops");
 	}
 
@@ -363,8 +385,8 @@ public class ExceptionalTest {
 
 		ToIntFunction<String> function = uncheckToIntFunction(checked);
 		int applied = function.applyAsInt("42");
-		
-		assertThat(applied, is( equalTo( 42 )));
+
+		assertThat(applied, is(equalTo(42)));
 	}
 
 
@@ -372,12 +394,14 @@ public class ExceptionalTest {
 	public void uncheckedToDoubleFunctionThrows()
 	{
 		Exception kaboom = new IOException();
-		thrown.expect( is( instanceOf( UncheckedIOException.class )));
-		thrown.expectCause( is( sameInstance( kaboom )));
-		
-		CheckedToDoubleFunction<String> checked = a -> { throw kaboom; };
+		thrown.expect(is(instanceOf(UncheckedIOException.class)));
+		thrown.expectCause(is(sameInstance(kaboom)));
+
+		CheckedToDoubleFunction<String> checked = a -> {
+			throw kaboom;
+		};
 		ToDoubleFunction<String> func = uncheckToDoubleFunction(checked);
-		
+
 		func.applyAsDouble("oops");
 	}
 
@@ -389,8 +413,8 @@ public class ExceptionalTest {
 
 		ToDoubleFunction<String> function = uncheckToDoubleFunction(checked);
 		double applied = function.applyAsDouble("42");
-		
-		assertThat(applied, is( equalTo( 42D )));
+
+		assertThat(applied, is(equalTo(42D)));
 	}
 
 
@@ -398,12 +422,14 @@ public class ExceptionalTest {
 	public void uncheckedToLongFunctionThrows()
 	{
 		Exception kaboom = new IOException();
-		thrown.expect( is( instanceOf( UncheckedIOException.class )));
-		thrown.expectCause( is( sameInstance( kaboom )));
-		
-		CheckedToLongFunction<String> checked = a -> { throw kaboom; };
+		thrown.expect(is(instanceOf(UncheckedIOException.class)));
+		thrown.expectCause(is(sameInstance(kaboom)));
+
+		CheckedToLongFunction<String> checked = a -> {
+			throw kaboom;
+		};
 		ToLongFunction<String> func = uncheckToLongFunction(checked);
-		
+
 		func.applyAsLong("oops");
 	}
 
@@ -415,51 +441,28 @@ public class ExceptionalTest {
 
 		ToLongFunction<String> function = uncheckToLongFunction(checked);
 		long applied = function.applyAsLong("42");
-		
-		assertThat(applied, is( equalTo( 42L )));
+
+		assertThat(applied, is(equalTo(42L)));
 	}
-
-
-//	@Test
-//	public void swallowsCheckedRunnablesButSetsInterruptFlag()
-//	{
-//		assumeFalse(currentThread().isInterrupted());
-//		
-//		AtomicBoolean invoked = new AtomicBoolean(false);
-//		
-//		swallow(() -> { invoked.set(true); throw new InterruptedException(); });
-//		
-//		assertThat(invoked.get(), is( true ));
-//		assertThat(currentThread().isInterrupted(), is( true ));
-//	}
-//
-//
-//	@Test
-//	public void swallowExecutesCheckedRunnable()
-//	{
-//		AtomicBoolean invoked = new AtomicBoolean(false);
-//		
-//		swallow(() -> invoked.set(true));
-//		
-//		assertThat(invoked.get(), is( true ));
-//	}
 
 
 	@SuppressWarnings("unchecked")
 	@Test
 	public void unwrapCheckedInvocationException()
 	{
-		InvocationHandler handler = (proxy, method, args) -> { throw new IOException("Computer says no"); };
-		
+		InvocationHandler handler = (proxy, method, args) -> {
+			throw new IOException("Computer says no");
+		};
+
 		Comparable<Object> proxy = createComparableProxy(handler);
-		
+
 		try {
 			proxy.compareTo(new Object());
 			fail();
 		} catch(Throwable t) {
 			Throwable unwrapped = unwrap(t);
-			assertThat(unwrapped, instanceOf( IOException.class ));
-			assertThat(unwrapped.getSuppressed(), arrayContaining( instanceOf( UndeclaredThrowableException.class )));
+			assertThat(unwrapped, instanceOf(IOException.class));
+			assertThat(unwrapped.getSuppressed(), arrayContaining(instanceOf(UndeclaredThrowableException.class)));
 		}
 	}
 
@@ -467,24 +470,26 @@ public class ExceptionalTest {
 	@SuppressWarnings("unchecked")
 	private Comparable<Object> createComparableProxy(InvocationHandler handler)
 	{
-		return (Comparable<Object>) Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[]{ Comparable.class }, handler);
+		return (Comparable<Object>) Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[] { Comparable.class }, handler);
 	}
 
 
 	@Test
 	public void nothingToUnwrapForUncheckedInvocationException()
 	{
-		InvocationHandler handler = (proxy, method, args) -> { throw new IllegalStateException("Computer says no"); };
-		
+		InvocationHandler handler = (proxy, method, args) -> {
+			throw new IllegalStateException("Computer says no");
+		};
+
 		Comparable<Object> proxy = createComparableProxy(handler);
-		
+
 		try {
 			proxy.compareTo(new Object());
 			fail();
 		} catch(Throwable t) {
 			Throwable unwrapped = unwrap(t);
-			assertThat(unwrapped, instanceOf( IllegalStateException.class ));
-			assertThat(unwrapped, is( equalTo( t )));
+			assertThat(unwrapped, instanceOf(IllegalStateException.class));
+			assertThat(unwrapped, is(equalTo(t)));
 		}
 	}
 
@@ -499,44 +504,44 @@ public class ExceptionalTest {
 				throw new IllegalArgumentException("I don't declare any args anyway");
 			}
 		}
-		
+
 		BadlyBehaved bad = new BadlyBehaved();
-		
+
 		try {
 			BadlyBehaved.class.getMethod("seeminglyInnocuous").invoke(bad);
 			fail();
-		} catch (Throwable thrown) {
+		} catch(Throwable thrown) {
 			Throwable unwrap = unwrap(thrown);
-			
-			assertThat(thrown, is( instanceOf( InvocationTargetException.class )));
-			assertThat(unwrap, is( instanceOf( IllegalArgumentException.class )));
-			assertThat(unwrap.getSuppressed(), arrayContaining( thrown ));
+
+			assertThat(thrown, is(instanceOf(InvocationTargetException.class)));
+			assertThat(unwrap, is(instanceOf(IllegalArgumentException.class)));
+			assertThat(unwrap.getSuppressed(), arrayContaining(thrown));
 		}
 	}
-	
-	
+
+
 	@Test
 	public void nothingIsThrownWhenRunnableExecutesNormally()
 	{
 		AtomicBoolean executed = new AtomicBoolean(false);
-		
+
 		run(() -> executed.set(true));
-		
-		assertThat(executed.get(), is( true ));
+
+		assertThat(executed.get(), is(true));
 	}
-	
-	
+
+
 	@Test
 	public void nothingIsThrownWhenCallableExecutesNormally()
 	{
 		final int value = 42;
-		
+
 		Integer result = get(() -> value);
-		
-		assertThat(result, is( equalTo( value )));
+
+		assertThat(result, is(equalTo(value)));
 	}
-	
-	
+
+
 	@Test
 	public void cannotConstructWithoutObjenesis() throws Exception
 	{
@@ -546,7 +551,7 @@ public class ExceptionalTest {
 			constructor.newInstance();
 			fail();
 		} catch(InvocationTargetException e) {
-			assertThat(unwrap(e), is( instanceOf( IllegalStateException.class )));
+			assertThat(unwrap(e), is(instanceOf(IllegalStateException.class)));
 		}
 	}
 
@@ -556,11 +561,13 @@ public class ExceptionalTest {
 	{
 		final IllegalArgumentException thrown = new IllegalArgumentException("noo");
 		try {
-			Callable<String> action = () -> {throw thrown;};
+			Callable<String> action = () -> {
+				throw thrown;
+			};
 			call(action);
 			fail();
 		} catch(Exception caught) {
-			assertThat(caught, is( sameInstance( thrown )));
+			assertThat(caught, is(sameInstance(thrown)));
 		}
 	}
 
@@ -570,12 +577,14 @@ public class ExceptionalTest {
 	{
 		final IOException thrown = new IOException("noo");
 		try {
-			Callable<String> action = () -> {throw thrown;};
+			Callable<String> action = () -> {
+				throw thrown;
+			};
 			call(action);
 			fail();
 		} catch(Exception caught) {
-			assertThat(caught, is( instanceOf( UncheckedIOException.class )));
-			assertThat(caught.getCause(), is( sameInstance( thrown )));
+			assertThat(caught, is(instanceOf(UncheckedIOException.class)));
+			assertThat(caught.getCause(), is(sameInstance(thrown)));
 		}
 	}
 
@@ -585,12 +594,14 @@ public class ExceptionalTest {
 	{
 		final InstantiationException thrown = new InstantiationException("noo");
 		try {
-			Callable<String> action = () -> {throw thrown;};
+			Callable<String> action = () -> {
+				throw thrown;
+			};
 			call(action);
 			fail();
 		} catch(Exception caught) {
-			assertThat(caught, is( instanceOf( UncheckedReflectiveException.class )));
-			assertThat(caught.getCause(), is( sameInstance( thrown )));
+			assertThat(caught, is(instanceOf(UncheckedReflectiveException.class)));
+			assertThat(caught.getCause(), is(sameInstance(thrown)));
 		}
 	}
 
@@ -600,12 +611,14 @@ public class ExceptionalTest {
 	{
 		final KeyManagementException thrown = new KeyManagementException("noo");
 		try {
-			CheckedRunnable action = () -> {throw thrown;};
+			CheckedRunnable action = () -> {
+				throw thrown;
+			};
 			run(action);
 			fail();
 		} catch(Exception caught) {
-			assertThat(caught, is( instanceOf( UncheckedSecurityException.class )));
-			assertThat(caught.getCause(), is( sameInstance( thrown )));
+			assertThat(caught, is(instanceOf(UncheckedSecurityException.class)));
+			assertThat(caught.getCause(), is(sameInstance(thrown)));
 		}
 	}
 
@@ -615,12 +628,14 @@ public class ExceptionalTest {
 	{
 		final Exception thrown = new Exception("noo");
 		try {
-			CheckedRunnable action = () -> {throw thrown;};
+			CheckedRunnable action = () -> {
+				throw thrown;
+			};
 			run(action);
 			fail();
 		} catch(Exception caught) {
-			assertThat(caught, is( instanceOf( UncheckedException.class )));
-			assertThat(caught.getCause(), is( sameInstance( thrown )));
+			assertThat(caught, is(instanceOf(UncheckedException.class)));
+			assertThat(caught.getCause(), is(sameInstance(thrown)));
 		}
 	}
 
@@ -630,17 +645,17 @@ public class ExceptionalTest {
 	{
 		String earl = "http://example.com/which/path/to/persia?they-never-mention=peace&love";
 		URL url = url(earl);
-		
-		assertThat(url.toString(), is( equalTo( earl )));
+
+		assertThat(url.toString(), is(equalTo(earl)));
 	}
 
 
 	@Test
 	public void invalidUrlStringThrownAsUnchecked()
 	{
-		thrown.expect( is( instanceOf( UncheckedIOException.class )));
-		thrown.expectCause( is( instanceOf( MalformedURLException.class )));
-		
+		thrown.expect(is(instanceOf(UncheckedIOException.class)));
+		thrown.expectCause(is(instanceOf(MalformedURLException.class)));
+
 		url("http ://bad/protocol");
 	}
 
@@ -650,19 +665,19 @@ public class ExceptionalTest {
 	{
 		String path = "/the/road/of/excess/leads/to/the/palace/of/wisdom";
 		String earl = "https://williamblake.com:8443" + path;
-		
+
 		URL url = url("https", "williamblake.com", 8443, path, null);
-		
-		assertThat(url.toString(), is( equalTo( earl )));
+
+		assertThat(url.toString(), is(equalTo(earl)));
 	}
 
 
 	@Test
 	public void invalidUrlThrownAsUnchecked()
 	{
-		thrown.expect( is( instanceOf( UncheckedIOException.class )));
-		thrown.expectCause( is( instanceOf( MalformedURLException.class )));
-		
+		thrown.expect(is(instanceOf(UncheckedIOException.class)));
+		thrown.expectCause(is(instanceOf(MalformedURLException.class)));
+
 		url("gobbledygook", "horrid-books.com", 80, "/which/path/to/persia?they-never-mention=peace&love", null);
 	}
 
@@ -672,17 +687,17 @@ public class ExceptionalTest {
 	{
 		String yuri = "http://example.com/path";
 		URI uri = uri(yuri);
-		
-		assertThat(uri.toString(), is( equalTo( yuri )));
+
+		assertThat(uri.toString(), is(equalTo(yuri)));
 	}
 
 
 	@Test
 	public void invalidUriThrownAsUnchecked()
 	{
-		thrown.expect( is( instanceOf( UncheckedException.class )));
-		thrown.expectCause( is( instanceOf( URISyntaxException.class )));
-		
+		thrown.expect(is(instanceOf(UncheckedException.class)));
+		thrown.expectCause(is(instanceOf(URISyntaxException.class)));
+
 		uri("http://this is not a valid URI");
 	}
 
@@ -691,8 +706,8 @@ public class ExceptionalTest {
 	public void rethrowingUncaughtExceptionHandlerRethrows()
 	{
 		NullPointerException exception = new NullPointerException();
-		thrown.expect( sameInstance( exception ));
-		
+		thrown.expect(sameInstance(exception));
+
 		RETHROWING.uncaughtException(currentThread(), exception);
 	}
 
@@ -702,8 +717,8 @@ public class ExceptionalTest {
 	{
 		IOException exception = new IOException();
 		thrown.expect(UncheckedIOException.class);
-		thrown.expectCause( sameInstance( exception ));
-		
+		thrown.expectCause(sameInstance(exception));
+
 		RETHROWING.uncaughtException(currentThread(), exception);
 	}
 
@@ -719,7 +734,7 @@ public class ExceptionalTest {
 	public void swallowingUncaughtExceptionHandlerRethrowsErrors()
 	{
 		ThreadDeath error = new ThreadDeath();
-		thrown.expect( sameInstance( error ));
+		thrown.expect(sameInstance(error));
 
 		SWALLOWING.uncaughtException(currentThread(), error);
 	}
@@ -729,11 +744,13 @@ public class ExceptionalTest {
 	public void callableUncheckedThrows()
 	{
 		CertificateException ioe = new CertificateException();
-		Callable<String> callable = () -> {throw ioe;};
-		
+		Callable<String> callable = () -> {
+			throw ioe;
+		};
+
 		thrown.expect(UncheckedSecurityException.class);
-		thrown.expectCause( sameInstance( ioe ));
-		
+		thrown.expectCause(sameInstance(ioe));
+
 		call(callable);
 	}
 
@@ -742,11 +759,13 @@ public class ExceptionalTest {
 	public void runnableUncheckedThrows()
 	{
 		IllegalAccessException iae = new IllegalAccessException();
-		CheckedRunnable checked = () -> {throw iae;};
-		
+		CheckedRunnable checked = () -> {
+			throw iae;
+		};
+
 		thrown.expect(UncheckedReflectiveException.class);
-		thrown.expectCause( sameInstance( iae ));
-		
+		thrown.expectCause(sameInstance(iae));
+
 		Runnable unchecked = uncheckRunnable(checked);
 		unchecked.run();
 	}
@@ -756,12 +775,12 @@ public class ExceptionalTest {
 	public void callableUncheckedCalled()
 	{
 		final String value = "hello there, how's tricks?";
-		
+
 		Callable<String> callable = () -> value;
-		
+
 		String called = call(callable);
-		
-		assertThat(called, is( equalTo( value )));
+
+		assertThat(called, is(equalTo(value)));
 	}
 
 
@@ -769,23 +788,23 @@ public class ExceptionalTest {
 	public void runnableUncheckedRan()
 	{
 		final AtomicBoolean ran = new AtomicBoolean(false);
-		
+
 		CheckedRunnable runnable = () -> ran.set(true);
-		
+
 		run(runnable);
-		
-		assertThat(ran.get(), is( true ));
+
+		assertThat(ran.get(), is(true));
 	}
 
-	
+
 	@Test
 	public void functionApplied()
 	{
 		CheckedFunction<String, Integer> function = Integer::parseInt;
-		
+
 		Integer fortyTwo = apply(function, "42");
-		
-		assertThat(fortyTwo, is( 42 ));
+
+		assertThat(fortyTwo, is(42));
 	}
 
 
@@ -793,9 +812,9 @@ public class ExceptionalTest {
 	public void functionThrowsUnchecked()
 	{
 		thrown.expect(NumberFormatException.class);
-		
+
 		CheckedFunction<String, Integer> function = Integer::parseInt;
-		
+
 		apply(function, "forty two");
 	}
 
@@ -804,8 +823,8 @@ public class ExceptionalTest {
 	public void closeAfterApplyingSucceeds()
 	{
 		int openPort = closeAfterApplying(ServerSocket::new, 0, ServerSocket::getLocalPort);
-		
-		assertThat(openPort, is( greaterThan( 0 )));
+
+		assertThat(openPort, is(greaterThan(0)));
 	}
 
 
@@ -813,13 +832,13 @@ public class ExceptionalTest {
 	public void closeAfterAcceptingWhenCreateThrows()
 	{
 		AtomicBoolean wasCalled = new AtomicBoolean(false);
-		
+
 		try {
 			closeAfterAccepting(ServerSocket::new, Integer.MAX_VALUE, c -> wasCalled.set(true));
 			fail();
 		} catch(IllegalArgumentException e) {}
-		
-		assertThat(wasCalled.get(), is( false ));
+
+		assertThat(wasCalled.get(), is(false));
 	}
 
 
@@ -833,10 +852,10 @@ public class ExceptionalTest {
 			closeAfterAccepting(new ThrowsAtClosingTime(exception), c -> wasCalled.set(true));
 			fail();
 		} catch(UncheckedIOException e) {
-			assertThat(e.getCause(), is( sameInstance( exception )));
+			assertThat(e.getCause(), is(sameInstance(exception)));
 		}
-		
-		assertThat(wasCalled.get(), is( true ));
+
+		assertThat(wasCalled.get(), is(true));
 	}
 
 
@@ -847,13 +866,16 @@ public class ExceptionalTest {
 		IOException exception = new IOException("24/7, never closes");
 
 		try {
-			closeAfterApplying(ThrowsAtClosingTime::new, exception, c -> { wasCalled.set(true); return null;});
+			closeAfterApplying(ThrowsAtClosingTime::new, exception, c -> {
+				wasCalled.set(true);
+				return null;
+			});
 			fail();
 		} catch(UncheckedIOException e) {
-			assertThat(e.getCause(), is( sameInstance( exception )));
+			assertThat(e.getCause(), is(sameInstance(exception)));
 		}
-		
-		assertThat(wasCalled.get(), is( true ));
+
+		assertThat(wasCalled.get(), is(true));
 	}
 
 
@@ -862,8 +884,8 @@ public class ExceptionalTest {
 	{
 		ServerSocket socket = createRandomPortServerSocket();
 		closeAfterApplying(socket, ServerSocket::getLocalPort);
-		
-		assertThat(socket.isClosed(), is( true ));
+
+		assertThat(socket.isClosed(), is(true));
 	}
 
 
@@ -873,13 +895,15 @@ public class ExceptionalTest {
 		IOException checked = new IOException("whooosh, bang");
 		ServerSocket socket = createRandomPortServerSocket();
 		try {
-			closeAfterApplying(socket, s -> { throw checked;});
+			closeAfterApplying(socket, s -> {
+				throw checked;
+			});
 			fail();
 		} catch(UncheckedIOException e) {
-			assertThat(e.getCause(), is( sameInstance( checked )));
+			assertThat(e.getCause(), is(sameInstance(checked)));
 		}
-		
-		assertThat(socket.isClosed(), is( true ));
+
+		assertThat(socket.isClosed(), is(true));
 	}
 
 
@@ -888,8 +912,8 @@ public class ExceptionalTest {
 	{
 		AtomicReference<ObjectOutputStream> ref = new AtomicReference<>();
 		closeAfterAccepting(ObjectOutputStream::new, new ByteArrayOutputStream(), ref::set);
-		
-		assertThat(ref.get(), is( notNullValue() ));
+
+		assertThat(ref.get(), is(notNullValue()));
 	}
 
 
@@ -898,11 +922,13 @@ public class ExceptionalTest {
 	{
 		ServerSocket socket = createRandomPortServerSocket();
 		try {
-			closeAfterAccepting(socket, c -> { throw new IOException("nay hungry, nay acceptin' that");});
+			closeAfterAccepting(socket, c -> {
+				throw new IOException("nay hungry, nay acceptin' that");
+			});
 			fail();
 		} catch(Exception e) {}
-		
-		assertThat(socket.isClosed(), is( true ));
+
+		assertThat(socket.isClosed(), is(true));
 	}
 
 
@@ -917,12 +943,14 @@ public class ExceptionalTest {
 	{
 		ServerSocket socket = createRandomPortServerSocket();
 		try {
-			closeAfterAccepting(socket, c -> { throw new InterruptedException("'scuse me!");});
+			closeAfterAccepting(socket, c -> {
+				throw new InterruptedException("'scuse me!");
+			});
 			fail();
 		} catch(Exception e) {}
-		
-		assertThat(socket.isClosed(), is( true ));
-		assertThat(Thread.currentThread().isInterrupted(), is( true ));
+
+		assertThat(socket.isClosed(), is(true));
+		assertThat(Thread.currentThread().isInterrupted(), is(true));
 	}
 
 
@@ -935,8 +963,8 @@ public class ExceptionalTest {
 			fail();
 		} catch(NullPointerException npe) {}
 	}
-	
-	
+
+
 	private static int cmp(String a, String b)
 	{
 		return a.compareTo(b);
@@ -948,6 +976,6 @@ public class ExceptionalTest {
 	{
 		ToIntBiFunction<String, String> fn = uncheckToIntBiFunction(ExceptionalTest::cmp);
 		int cmp = fn.applyAsInt("a", "a");
-		assertThat(cmp, is( 0 ));
+		assertThat(cmp, is(0));
 	}
 }

@@ -9,15 +9,14 @@ import io.earcam.unexceptional.UncheckedException;
 
 public class UncheckedExceptionTest {
 
-
 	@Test
 	public void message()
 	{
 		String message = "message";
 		UncheckedException e = new UncheckedException(message);
-		
+
 		assertThat(e.getMessage(), is(message));
-		assertThat(e.getCause(), is( nullValue() ));
+		assertThat(e.getCause(), is(nullValue()));
 	}
 
 
@@ -26,9 +25,9 @@ public class UncheckedExceptionTest {
 	{
 		Throwable cause = new Throwable();
 		UncheckedException e = new UncheckedException(cause);
-		
+
 		assertThat(e.getCause(), is(cause));
-		assertThat(e.getMessage(), is( Throwable.class.getCanonicalName() ));
+		assertThat(e.getMessage(), is(Throwable.class.getCanonicalName()));
 	}
 
 
@@ -38,8 +37,8 @@ public class UncheckedExceptionTest {
 		String message = "message";
 		Throwable cause = new Throwable();
 		UncheckedException e = new UncheckedException(message, cause);
-		
+
 		assertThat(e.getCause(), is(cause));
-		assertThat(e.getMessage(), is( message ));
+		assertThat(e.getMessage(), is(message));
 	}
 }

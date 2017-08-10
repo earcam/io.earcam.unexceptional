@@ -25,6 +25,7 @@ public class UncheckedException extends RuntimeException {
 
 	/**
 	 * see {@link RuntimeException#RuntimeException(String)}
+	 * 
 	 * @param message the detail message
 	 */
 	public UncheckedException(String message)
@@ -35,6 +36,7 @@ public class UncheckedException extends RuntimeException {
 
 	/**
 	 * see {@link RuntimeException#RuntimeException(String, Throwable)}
+	 * 
 	 * @param message the detail message
 	 * @param cause the underlying cause
 	 */

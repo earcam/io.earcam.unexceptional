@@ -7,6 +7,7 @@ public class UncheckedReflectiveException extends UncheckedException {
 
 	private static final long serialVersionUID = 5579177178944916001L;
 
+
 	/**
 	 * see {@link UncheckedException#UncheckedException(Throwable)}
 	 * 
