@@ -31,30 +31,28 @@
 	<inceptionYear>2016</inceptionYear>
 
 	<scm>
-		<connection>scm:git:git://github.com/${coordinate.username.project}.git</connection>
-		<developerConnection>scm:git:ssh://github.com:${coordinate.username.project}.git</developerConnection>
-		<url>http://github.com/${coordinate.username.project}/tree/master</url>
+		<connection>scm:git:git://bitbucket.com/${coordinate.username.project}.git</connection>
+		<developerConnection>scm:git:ssh://bitbucket.com:${coordinate.username.project}.git</developerConnection>
+		<url>http://bitbucket.com/${coordinate.username.project}/tree/master</url>
 	  <tag>HEAD</tag>
 	</scm>
 
 	<ciManagement>
-		<system>Jenkins</system>
+		<system>Travis</system>
 		<url>https://travis-ci.org/${coordinate.username.project}</url>
 	</ciManagement>
 
 	<issueManagement>
-		<system>GitHub</system>
-		<url>http://github.com/${coordinate.username.project}/issues</url>
+		<system>BitBucket</system>
+		<url>https://bitbucket.org/${coordinate.username.project}/issues</url>
 	</issueManagement>
 
 	<distributionManagement>
 		<site>
-			<id>github</id>
-			<name>Deployment through GitHub's site deployment plugin</name>
-			<url>http://earcam.github.io/${project.artifactId}</url>
+			<id>netlify</id>
+			<url>https://unexceptional.earcam.io</url>
 		</site>
 	</distributionManagement>
-
 
 	<dependencies>
 		<dependency>
