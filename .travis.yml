@@ -34,5 +34,5 @@ install:
 before_script:
 - mvn -v
 script:
-- mvn -U -P analyse,site clean install site:site org.sonarsource.scanner.maven:sonar-maven-plugin:LATEST:sonar
+- mvn -U -P analyse,report,sonar clean install
 after_success: bash <(curl -s https://codecov.io/bash)
