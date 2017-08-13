@@ -56,10 +56,10 @@ Please use responsibly, always consider if a raised exception can actually be ha
 	<li><a class="externalLink" href="https://maven-badges.herokuapp.com/maven-central/io.earcam/io.earcam.unexceptional" title="Maven Central"><img src="https://maven-badges.herokuapp.com/maven-central/io.earcam/io.earcam.unexceptional/badge.svg" alt="Maven Central" /></a></li>
 	<li><a class="externalLink" href="http://www.javadoc.io/doc/io.earcam/io.earcam.unexceptional" title="JavaDoc"><img src="https://www.javadoc.io/badge/io.earcam/io.earcam.unexceptional.svg?color=green" alt="JavaDoc" /></a></li>
 	<li><a class="externalLink" href="https://travis-ci.org/earcam/io.earcam.unexceptional" title="Travis CI"><img src="https://travis-ci.org/earcam/io.earcam.unexceptional.svg?branch=master" alt="Travis CI" /></a></li>
-	<!-- shelving Circle CI for now
+	<!-- other CI
 	<li><a class="externalLink" href="https://circleci.com/gh/earcam/io.earcam.unexceptional" title="Circle CI"><img src="https://circleci.com/gh/earcam/io.earcam.unexceptional.svg?style=svg" alt="Circle CI" /></a></li>
-	-->
 	<li><a href="https://ci.appveyor.com/project/earcam/io-earcam-unexceptional"><img src="https://ci.appveyor.com/api/projects/status/iwsmbc4n61m79ac4?svg=true"/></a></li>
+	-->
 	<li><a class="externalLink" href="https://sonarcloud.io/dashboard?id=io.earcam%3Aio.earcam.unexceptional" title="SonarQube Quality Gate"><img src="https://sonarcloud.io/api/badges/gate?key=io.earcam%3Aio.earcam.unexceptional" alt="Sonar Quality Gate" /></a></li>
 	<li><a class="externalLink" href="https://codecov.io/github/earcam/io.earcam.unexceptional?branch=master" title="CodeCov"><img src="https://codecov.io/github/earcam/io.earcam.unexceptional/coverage.svg?branch=master" alt="CodeCov" /></a></li>
 	<li><a href="https://scan.coverity.com/projects/earcam-io-earcam-unexceptional"><img alt="Coverity Scan Build Status" src="https://scan.coverity.com/projects/13461/badge.svg"/></a></li>
