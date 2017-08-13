@@ -63,9 +63,9 @@ Please use responsibly, always consider if a raised exception can actually be ha
 	<li><a class="externalLink" href="https://sonarcloud.io/dashboard?id=io.earcam%3Aio.earcam.unexceptional" title="SonarQube Quality Gate"><img src="https://sonarcloud.io/api/badges/gate?key=io.earcam%3Aio.earcam.unexceptional" alt="Sonar Quality Gate" /></a></li>
 	<li><a class="externalLink" href="https://codecov.io/github/earcam/io.earcam.unexceptional?branch=master" title="CodeCov"><img src="https://codecov.io/github/earcam/io.earcam.unexceptional/coverage.svg?branch=master" alt="CodeCov" /></a></li>
 	<li><a href="https://scan.coverity.com/projects/earcam-io-earcam-unexceptional"><img alt="Coverity Scan Build Status" src="https://scan.coverity.com/projects/13461/badge.svg"/></a></li>
-	<li><a href="https://bestpractices.coreinfrastructure.org/projects/1177"><img src="https://bestpractices.coreinfrastructure.org/projects/1177/badge"></a></li>
-	<li><a href="https://bitbucket.org/earcam/io.earcam.unexceptional/issues" title="Average time to resolve an issue"><img src="https://isitmaintained.com/badge/resolution/earcam/io.earcam.unexceptional.svg" alt="Average time to resolve an issue"></a></li>
-	<li><a href="https://bitbucket.org/earcam/io.earcam.unexceptional/issues?status=open" title="Percentage of issues still open"><img src="https://isitmaintained.com/badge/open/earcam/io.earcam.unexceptional.svg" alt="Percentage of issues still open"></a></li>
+	<li><a href="https://bestpractices.coreinfrastructure.org/projects/1177"><img src="https://bestpractices.coreinfrastructure.org/projects/1177/badge"/></a></li>
+	<li><a href="https://bitbucket.org/earcam/io.earcam.unexceptional/issues" title="Average time to resolve an issue"><img src="https://isitmaintained.com/badge/resolution/earcam/io.earcam.unexceptional.svg" alt="Average time to resolve an issue"/></a></li>
+	<li><a href="https://bitbucket.org/earcam/io.earcam.unexceptional/issues?status=open" title="Percentage of issues still open"><img src="https://isitmaintained.com/badge/open/earcam/io.earcam.unexceptional.svg" alt="Percentage of issues still open"/></a></li>
 </ul>
 
 <br/>

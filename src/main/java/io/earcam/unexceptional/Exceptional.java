@@ -69,11 +69,10 @@ import javax.annotation.concurrent.Immutable;
  * 1. unusual; not typical.
  * </p>
  */
+@SuppressWarnings("serial")
 @ParametersAreNonnullByDefault
 @Immutable
 public final class Exceptional implements Serializable {
-
-	private static final long serialVersionUID = -5749920534973388856L;
 
 	private static final Map<Class<? extends Throwable>, Function<Throwable, RuntimeException>> UNCHECK_MAP;
 

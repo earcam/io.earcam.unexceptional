@@ -673,6 +673,17 @@ public class ExceptionalTest {
 
 
 	@Test
+	public void validUrlToUri() throws MalformedURLException
+	{
+		String earl = "https://williamblake.com:8443/the/road/of/excess/leads/to/the/palace/of/wisdom";
+
+		URI uri = Exceptional.uri(new URL(earl));
+
+		assertThat(uri.toString(), is(equalTo(earl)));
+	}
+
+
+	@Test
 	public void invalidUrlThrownAsUnchecked()
 	{
 		thrown.expect(is(instanceOf(UncheckedIOException.class)));
@@ -685,7 +696,7 @@ public class ExceptionalTest {
 	@Test
 	public void validUri()
 	{
-		String yuri = "http://example.com/path";
+		String yuri = "mailto:bob@fe.tt";
 		URI uri = uri(yuri);
 
 		assertThat(uri.toString(), is(equalTo(yuri)));
