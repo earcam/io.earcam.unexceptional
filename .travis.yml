@@ -33,6 +33,8 @@ install:
 - chmod go-rwx -R $HOME/.m2
 before_script:
 - mvn -v
+- wget https://bitbucket.org/earcam/io.earcam.maven/src/master/io.earcam.maven.configuration/src/main/resources/settings.xml -O $HOME/ci-settings.xml 
+- mvn --settings $HOME/ci-settings.xml -Dartifact='io.earcam.maven:io.earcam.maven.configuration:[0,)' -DremoteRepositories=https://oss.sonatype.org/content/repositories/snapshots org.apache.maven.plugins:maven-dependency-plugin:3.0.1:get
 script:
-- mvn -U -P analyse,report,sonar clean install
+- mvn -U -P analyse,report,sonar
 after_success: bash <(curl -s https://codecov.io/bash)

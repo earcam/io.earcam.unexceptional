@@ -8,7 +8,7 @@ Examples for various OS/architectures can be found [here][maven-central-earcam-t
 With toolchains configured, run `mvn clean install`.
 
 When modifying the code beware/be-aware the build will fail if Maven POMs, Java source or Javascript source aren't formatted according to conventions (Apache 
-Maven's standards for POMs, my own undocumented formatting for source).  To auto-format the lot, simply run `mvn -P tidy clean install`.
+Maven's standards for POMs, my own undocumented formatting for source).  To auto-format the lot, simply run `mvn -P '!strict,tidy'`.
 
 To run PiTest use `mvn -P analyze clean install`
 
