@@ -28,13 +28,12 @@ before_install:
 - export M2_HOME=$HOME/apache-maven-3.5.0
 - if [ ! -d $M2_HOME/bin ]; then curl https://archive.apache.org/dist/maven/maven-3/3.5.0/binaries/apache-maven-3.5.0-bin.tar.gz | tar zxf - -C $HOME; fi
 - export PATH=$M2_HOME/bin:$PATH
-- wget https://raw.githubusercontent.com/earcam/io.earcam.maven/master/io.earcam.maven.toolchain/src/main/resources/toolchain/continuous-integration-hotspot-linux-debian-amd64.xml -O  ~/.m2/toolchains.xml
 install:
 - chmod go-rwx -R $HOME/.m2
 before_script:
-- mvn -v
+- wget https://bitbucket.org/earcam/io.earcam.maven/raw/master/io.earcam.maven.toolchain/src/main/resources/toolchain/continuous-integration-hotspot-linux-debian-amd64.xml -O  ~/.m2/toolchains.xml
 - wget https://bitbucket.org/earcam/io.earcam.maven/raw/master/io.earcam.maven.configuration/src/main/resources/settings.xml -O $HOME/ci-settings.xml 
-- mvn --settings $HOME/ci-settings.xml -Dartifact='io.earcam.maven:io.earcam.maven.configuration:[0,)' -DremoteRepositories=https://oss.sonatype.org/content/repositories/snapshots org.apache.maven.plugins:maven-dependency-plugin:3.0.1:get
+- mvn -v
 script:
-- mvn -U -P analyse,report,sonar
+- mvn --settings $HOME/ci-settings.xml -U -P analyse,report,sonar
 after_success: bash <(curl -s https://codecov.io/bash)
