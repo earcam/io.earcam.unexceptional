@@ -18,10 +18,10 @@
 	<inceptionYear>2016</inceptionYear>
 
 	<scm>
-		<connection>scm:git:git://bitbucket.com/${coordinate.username.project}.git</connection>
-		<developerConnection>scm:git:ssh://bitbucket.com:${coordinate.username.project}.git</developerConnection>
-		<url>http://bitbucket.com/${coordinate.username.project}/tree/master</url>
-	  <tag>HEAD</tag>
+		<connection>scm:git:ssh://git@bitbucket.org/${coordinate.username.project}.git</connection>
+		<developerConnection>scm:git:ssh://git@bitbucket.org/${coordinate.username.project}.git</developerConnection>
+		<url>http://bitbucket.org/${coordinate.username.project}.git</url>
+		<tag>HEAD</tag>
 	</scm>
 	<issueManagement>
 		<system>BitBucket</system>
