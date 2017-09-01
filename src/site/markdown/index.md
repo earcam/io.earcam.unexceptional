@@ -56,7 +56,8 @@ Please use responsibly, always consider if a raised exception can actually be ha
 	<li><a class="externalLink" href="https://maven-badges.herokuapp.com/maven-central/io.earcam/io.earcam.unexceptional" title="Maven Central"><img src="https://maven-badges.herokuapp.com/maven-central/io.earcam/io.earcam.unexceptional/badge.svg" alt="Maven Central" /></a></li>
 	<li><a class="externalLink" href="http://www.javadoc.io/doc/io.earcam/io.earcam.unexceptional" title="JavaDoc"><img src="https://www.javadoc.io/badge/io.earcam/io.earcam.unexceptional.svg?color=green" alt="JavaDoc" /></a></li>
 	<li><a class="externalLink" href="https://travis-ci.org/earcam/io.earcam.unexceptional" title="Travis CI"><img src="https://travis-ci.org/earcam/io.earcam.unexceptional.svg?branch=master" alt="Travis CI" /></a></li>
-	<!-- other CI
+	<li><a class="externalLink" href="https://bitbucket.org/earcam/io.earcam.unexceptional" title="BitBucket Pipelines CI"><img src="https://bitbucket-badges.atlassian.io/badge/earcam/io.earcam.unexceptional.svg" alt="BitBucket Pipelines CI" /></a></li>
+	<!-- other CI disabled for now...
 	<li><a class="externalLink" href="https://circleci.com/gh/earcam/io.earcam.unexceptional" title="Circle CI"><img src="https://circleci.com/gh/earcam/io.earcam.unexceptional.svg?style=svg" alt="Circle CI" /></a></li>
 	<li><a href="https://ci.appveyor.com/project/earcam/io-earcam-unexceptional"><img src="https://ci.appveyor.com/api/projects/status/iwsmbc4n61m79ac4?svg=true"/></a></li>
 	-->
