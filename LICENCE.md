@@ -7,7 +7,7 @@ This project may be used in accordance with _any_ of the following:
 * <a href="https://opensource.org/licenses/BSD-3-Clause"><abbr title="Berkeley Software Distribution">BSD</abbr> 3 Clause</a>
 * <a href="https://www.eclipse.org/legal/epl-v10.html">Eclipse</a>
 * <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache</a>
-* <a href="https://www.opensource.org/licenses/MIT"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>
+* <a href="https://opensource.org/licenses/MIT"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>
 
 i.e. choose the _one_ that you prefer / best suits your needs.
 

@@ -12,7 +12,7 @@
  * 	<li><a href="https://opensource.org/licenses/BSD-3-Clause">BSD-3-Clause</a></li>
  * 	<li><a href="https://www.eclipse.org/legal/epl-v10.html">EPL-1.0</a></li>
  * 	<li><a href="https://www.apache.org/licenses/LICENSE-2.0">Apache-2.0</a></li>
- * 	<li><a href="https://www.opensource.org/licenses/MIT">MIT</a></li>
+ * 	<li><a href="https://opensource.org/licenses/MIT">MIT</a></li>
  * </ul>
  * #L%
  */
@@ -97,11 +97,12 @@ public final class Exceptional implements Serializable {
 	static {
 		Map<Class<? extends Throwable>, Function<Throwable, RuntimeException>> map = new HashMap<>();
 		// @formatter:off
-		map.put(                 IOException.class, e -> new UncheckedIOException((IOException)e));
-		map.put(    GeneralSecurityException.class, e -> new UncheckedSecurityException((GeneralSecurityException)e));
 		map.put(ReflectiveOperationException.class, e -> new UncheckedReflectiveException((ReflectiveOperationException)e));
+		map.put(    GeneralSecurityException.class, e -> new UncheckedSecurityException((GeneralSecurityException)e));
 		map.put(        InterruptedException.class, e -> new UncheckedInterruptException((InterruptedException)e));
+		map.put(          URISyntaxException.class, e -> new UncheckedUriSyntaxException((URISyntaxException)e));
 		map.put(            RuntimeException.class, RuntimeException.class::cast);
+		map.put(                 IOException.class, e -> new UncheckedIOException((IOException)e));
 		// @formatter:on
 
 		UNCHECK_MAP = unmodifiableMap(map);
@@ -141,7 +142,7 @@ public final class Exceptional implements Serializable {
 
 
 	/**
-	 * @param protocol e.g. http, ftp, stcp
+	 * @param protocol e.g. https, ftp, sctp
 	 * @param host hostname or IP
 	 * @param port 0 to 65536
 	 * @param path the "file" portion of the URL
@@ -184,8 +185,13 @@ public final class Exceptional implements Serializable {
 
 
 	/**
-	 * Will rethrow any {@link Error}, otherwise will silently swallow, resetting the
-	 * interrupt flag IFF {@code caught instanceof InterruptedException}
+	 * Will regurgitate any {@link Error} - otherwise will dutifly and silently <i>swallow</i> whole.
+	 * Gulping of {@link InterruptedException}s will result in the current {@link Thread}'s interrupt 
+	 * flag being reset. 
+	 * 
+	 * <b>Caution</b>: used carelessly/incorrectly this foul method will inevitably lead to a frustrating 
+	 * debugging session resulting in plenty of "doh"/"wtf" but never a "eurka" moment.  Shooting of 
+	 * messenger is in breach of license terms.
 	 * 
 	 * @param caught the caught unmentionable
 	 */
@@ -280,12 +286,14 @@ public final class Exceptional implements Serializable {
 
 
 	/**
-	 * Converts {@link Throwable}s to {@link RuntimeException}s. If the supplied {@link Throwable} is
-	 * already a {@link RuntimeException}, then it's simply cast and returned.
-	 * {@link Error} subclasses will be wrapped in an {@link UncheckedException}.
+	 * <p>Converts {@link Throwable}s to {@link RuntimeException}s.</p>
+	 * <p>If the supplied {@link Throwable} is already a {@link RuntimeException}, then it's simply cast and returned.</p>
+	 * <p>{@link Error} subclasses will be wrapped in an {@link UncheckedException}.</p>
+	 * <p>The interrupt flag will be reset IFF {@code caught instanceof InterruptedException}</p>
+	 * <p></p>
 	 * 
 	 * @param caught any {@link Throwable}
-	 * @return a {@link RuntimeException}, typically {@link UncheckedException}
+	 * @return a {@link RuntimeException}, typically a subclass of {@link UncheckedException} or an {@link UncheckedIOException}
 	 * @see #rethrow(Throwable)
 	 */
 	public static RuntimeException uncheck(Throwable caught)
@@ -681,11 +689,14 @@ public final class Exceptional implements Serializable {
 
 
 	/**
+	 * <p>
 	 * This fugly method relies on erasure to trick the compiler, allowing you to throw any checked
 	 * exception without declaring so on the surrounding method. You are almost certainly better off
 	 * using {@link #rethrow(Throwable)}.
-	 * 
-	 * Note: this may well become an obsolete hack in future versions of Java if generics change.
+	 * </p>
+	 * <p>
+	 * <b>Note</b>: this may well become an obsolete hack in future versions of Java if generics change.
+	 * </p>
 	 * 
 	 * @param throwable the {@link Throwable} to be thrown
 	 * @return this alleged return will never be received, but useful in that
@@ -764,11 +775,14 @@ public final class Exceptional implements Serializable {
 	 * @param t the argument to apply to the {@code create} function
 	 * @param convert a function applied to the {@link AutoCloseable} to produce the result
 	 * @return the result of applying the {@code convert} function
+	 * 
+	 * @deprecated functionality moved to {@link Closing}
+	 * @see Closing
 	 */
+	@Deprecated
 	public static <C extends AutoCloseable, T, R> R closeAfterApplying(CheckedFunction<T, C> create, T t, CheckedFunction<C, R> convert)
 	{
-		C closeable = Exceptional.apply(create, t);
-		return closeAfterApplying(closeable, convert);
+		return Closing.closeAfterApplying(create, t, convert);
 	}
 
 
@@ -782,14 +796,14 @@ public final class Exceptional implements Serializable {
 	 * @param closeable the closeable subject of the {@code convert} function
 	 * @param convert the function consuming the closeable and supplying the result
 	 * @return the result of applying {@code convert} function to the {@code closeable} argument
+	 * 
+	 * @deprecated functionality moved to {@link Closing#closeAfterApplying(AutoCloseable, CheckedFunction)}
+	 * @see Closing
 	 */
+	@Deprecated
 	public static <C extends AutoCloseable, R> R closeAfterApplying(C closeable, CheckedFunction<C, R> convert)
 	{
-		try(C autoClose = closeable) {
-			return Exceptional.apply(convert, autoClose);
-		} catch(Exception e) {
-			throw uncheck(e);
-		}
+		return Closing.closeAfterApplying(closeable, convert);
 	}
 
 
@@ -804,11 +818,14 @@ public final class Exceptional implements Serializable {
 	 * @param create the function creating the {@link AutoCloseable}
 	 * @param t the argument that the {@code create} function is applied to
 	 * @param consume the consumer of the {@link AutoCloseable}
+	 * 
+	 * @deprecated functionality moved to {@link Closing#closeAfterAccepting(CheckedFunction, Object, CheckedConsumer)}
+	 * @see Closing
 	 */
+	@Deprecated
 	public static <C extends AutoCloseable, T> void closeAfterAccepting(CheckedFunction<T, C> create, T t, CheckedConsumer<C> consume)
 	{
-		C closeable = Exceptional.apply(create, t);
-		closeAfterAccepting(closeable, consume);
+		Closing.closeAfterAccepting(create, t, consume);
 	}
 
 
@@ -819,16 +836,13 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @param closeable the closeable to be consumed and closed
 	 * @param consume the consumer of the {@link AutoCloseable}
+	 * 
+	 * @deprecated functionality moved to {@link Closing#closeAfterAccepting(AutoCloseable, CheckedConsumer)}
+	 * @see Closing
 	 */
+	@Deprecated
 	public static <C extends AutoCloseable> void closeAfterAccepting(C closeable, CheckedConsumer<C> consume)
 	{
-		try(C autoClose = closeable) {
-			Exceptional.accept(consume, autoClose);
-		} catch(InterruptedException e) {
-			Thread.currentThread().interrupt();
-			throw uncheck(e);
-		} catch(Exception e) {
-			throw uncheck(e);
-		}
+		Closing.closeAfterAccepting(closeable, consume);
 	}
 }

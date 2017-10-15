@@ -10,9 +10,9 @@ With toolchains configured, run `mvn clean install`.
 When modifying the code beware/be-aware the build will fail if Maven POMs, Java source or Javascript source aren't formatted according to conventions (Apache 
 Maven's standards for POMs, my own undocumented formatting for source).  To auto-format the lot, simply run `mvn -P '!strict,tidy'`.
 
-To run PiTest use `mvn -P analyze clean install`
+To run PiTest use `mvn -P analyse`
 
-To run against SonarQube use `mvn -P analyze clean install org.sonarsource.scanner.maven:sonar-maven-plugin:LATEST:sonar`
+To run against SonarQube use `mvn -P analyse,sonar`
 
 
 ## Roadmap
@@ -107,13 +107,12 @@ in `CheckedBinaryOperator` for `maxBy` and `minBy` methods accepting `Comparator
 
 #### AutoClose
 
-Javac (v8 and v9, Oracle Hotspot and Azul Zulu) generates x2 instances of an odd warning for methods handling `AutoCloseable`, first glance it's just an overzealous
-compiler warning (bug) [JDK-8155591](https://bugs.openjdk.java.net/browse/JDK-8155591).
+Javac (v8 and v9) generates x2 instances of an odd warning for methods handling `AutoCloseable`, first glance it's just an overzealous compiler warning (bug) [JDK-8155591](https://bugs.openjdk.java.net/browse/JDK-8155591).
 
 The [JavaDoc](https://docs.oracle.com/javase/8/docs/api/java/lang/AutoCloseable.html#close--) for `AutoCloseable.close()` states implementors should not throw `InterruptedException`. 
-IMO javac should generate a warning/error on compiling an implementation of AutoCloseable.close() that throws InterruptedException, not badger consumers.
+IMO javac should generate a warning/error when compiling an implementation of AutoCloseable.close() that throws InterruptedException, not badger consumers.
 
-	[WARNING] ... Exceptional.java ... auto-closeable resource C has a member method close() that could throw InterruptedException
+	[WARNING] ... Closing.java ... auto-closeable resource C has a member method close() that could throw InterruptedException
 
 Further annoyance as the compiler does no analysis for this warning - so even if you explicitly catch `InterruptedException` and add `Thread.currentThread().interrupt()` your build log will still be polluted with this noddy warning.
 

@@ -13,7 +13,7 @@
   	<li><a href="https://opensource.org/licenses/BSD-3-Clause">BSD-3-Clause</a></li>
   	<li><a href="https://www.eclipse.org/legal/epl-v10.html">EPL-1.0</a></li>
   	<li><a href="https://www.apache.org/licenses/LICENSE-2.0">Apache-2.0</a></li>
-  	<li><a href="https://www.opensource.org/licenses/MIT">MIT</a></li>
+  	<li><a href="https://opensource.org/licenses/MIT">MIT</a></li>
   </ul>
   #L%
   -->
@@ -24,13 +24,7 @@
 	<skin>
 		<groupId>io.earcam.maven</groupId>
 		<artifactId>io.earcam.maven.site.skin</artifactId>
-		<version>2.0.8-SNAPSHOT</version>
-		
-		<!--
-		<groupId>lt.velykis.maven.skins</groupId>
-		<artifactId>reflow-maven-skin</artifactId>
-		<version>1.1.1</version>
-		-->
+		<version>2.1.2-SNAPSHOT</version>
 	</skin>
 
 	<bannerLeft>
@@ -46,11 +40,9 @@
 	<googleAnalyticsAccountId>UA-101439214-1</googleAnalyticsAccountId>
 
 	<custom>
-		<!--
-		<reflowSkin>
-		-->
 		<earcamSkin>
 			<protocolRelativeURLs>true</protocolRelativeURLs>
+			<searchBox>false</searchBox>
 			<smoothScroll>true</smoothScroll>
 			<theme>default</theme>
 			<highlightJs>true</highlightJs>
@@ -96,18 +88,25 @@
 					</sections>
 				</index>
 
-				<examples2>
-					<!-- Override the title -->
+				<examples>
 					<titleTemplate>Examples</titleTemplate>
 					<breadcrumbs>false</breadcrumbs>
 					<toc>false</toc>
 					<markPageHeader>false</markPageHeader>
 					<sections>
 						<body/>
-						<columns>3</columns>
 						<columns>2</columns>
 					</sections>
-				</examples2>
+				</examples>
+
+				<licence>
+					<highlightJs>false</highlightJs>
+					<toc>false</toc>
+					<sections>
+						<body/>
+						<columns>2</columns>
+					</sections>
+				</licence>
 
 				<contribute>
 					<breadcrumbs>false</breadcrumbs>
@@ -117,10 +116,6 @@
 					<breadcrumbs>false</breadcrumbs>
 				</dependency>
 
-				<examples>
-					<breadcrumbs>false</breadcrumbs>
-				</examples>
-				
 				<about>
 					<breadcrumbs>false</breadcrumbs>
 				</about>
@@ -133,10 +128,6 @@
 					<highlightJs>false</highlightJs>
 					<toc>false</toc>
 				</issue-tracking>
-				<licence>
-					<highlightJs>false</highlightJs>
-					<toc>false</toc>
-				</licence>
 				<!-- Disable ToC for some Maven reports -->
 				<project-info>
 					<toc>false</toc>
@@ -157,21 +148,19 @@
 			
 				<script src="$resourcePath/js/unexceptional.js"></script>
 			</endContent>
-
-		<!--
-		</reflowSkin>
-		-->
 		</earcamSkin>
 	</custom>
 
 	<body>
 
-		<!--  meta description is added from project.description -->
 		<head><![CDATA[
 		<link rel="author" href="https://plus.google.com/+CasparMacRae"/>
 		
 		<meta name="keywords" content="exception, checked exception, uncheck, boiler plate, try catch, java, maven, functional, stream"/>
 		
+		<link rel="search" type="application/opensearchdescription+xml" title="Unexceptional" href="/opensearch.xml"/>
+		
+		<!--  meta description is added from project.description - - >
 		<meta name="twitter:card" content="summary" />
 		<meta name="twitter:site" content="@caspar_macrae" />
 		<meta name="twitter:title" content="Unexceptional" />
@@ -199,48 +188,27 @@
 		<meta name="msapplication-TileColor" content="#ffffff"/>
 		<meta name="msapplication-TileImage" content="/img/ico/ms-icon-144x144.png"/>
 		<meta name="theme-color" content="#ffffff"/>
+		-->
 		]]>
 		</head>
-
+		
 		<menu name="Get" inherit="top">
-			<item name="Source" href="https://github.com/earcam/io.earcam.unexceptional" />
 			<item name="Dependency Management" href="dependency-info.html" />
-			<item name="Download" href="download.html" />
-		</menu>
-
-		<menu name="Documentation" inherit="top">
-			<item name="Examples" href="examples.html" />
-			<item name="Javadoc" href="apidocs/index.html" />
-			<item name="Source Cross Reference" href="xref/index.html" />
+			<item name="Binary Download" href="download.html" />
+			<item name="Source on BitBucket" href="https://bitbucket.org/earcam/io.earcam.utilitarian" />
+			<item name="Source on GitHub" href="https://github.com/earcam/io.earcam.utilitarian" />
 		</menu>
 
 		<menu name="About" inherit="top">
+			<item name="Generated Reports" href="project-reports.html" />
+			<item name="Project Information" href="project-info.html" />
+			<item name="Examples" href="examples.html" />
 			<item name="Licences" href="licence.html" />
 			<item name="Roadmap" href="about.html#Roadmap" />
 			<item name="Implementation" href="about.html#Implementation_Notes" />
 			<item name="Contribute" href="contribute.html" />
-		</menu>
-		
-		<!-- 
-		Annoyingly Jacoco is listed as an empty Aggregate Report and populated Report (due to aggregate 
-		declaration in uber parent pom).  Also I don't want JavaDoc etc appearing in standard "Reports"
-		section, but under a "Documentation" section (seems reasonable).
-		
-		Otherwise this line would include all reports:
-					<menu name="Reports" ref="reports" inherit="top" />
-		With potential to tailor in <reflowSkin>
-		-->
-		<menu name="Reports" inherit="top">
-			<item name="PIT Test Mutation" href="pit-reports/io.earcam.unexceptional/index.html" />
-			<item name="Jacoco Test Coverage" href="jacoco/index.html" />
-			<item name="JDepend" href="jdepend-report.html" />
-			<item name="Dependency Analysis" href="dependency-analysis.html" />
-			<item name="Semantic Version Analysis" href="revapi-report.html" />
-			<item name="3rd Party Licences" href="third-party-report.html" />
 			<item name="SonarQube" href="https://sonarcloud.io/dashboard?id=io.earcam%3Aio.earcam.unexceptional" />
 			<item name="SourceGraph" href="https://sourcegraph.com/github.com/earcam/io.earcam.unexceptional" />
-			<item name="Bespoke Reports" href="project-reports.html" />
-			<item name="Standard Maven Reports" href="project-info.html" />
 		</menu>
 	</body>
 </project>

@@ -12,7 +12,7 @@
  * 	<li><a href="https://opensource.org/licenses/BSD-3-Clause">BSD-3-Clause</a></li>
  * 	<li><a href="https://www.eclipse.org/legal/epl-v10.html">EPL-1.0</a></li>
  * 	<li><a href="https://www.apache.org/licenses/LICENSE-2.0">Apache-2.0</a></li>
- * 	<li><a href="https://www.opensource.org/licenses/MIT">MIT</a></li>
+ * 	<li><a href="https://opensource.org/licenses/MIT">MIT</a></li>
  * </ul>
  * #L%
  */
@@ -75,5 +75,16 @@ public interface CheckedFunction<T, R> {
 	{
 		Objects.requireNonNull(after);
 		return (T t) -> after.apply(apply(t));
+	}
+
+
+	/**
+	 * See {@link java.util.function.Function#identity()}
+	 * 
+	 * @return the argument as given
+	 */
+	public static <T> CheckedFunction<T, T> identity()
+	{
+		return t -> t;
 	}
 }

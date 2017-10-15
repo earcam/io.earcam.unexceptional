@@ -1,0 +1,163 @@
+#set($h1 = '#')
+#set($h2 = '##')
+#set($h3 = '###')
+#set($h4 = '####')
+#set($h5 = '#####')
+#set($h6 = '######')
+
+
+${h2} Sample Examples
+
+
+
+Exemplars are available in the [src/example/java][unexceptional-examples] directory, a few sample snippets reproduced below:
+
+
+
+${h3} Conversion 
+
+Convert checked Functional Interface instances and Method Handles to unchecked `java.util.function.*` Functional Interfaces.
+
+Given a method that declares a checked exception (very contrived example):
+
+	import java.io.IOException;
+	
+	class ExceptionalExample {
+	
+		private static int parse(String text) throws IOException
+		{
+			try {
+				return Integer.parseInt(text);
+			} catch(NumberFormatException nfe) {
+				throw new IOException(nfe);
+			}
+		}
+	}
+
+Without <span class="color-highlight">Un</span>exceptional, you might write an ugly lambda like so:
+
+	import java.io.IOException;
+	import java.io.UncheckedIOException;
+	import java.util.function.ToIntFunction;
+	
+	// ...
+	
+	public void convertFunctional()
+	{
+		ToIntFunction<String> a = value -> {
+			try {
+				return ExceptionalExample.parse(value);
+			} catch (IOException e) {
+				throw new UncheckedIOException(e);
+			}
+		};
+		
+		a.applyAsInt("42");
+	}
+
+With <span class="color-highlight">Un</span>exceptional, you can just write:
+
+	import java.io.IOException;
+	import java.io.UncheckedIOException;
+	import java.util.function.ToIntFunction;
+	
+	// ...
+	
+	public void convertFunctional()
+	{
+		ToIntFunction<String> b = Exceptional.uncheckToIntFunction(ExceptionalExample::parse);
+		
+		a.applyAsInt("42");
+	}
+
+
+${h3} Invocation
+
+Invoking checked functional types and method handles without wrapping in try-catch.
+
+As an alternative to converting functional types, you can just invoke directly.  
+
+Given the contrived `parse` method from previous example, you can use <span class="color-highlight">Un</span>exceptional to invoke directly:
+
+	import io.earcam.unexceptional.Exceptional;
+	
+	// ...
+	
+	public void invokeFunctional()
+	{
+		int fortyTwo = Exceptional.applyAsInt(ExceptionalExample::parse, "42");
+	}	
+
+
+${h3} File List
+
+Examples of calling Files::list and Stream API.
+
+----
+
+${h4} Vanilla
+
+#snippet( "/src/example/java/io/earcam/unexceptional/example/FileListExample.java", "listFiles")
+
+
+${h4} Unexceptional / EmeticStream
+
+#snippet( "/src/example/java/io/earcam/unexceptional/example/FileListWithExceptionalExample.java", "listFiles")
+
+&nbsp;<br/>
+&nbsp;<br/>
+
+#snippet( "/src/example/java/io/earcam/unexceptional/example/FileListWithEmeticStreamExample.java", "listFiles")
+
+
+----
+
+<br/><br/><br/>
+
+<ul class="nav nav-list" style="float:right;width:50%">
+	<li class="nav-header">sample</li>
+	<li>/ˈsɑːmp(ə)l/&nbsp;&nbsp;<span title="Pronunciation" style="display:inline-block;"><input src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAQAAAC1QeVaAAAAi0lEQVQokWNgQAYyQFzGsIJBnwED8DNcBpK+DM8YfjMUokqxMRxg+A9m8TJsBLLSEFKMDCuBAv/hCncxfGWQhUn2gaVAktkMXkBSHmh0OwNU8D9csoHhO4MikN7BcAGb5H+GYiDdCTQYq2QubkkkY/E6CLtXdiJ7BTMQMnAHXxFm6IICvhwY8AYQLgCw2U9d90B8BAAAAABJRU5ErkJggg==" width="14" height="14" type="image" onclick="pronounce('sample--_gb_1.mp3')" /></span></li>
+	<li><i>noun:</i>
+		<ol>
+			<li>
+				a small part or quantity intended to show what the whole is like<br/>
+				<i>synonyms:</i> 	representative, illustrative, selected, specimen, test, trial, typifying, typical
+			</li>
+			<li>a sound or piece of music created by sampling</li>
+		</ol>
+	</li>
+	<li><i>verb:</i>
+		<ol>
+			<li>
+				take a sample or samples of (something) for analysis<br/>
+			</li>
+			<li>ascertain the momentary value of (an analogue signal) many times a second so as to convert the signal to digital form</li>
+		</ol>
+	</li>
+</ul>
+
+
+<ul class="nav nav-list">
+	<li class="nav-header">example</li>
+	<li>/ɪɡˈzɑːmp(ə)l,ɛɡˈzɑːmp(ə)l//&nbsp;&nbsp;<span title="Pronunciation" style="display:inline-block;"><input src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAQAAAC1QeVaAAAAi0lEQVQokWNgQAYyQFzGsIJBnwED8DNcBpK+DM8YfjMUokqxMRxg+A9m8TJsBLLSEFKMDCuBAv/hCncxfGWQhUn2gaVAktkMXkBSHmh0OwNU8D9csoHhO4MikN7BcAGb5H+GYiDdCTQYq2QubkkkY/E6CLtXdiJ7BTMQMnAHXxFm6IICvhwY8AYQLgCw2U9d90B8BAAAAABJRU5ErkJggg==" width="14" height="14" type="image" onclick="pronounce('example--_gb_1.mp3')" /></span></li>
+	<li><i>noun:</i>
+		<ol>
+			<li>
+				a thing characteristic of its kind or illustrating a general rule<br/>
+				<i>synonyms:</i> 	specimen, sample, exemplar, exemplification, instance, case, representative case, typical case, case in point, illustration
+			</li>
+			<li>
+				a person or thing regarded in terms of their fitness to be imitated<br/>
+				<i>synonyms:</i> precedent, lead, guide, model, pattern, blueprint, template, paradigm, exemplar, ideal, standard 	
+			</li>
+		</ol>
+	</li>
+	<li><i>verb:</i>
+		<ol>
+			<li>be illustrated or exemplified</li>
+		</ol>
+	</li>
+</ul>
+
+
+[unexceptional-examples]: https://bitbucket.org/earcam/io.earcam.unexceptional/src/HEAD/src/example/java/io/earcam/unexceptional/example/

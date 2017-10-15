@@ -12,13 +12,13 @@
  * 	<li><a href="https://opensource.org/licenses/BSD-3-Clause">BSD-3-Clause</a></li>
  * 	<li><a href="https://www.eclipse.org/legal/epl-v10.html">EPL-1.0</a></li>
  * 	<li><a href="https://www.apache.org/licenses/LICENSE-2.0">Apache-2.0</a></li>
- * 	<li><a href="https://www.opensource.org/licenses/MIT">MIT</a></li>
+ * 	<li><a href="https://opensource.org/licenses/MIT">MIT</a></li>
  * </ul>
  * #L%
  */
 package io.earcam.unexceptional.example;
 
-//EARCAM_SNIPPET_BEGIN: import
+// EARCAM_SNIPPET_BEGIN: import
 
 import static io.earcam.unexceptional.EmeticStream.emesis;
 import static java.nio.file.Paths.get;
@@ -34,7 +34,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-//EARCAM_SNIPPET_END: import
+// EARCAM_SNIPPET_END: import
 
 public class FileListWithEmeticStreamExample {
 
@@ -50,8 +50,8 @@ public class FileListWithEmeticStreamExample {
 	}
 
 
-	//EARCAM_SNIPPET_BEGIN: listFiles
-	//Using EmeticStream (less efficient on GC, more efficient on the eye)
+	// EARCAM_SNIPPET_BEGIN: listFiles
+	// Using EmeticStream, less efficient on GC, more efficient on the eye
 	static List<String> listFiles(Path path)
 	{
 		return emesis(Files::list, path)
@@ -61,5 +61,5 @@ public class FileListWithEmeticStreamExample {
 			.map(Object::toString)
 			.collect(toList());
 	}
-	//EARCAM_SNIPPET_END: listFiles
+	// EARCAM_SNIPPET_END: listFiles
 }

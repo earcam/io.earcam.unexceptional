@@ -16,32 +16,35 @@
  * </ul>
  * #L%
  */
-package io.earcam.unexceptional;
+package io.earcam.unexceptional.example;
 
-import static io.earcam.unexceptional.Closing.closeAfterAccepting;
-import static io.earcam.unexceptional.Closing.closeAfterApplying;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.io.UncheckedIOException;
 
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
+import org.junit.Test;
 
-final class SerialCodec {
+import io.earcam.unexceptional.CheckedPredicate;
 
-	private SerialCodec()
-	{}
-
+public class BoilerplateSerialCodecExample {
 
 	// EARCAM_SNIPPET_BEGIN: serialize
 	public static byte[] serialize(Object object)
 	{
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		closeAfterAccepting(ObjectOutputStream::new, baos, object, ObjectOutputStream::writeObject);
-		return baos.toByteArray();
+		try(ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+			oos.writeObject(object);
+			return baos.toByteArray();
+		} catch(IOException ioe) {
+			throw new UncheckedIOException(ioe);
+		}
 	}
 	// EARCAM_SNIPPET_END: serialize
 
@@ -51,36 +54,25 @@ final class SerialCodec {
 	public static <T> T deserialize(byte[] serialized, Class<T> type)
 	{
 		ByteArrayInputStream bais = new ByteArrayInputStream(serialized);
-		return (T) closeAfterApplying(ObjectInputStream::new, bais, ObjectInputStream::readObject);
+		try(ObjectInputStream ois = new ObjectInputStream(bais)) {
+			return (T) ois.readObject();
+		} catch(IOException ioe) {
+			throw new UncheckedIOException(ioe);
+		} catch(ClassNotFoundException cnfe) {
+			throw new RuntimeException(cnfe);
+		}
 	}
 	// EARCAM_SNIPPET_END: deserialize
 
 
-	public static boolean isSerializable(Object instance)
+	@SuppressWarnings("unchecked")
+	@Test
+	public void symetric() throws Throwable
 	{
-		return deserialize(serialize(instance), instance.getClass()) != null;
-	}
+		CheckedPredicate<String> p = (CheckedPredicate<String> & Serializable) "yes"::equals;
 
+		CheckedPredicate<String> phydrated = deserialize(serialize(p), p.getClass());
 
-	public static Matcher<Object> serializable()
-	{
-		return new TypeSafeMatcher<Object>() {
-
-			@Override
-			public void describeTo(Description description)
-			{
-				description.appendText(" serializable");
-			}
-
-
-			@Override
-			protected boolean matchesSafely(Object item)
-			{
-				if(item == null) {
-					return false;
-				}
-				return isSerializable(item);
-			}
-		};
+		assertThat(phydrated.test("yes"), is(true));
 	}
 }

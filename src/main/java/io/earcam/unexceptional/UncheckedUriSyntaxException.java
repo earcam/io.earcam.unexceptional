@@ -18,24 +18,21 @@
  */
 package io.earcam.unexceptional;
 
-/**
- * Unchecked exception holding {@link InterruptedException}. It <b>resets</b> the interrupt flag.
- */
-public class UncheckedInterruptException extends UncheckedException {
+import java.net.URISyntaxException;
 
-	private static final long serialVersionUID = 5410904583469754965L;
+/**
+ * Unchecked exception wrapping {@link URISyntaxException}
+ */
+public class UncheckedUriSyntaxException extends UncheckedException {
+
+	private static final long serialVersionUID = -3126557164222542110L;
 
 
 	/**
-	 * This constructor also sets the interrupt flag
-	 * 
-	 * see {@link UncheckedException#UncheckedException(Throwable)}
-	 * 
-	 * @param cause the underlying cause
+	 * @param cause the underlying {@link URISyntaxException}
 	 */
-	public UncheckedInterruptException(InterruptedException cause)
+	public UncheckedUriSyntaxException(URISyntaxException cause)
 	{
 		super(cause);
-		Thread.currentThread().interrupt();
 	}
 }

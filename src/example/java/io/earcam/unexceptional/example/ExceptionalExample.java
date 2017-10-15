@@ -12,21 +12,20 @@
  * 	<li><a href="https://opensource.org/licenses/BSD-3-Clause">BSD-3-Clause</a></li>
  * 	<li><a href="https://www.eclipse.org/legal/epl-v10.html">EPL-1.0</a></li>
  * 	<li><a href="https://www.apache.org/licenses/LICENSE-2.0">Apache-2.0</a></li>
- * 	<li><a href="https://www.opensource.org/licenses/MIT">MIT</a></li>
+ * 	<li><a href="https://opensource.org/licenses/MIT">MIT</a></li>
  * </ul>
  * #L%
  */
 package io.earcam.unexceptional.example;
 
-import static io.earcam.unexceptional.Exceptional.apply;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.stream.Collectors.toList;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.net.ServerSocket;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -38,7 +37,6 @@ import java.util.function.ToIntFunction;
 import org.junit.Test;
 
 import io.earcam.unexceptional.Exceptional;
-import io.earcam.unexceptional.UncheckedException;
 
 
 /**
@@ -46,6 +44,16 @@ import io.earcam.unexceptional.UncheckedException;
  */
 public class ExceptionalExample {
 
+	
+	public static class SomeArbitraryRuntimeException extends RuntimeException {
+		private static final long serialVersionUID = -169337495070938693L;
+
+		public SomeArbitraryRuntimeException(Throwable cause)
+		{
+			super(cause);
+		}
+	}
+	
 	
 	private static int parse(String text) throws IOException
 	{
@@ -107,19 +115,31 @@ public class ExceptionalExample {
 	{
 		String ʊri = "http://AchTeaTeaPea.Co.lon/ForwardSlash/ForwardSlash/Valid/Yuri";
 		
-		URI a;
-		try {
-			a = new URI(ʊri);
-		} catch (URISyntaxException e) {
-			throw new UncheckedException(e);
-		}
-
-		
-		URI b = Exceptional.uri(ʊri);
-
+		URI a = toUriVanilla(ʊri);
+		URI b = toUri(ʊri);
 		
 		assertThat(a, is( equalTo( b )));
 	}
+
+
+	// EARCAM_SNIPPET_BEGIN: uri_vanilla
+	public static URI toUriVanilla(String ʊri)
+	{
+		try {
+			return new URI(ʊri);
+		} catch (URISyntaxException e) {
+			throw new SomeArbitraryRuntimeException(e);
+		}
+	}
+	// EARCAM_SNIPPET_END: uri_vanilla
+
+
+	// EARCAM_SNIPPET_BEGIN: uri_unexceptional
+	public static URI toUri(String ʊri)
+	{
+		return Exceptional.uri(ʊri);
+	}
+	// EARCAM_SNIPPET_END: uri_unexceptional
 	
 	
 	
@@ -128,38 +148,64 @@ public class ExceptionalExample {
 	{
 		Path targetDir = Paths.get(".", "target");
 
-
-		List<Path> a = null;
-		try {
-			a = Files.list(targetDir)
-					.collect(toList());
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		}
-
-		
-		
-		List<Path> b = apply(Files::list, targetDir)
-				.collect(toList());
-
+		List<Path> a = fileListVanilla(targetDir);
+		List<Path> b = fileList(targetDir);
 
 		assertThat(a, is( equalTo( b )));
 	}
 
 
-	@Test
-	public void findFreePort()
+	// EARCAM_SNIPPET_BEGIN: filelist_vanilla
+	List<Path> fileListVanilla(Path targetDir)
 	{
-		int portA = 0; 
-		try(ServerSocket socket = new ServerSocket(0)) {
-			portA = socket.getLocalPort();
+		try {
+			return Files.list(targetDir)
+					.collect(toList());
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
-
-		int portB = Exceptional.closeAfterApplying(ServerSocket::new, 0, ServerSocket::getLocalPort);
-		
-		assertThat(portA, is( not( equalTo( 0 ))));
-		assertThat(portB, is( not( equalTo( 0 ))));
 	}
+	// EARCAM_SNIPPET_END: filelist_vanilla
+
+
+
+	// EARCAM_SNIPPET_BEGIN: filelist_unexceptional
+	List<Path> fileList(Path targetDir)
+	{
+		return Exceptional.apply(Files::list, targetDir)
+				.collect(toList());
+	}
+	// EARCAM_SNIPPET_END: filelist_unexceptional
+	
+	
+	@Test
+	public void applyReadAllBytes()
+	{
+		Path file = Paths.get("src", "main", "resources", "to_be_read.txt");
+		
+		String a = new String(readAllBytes(file), UTF_8);
+		String b = new String(readAllBytesVanilla(file), UTF_8);
+		
+		assertThat(a, is(equalTo(b)));
+	}
+	
+	
+	// EARCAM_SNIPPET_BEGIN: bytes_vanilla
+	public byte[] readAllBytesVanilla(Path file)
+	{
+		try {
+			return Files.readAllBytes(file);
+		} catch(IOException e) {
+			throw new UncheckedIOException(e);
+		}
+	}
+	// EARCAM_SNIPPET_END: bytes_vanilla
+
+
+	// EARCAM_SNIPPET_BEGIN: bytes_unexceptional
+	public byte[] readAllBytes(Path file)
+	{
+		return Exceptional.apply(Files::readAllBytes, file);
+	}
+	// EARCAM_SNIPPET_END: bytes_unexceptional
 }
