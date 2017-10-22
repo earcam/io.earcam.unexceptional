@@ -195,8 +195,8 @@
 		<menu name="Get" inherit="top">
 			<item name="Dependency Management" href="dependency-info.html" />
 			<item name="Binary Download" href="download.html" />
-			<item name="Source on BitBucket" href="https://bitbucket.org/earcam/io.earcam.utilitarian" />
-			<item name="Source on GitHub" href="https://github.com/earcam/io.earcam.utilitarian" />
+			<item name="Source on BitBucket" href="https://bitbucket.org/earcam/io.earcam.unexceptional" />
+			<item name="Source on GitHub" href="https://github.com/earcam/io.earcam.unexceptional" />
 		</menu>
 
 		<menu name="About" inherit="top">
