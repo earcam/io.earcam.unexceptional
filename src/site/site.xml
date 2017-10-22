@@ -210,5 +210,10 @@
 			<item name="SonarQube" href="https://sonarcloud.io/dashboard?id=io.earcam%3Aio.earcam.unexceptional" />
 			<item name="SourceGraph" href="https://sourcegraph.com/github.com/earcam/io.earcam.unexceptional" />
 		</menu>
+		
+		<footer><![CDATA[
+			<script src="/js/unexceptional.js"></script>
+		]]>
+		</footer>
 	</body>
 </project>
