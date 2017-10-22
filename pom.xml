@@ -10,7 +10,7 @@
 
 	<groupId>io.earcam</groupId>
 	<artifactId>io.earcam.unexceptional</artifactId>
-	<version>0.3.0-SNAPSHOT</version>
+	<version>0.3.0</version>
 	<packaging>jar</packaging>
 
 	<description>A small cohesive module, leveraging Java 8 functional capabilities to remove most of the boiler-plate of handling checked exceptions.</description>
@@ -21,7 +21,7 @@
 		<connection>scm:git:ssh://git@bitbucket.org/${coordinate.username.project}.git</connection>
 		<developerConnection>scm:git:ssh://git@bitbucket.org/${coordinate.username.project}.git</developerConnection>
 		<url>http://bitbucket.org/${coordinate.username.project}.git</url>
-		<tag>HEAD</tag>
+		<tag>v0.3.0</tag>
 	</scm>
 	<issueManagement>
 		<system>BitBucket</system>
