@@ -23,7 +23,7 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 
 /**
- * /** A checked parallel of {@link java.util.function.BiFunction}
+ * A checked parallel of {@link java.util.function.BiFunction}
  * 
  * @param <T> first argument type
  * @param <U> second argument type
