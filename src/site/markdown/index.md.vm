@@ -84,8 +84,8 @@ A nice side effect is the removal of, potential but often unrealistic, branches;
 	<li><a href='https://www.versioneye.com/user/projects/5990a8020fb24f159f26043b'><img src='https://www.versioneye.com/user/projects/5990a8020fb24f159f26043b/badge.svg?style=flat-rounded' alt="Dependency Status" /></a></li>
 	-->
 	<li><a href="https://bestpractices.coreinfrastructure.org/projects/1177"><img src="https://bestpractices.coreinfrastructure.org/projects/1177/badge"/></a></li>
-	<li><a href="https://bitbucket.org/earcam/io.earcam.unexceptional/issues" title="Average time to resolve an issue"><img src="https://isitmaintained.com/badge/resolution/earcam/io.earcam.unexceptional.svg" alt="Average time to resolve an issue"/></a></li>
-	<li><a href="https://bitbucket.org/earcam/io.earcam.unexceptional/issues?status=open" title="Percentage of issues still open"><img src="https://isitmaintained.com/badge/open/earcam/io.earcam.unexceptional.svg" alt="Percentage of issues still open"/></a></li>
+	<li><a href="https://bitbucket.org/${coordinate}/issues?status=open" title="Number of issues still open"><img src="https://img.shields.io/bitbucket/issues/${coordinate}.svg" alt="Number of issues still open"/></a></li>
+	<li><a href="https://bitbucket.org/${coordinate}/pull-requests/" title="Number of open pull requests"><img src="https://img.shields.io/bitbucket/pr/${coordinate}.svg" alt="Number of open pull requests"/></a></li>
 </ul>
 
 <br/>
