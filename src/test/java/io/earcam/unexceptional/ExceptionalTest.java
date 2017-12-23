@@ -28,6 +28,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.sameInstance;
+import static org.hamcrest.Matchers.arrayContainingInAnyOrder;
 import static org.junit.Assert.*;
 import static org.junit.Assume.assumeFalse;
 
@@ -534,6 +535,41 @@ public class ExceptionalTest {
 			assertThat(thrown, is(instanceOf(InvocationTargetException.class)));
 			assertThat(unwrap, is(instanceOf(IllegalArgumentException.class)));
 			assertThat(unwrap.getSuppressed(), arrayContaining(thrown));
+		}
+	}
+
+
+	@Test
+	public void unwrapUncheckedException()
+	{
+		IllegalStateException expected = new IllegalStateException();
+
+		try {
+			throw new UncheckedException(expected);
+		} catch(Throwable thrown) {
+			Throwable unwrap = unwrap(thrown);
+
+			assertThat(unwrap, is(expected));
+			assertThat(unwrap.getSuppressed(), arrayContaining(thrown));
+		}
+	}
+
+
+	@Test
+	public void unwrapChain()
+	{
+		IllegalStateException ise = new IllegalStateException();
+		InvocationTargetException ite = new InvocationTargetException(ise);
+		UndeclaredThrowableException ute = new UndeclaredThrowableException(ite);
+		UncheckedException ue = new UncheckedException(ute);
+
+		try {
+			throw ue;
+		} catch(Throwable thrown) {
+			Throwable unwrap = unwrap(thrown);
+
+			assertThat(unwrap, is(ise));
+			assertThat(unwrap.getSuppressed(), arrayContainingInAnyOrder(ite, ute, ue));
 		}
 	}
 
