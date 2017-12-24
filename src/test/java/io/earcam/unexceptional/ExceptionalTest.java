@@ -20,14 +20,7 @@ package io.earcam.unexceptional;
 
 import static io.earcam.unexceptional.Exceptional.*;
 import static java.lang.Thread.currentThread;
-import static org.hamcrest.Matchers.arrayContaining;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.hasToString;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.sameInstance;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.junit.Assume.assumeFalse;
 
@@ -48,6 +41,12 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.cert.CertificateException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -1015,5 +1014,59 @@ public class ExceptionalTest {
 		ToIntBiFunction<String, String> fn = uncheckToIntBiFunction(ExceptionalTest::cmp);
 		int cmp = fn.applyAsInt("a", "a");
 		assertThat(cmp, is(0));
+	}
+
+
+	@Test
+	public void iterableForEachThrows()
+	{
+		IOException curveBall = new IOException();
+		try {
+			Exceptional.forEach(Collections.singleton("bang?"), s -> {
+				throw curveBall;
+			});
+			fail();
+		} catch(UncheckedIOException e) {
+			assertThat(e.getCause(), is(sameInstance(curveBall)));
+		}
+	}
+
+
+	@Test
+	public void iterableForEach()
+	{
+		Iterable<String> source = Arrays.asList("Fee", "fi", "fo", "fum");
+		List<String> sink = new ArrayList<>(4);
+
+		Exceptional.forEach(source, sink::add);
+
+		assertThat(sink, is(equalTo(source)));
+	}
+
+
+	@Test
+	public void mapForEachThrows()
+	{
+		IOException curveBall = new IOException();
+		try {
+			Exceptional.forEach(Collections.singletonMap("crash?", "bang?"), (k, v) -> {
+				throw curveBall;
+			});
+			fail();
+		} catch(UncheckedIOException e) {
+			assertThat(e.getCause(), is(sameInstance(curveBall)));
+		}
+	}
+
+
+	@Test
+	public void mapForEach()
+	{
+		Map<String, String> source = Collections.singletonMap("crash?", "bang?");
+		Map<String, String> sink = new HashMap<>();
+
+		Exceptional.forEach(source, sink::put);
+
+		assertThat(sink, is(equalTo(source)));
 	}
 }

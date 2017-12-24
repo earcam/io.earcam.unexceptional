@@ -845,4 +845,31 @@ public final class Exceptional implements Serializable {
 	{
 		Closing.closeAfterAccepting(closeable, consume);
 	}
+
+
+	/**
+	 * Invokes the {@link Iterable#forEach(Consumer)} method having unchecked the consumer
+	 *  
+	 * @param iterable the Iterable to consume each element of
+	 * @param consumer the checked consumer of the Iterable's elements
+	 * 
+	 *  @see #uncheckConsumer(CheckedConsumer)
+	 */
+	public static <T> void forEach(Iterable<T> iterable, CheckedConsumer<T> consumer)
+	{
+		iterable.forEach(uncheckConsumer(consumer));
+	}
+
+
+	/**
+	 * Invokes the {@link Map#forEach(Consumer)} method having unchecked the bi-consumer
+	 * @param map the entries to consume
+	 * @param consumer the consumer of the map's key value pairs
+	 * 
+	 * @see #uncheckBiConsumer(CheckedBiConsumer)
+	 */
+	public static <K, V> void forEach(Map<K, V> map, CheckedBiConsumer<K, V> consumer)
+	{
+		map.forEach(uncheckBiConsumer(consumer));
+	}
 }
