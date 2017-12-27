@@ -34,7 +34,9 @@ import java.net.URLStreamHandler;
 import java.security.GeneralSecurityException;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -186,11 +188,11 @@ public final class Exceptional implements Serializable {
 
 	/**
 	 * Will regurgitate any {@link Error} - otherwise will dutifly and silently <i>swallow</i> whole.
-	 * Gulping of {@link InterruptedException}s will result in the current {@link Thread}'s interrupt 
-	 * flag being reset. 
+	 * Gulping of {@link InterruptedException}s will result in the current {@link Thread}'s interrupt
+	 * flag being reset.
 	 * 
-	 * <b>Caution</b>: used carelessly/incorrectly this foul method will inevitably lead to a frustrating 
-	 * debugging session resulting in plenty of "doh"/"wtf" but never a "eurka" moment.  Shooting of 
+	 * <b>Caution</b>: used carelessly/incorrectly this foul method will inevitably lead to a frustrating
+	 * debugging session resulting in plenty of "doh"/"wtf" but never a "eurka" moment. Shooting of
 	 * messenger is in breach of license terms.
 	 * 
 	 * @param caught the caught unmentionable
@@ -286,14 +288,24 @@ public final class Exceptional implements Serializable {
 
 
 	/**
-	 * <p>Converts {@link Throwable}s to {@link RuntimeException}s.</p>
-	 * <p>If the supplied {@link Throwable} is already a {@link RuntimeException}, then it's simply cast and returned.</p>
-	 * <p>{@link Error} subclasses will be wrapped in an {@link UncheckedException}.</p>
-	 * <p>The interrupt flag will be reset IFF {@code caught instanceof InterruptedException}</p>
-	 * <p></p>
+	 * <p>
+	 * Converts {@link Throwable}s to {@link RuntimeException}s.
+	 * </p>
+	 * <p>
+	 * If the supplied {@link Throwable} is already a {@link RuntimeException}, then it's simply cast and returned.
+	 * </p>
+	 * <p>
+	 * {@link Error} subclasses will be wrapped in an {@link UncheckedException}.
+	 * </p>
+	 * <p>
+	 * The interrupt flag will be reset IFF {@code caught instanceof InterruptedException}
+	 * </p>
+	 * <p>
+	 * </p>
 	 * 
 	 * @param caught any {@link Throwable}
-	 * @return a {@link RuntimeException}, typically a subclass of {@link UncheckedException} or an {@link UncheckedIOException}
+	 * @return a {@link RuntimeException}, typically a subclass of {@link UncheckedException} or an
+	 * {@link UncheckedIOException}
 	 * @see #rethrow(Throwable)
 	 */
 	public static RuntimeException uncheck(Throwable caught)
@@ -721,75 +733,86 @@ public final class Exceptional implements Serializable {
 
 
 	/**
-	 * Attempts to unwrap invocation, reflection, and unchecked exceptions to their underlying cause.
-	 * Unwrapping is recursively applied.  The wrapper exceptions are add to the suppressed throwables
-	 * of the unwrapped throwable.
+	 * <p>
+	 * Attempts to unwrap invocation and unchecked exceptions to their underlying cause.
+	 * Unwrapping is recursively applied. The original wrapper exception is added to the suppressed
+	 * throwables of the returned unwrapped throwable.
+	 * </p>
+	 * 
+	 * <p>
+	 * Unwraps: {@link InvocationTargetException}, {@link UndeclaredThrowableException}, {@link UncheckedIOException}
+	 * and {@link UncheckedException}
+	 * </p>
 	 * 
 	 * @param throwable to be unwrapped
-	 * @return the root cause
+	 * @return the root cause, or original throwable if not unwrapped
 	 */
 	public static Throwable unwrap(Throwable throwable)
 	{
-		if(throwable instanceof InvocationTargetException) {
-			return unwrap((InvocationTargetException) throwable);
+		Throwable unwrapped = unwrapping(throwable);
+		if(unwrapped != throwable) {
+			unwrapped.addSuppressed(throwable);
 		}
-		if(throwable instanceof UndeclaredThrowableException) {
-			return unwrap((UndeclaredThrowableException) throwable);
-		}
-		if(throwable instanceof UncheckedException) {
-			return unwrap((UncheckedException) throwable);
+		return unwrapped;
+	}
+
+
+	private static Throwable unwrapping(Throwable throwable)
+	{
+		Set<Throwable> seen = new HashSet<>();
+		while(isUnwrappable(throwable) && !seen.contains(throwable)) {
+			seen.add(throwable);
+			throwable = throwable.getCause();
 		}
 		return throwable;
 	}
 
 
-	private static Throwable addSuppressions(Throwable throwable, Throwable underlying)
+	private static boolean isUnwrappable(Throwable throwable)
 	{
-		underlying.addSuppressed(throwable);
-		for(Throwable suppressed : throwable.getSuppressed()) {
-			underlying.addSuppressed(suppressed);
-		}
-		return underlying;
+		return throwable.getCause() != null
+				&& (throwable instanceof InvocationTargetException
+						|| throwable instanceof UndeclaredThrowableException
+						|| throwable instanceof UncheckedIOException
+						|| throwable instanceof UncheckedException);
 	}
 
 
 	/**
+	 * <p>
 	 * Recursively find the wrapped throwable
+	 * </p>
+	 * 
+	 * <b>NOTE</b>: this method now just delegates to {@link #unwrap(Throwable)} and is therefore superfluous,
+	 * as such it will be removed in the next major release without impact to client code; given
+	 * this, it is not marked {@link Deprecated} to avoid unnecessary upcasting to {@link Throwable}.
 	 *
 	 * @param throwable to be unwrapped
 	 * @return the value of {@link UndeclaredThrowableException#getUndeclaredThrowable()}
+	 * 
+	 * @see #unwrap(Throwable)
 	 */
 	public static Throwable unwrap(UndeclaredThrowableException throwable)
 	{
-		// if underlying is null the world has ended
-		return unwrap(addSuppressions(throwable, throwable.getUndeclaredThrowable()));
+		return unwrap((Throwable) throwable);
 	}
 
 
 	/**
+	 * <p>
 	 * Recursively find the wrapped throwable
+	 * </p>
+	 * 
+	 * <b>NOTE</b>: this method now just delegates to {@link #unwrap(Throwable)} and is therefore superfluous,
+	 * as such it will be removed in the next major release without impact to client code; given
+	 * this, it is not marked {@link Deprecated} to avoid unnecessary upcasting to {@link Throwable}.
 	 *
 	 * @param throwable to be unwrapped
 	 * @return the value of {@link InvocationTargetException#getTargetException()}
 	 */
 	public static Throwable unwrap(InvocationTargetException throwable)
 	{
-		// if underlying is null the world has ended
-		return unwrap(addSuppressions(throwable, throwable.getTargetException()));
-	}
-
-
-	/**
-	 * Recursively find the wrapped throwable
-	 *
-	 * @param throwable to be unwrapped
-	 * @return the value of {@link UncheckedException#getCause()}
-	 * @since 0.4.0
-	 */
-	public static Throwable unwrap(UncheckedException throwable)
-	{
-		// if underlying is null the world has ended
-		return unwrap(addSuppressions(throwable, throwable.getCause()));
+		return unwrap((Throwable) throwable);
 	}
 
 
@@ -878,11 +901,11 @@ public final class Exceptional implements Serializable {
 
 	/**
 	 * Invokes the {@link Iterable#forEach(Consumer)} method having unchecked the consumer
-	 *  
+	 * 
 	 * @param iterable the Iterable to consume each element of
 	 * @param consumer the checked consumer of the Iterable's elements
 	 * 
-	 *  @see #uncheckConsumer(CheckedConsumer)
+	 * @see #uncheckConsumer(CheckedConsumer)
 	 */
 	public static <T> void forEach(Iterable<T> iterable, CheckedConsumer<T> consumer)
 	{
@@ -892,6 +915,7 @@ public final class Exceptional implements Serializable {
 
 	/**
 	 * Invokes the {@link Map#forEach(Consumer)} method having unchecked the bi-consumer
+	 * 
 	 * @param map the entries to consume
 	 * @param consumer the consumer of the map's key value pairs
 	 * 

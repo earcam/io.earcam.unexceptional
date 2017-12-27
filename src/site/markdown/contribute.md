@@ -21,6 +21,10 @@ then please carry out a stealth [random act of kindness][random-act-of-kindness]
 for someone/somewhere deserving.  Share the love.
 
 
+## Past Contributors
+
+* [Caspar MacRae](https://bitbucket.org/earcam)
+* [Charles R Honton](https://bitbucket.org/chonton) 
 
 [about-building]: /about.html#Building
 [github-unexceptional]: https://github.com/earcam/io.earcam.unexceptional/

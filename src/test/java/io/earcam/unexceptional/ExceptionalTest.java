@@ -538,18 +538,41 @@ public class ExceptionalTest {
 
 
 	@Test
+	public void unwrapUndeclaredThrowableException()
+	{
+		Throwable expected = new RuntimeException("oops");
+		UndeclaredThrowableException thrown = new UndeclaredThrowableException(expected);
+
+		Throwable unwrap = unwrap(thrown);
+
+		assertThat(unwrap, is(expected));
+		assertThat(unwrap.getSuppressed(), arrayContaining(thrown));
+	}
+
+
+	@Test
+	public void unwrapUncheckedIOException()
+	{
+		IOException expected = new IOException("io io, it's off to work we go");
+		Throwable thrown = new UncheckedIOException(expected);
+
+		Throwable unwrap = unwrap(thrown);
+
+		assertThat(unwrap, is(expected));
+		assertThat(unwrap.getSuppressed(), arrayContaining(thrown));
+	}
+
+
+	@Test
 	public void unwrapUncheckedException()
 	{
 		IllegalStateException expected = new IllegalStateException();
+		Throwable thrown = new UncheckedException(expected);
 
-		try {
-			throw new UncheckedException(expected);
-		} catch(Throwable thrown) {
-			Throwable unwrap = unwrap(thrown);
+		Throwable unwrap = unwrap(thrown);
 
-			assertThat(unwrap, is(expected));
-			assertThat(unwrap.getSuppressed(), arrayContaining(thrown));
-		}
+		assertThat(unwrap, is(expected));
+		assertThat(unwrap.getSuppressed(), arrayContaining(thrown));
 	}
 
 
@@ -561,14 +584,45 @@ public class ExceptionalTest {
 		UndeclaredThrowableException ute = new UndeclaredThrowableException(ite);
 		UncheckedException ue = new UncheckedException(ute);
 
-		try {
-			throw ue;
-		} catch(Throwable thrown) {
-			Throwable unwrap = unwrap(thrown);
+		Throwable unwrap = unwrap(ue);
 
-			assertThat(unwrap, is(ise));
-			assertThat(unwrap.getSuppressed(), arrayContainingInAnyOrder(ite, ute, ue));
-		}
+		assertThat(unwrap, is(ise));
+
+		assertThat(unwrap.getCause(), is(nullValue()));
+		assertThat(unwrap.getSuppressed(), is(arrayContaining(ue)));
+	}
+
+
+	@Test
+	public void unUnwrappableWhenNoCause()
+	{
+		UncheckedException ue = new UncheckedException("no cause for concern");
+
+		assertThat(unwrap(ue), is(sameInstance(ue)));
+	}
+
+
+	@Test
+	public void unUnwrappableWhenIrrelevant()
+	{
+		Exception e = new Exception(new NullPointerException());
+		assertThat(unwrap(e), is(sameInstance(e)));
+	}
+
+
+	@Test
+	public void unwrapChainWithCircularReference()
+	{
+		UncheckedException ue = new UncheckedException("");
+		InvocationTargetException ite = new InvocationTargetException(ue);
+		UndeclaredThrowableException ute = new UndeclaredThrowableException(ite);
+		UncheckedException outer = new UncheckedException(ite);
+
+		ue.initCause(ute);
+
+		Throwable unwrapped = unwrap(outer);
+
+		assertThat(unwrapped, is(ite));
 	}
 
 
