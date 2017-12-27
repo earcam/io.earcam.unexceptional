@@ -721,7 +721,9 @@ public final class Exceptional implements Serializable {
 
 
 	/**
-	 * Attempts to unwrap invocation and reflection exceptions to their underlying cause
+	 * Attempts to unwrap invocation, reflection, and unchecked exceptions to their underlying cause.
+	 * Unwrapping is recursively applied.  The wrapper exceptions are add to the suppressed throwables
+	 * of the unwrapped throwable.
 	 * 
 	 * @param throwable to be unwrapped
 	 * @return the root cause
@@ -734,33 +736,60 @@ public final class Exceptional implements Serializable {
 		if(throwable instanceof UndeclaredThrowableException) {
 			return unwrap((UndeclaredThrowableException) throwable);
 		}
+		if(throwable instanceof UncheckedException) {
+			return unwrap((UncheckedException) throwable);
+		}
 		return throwable;
 	}
 
 
+	private static Throwable addSuppressions(Throwable throwable, Throwable underlying)
+	{
+		underlying.addSuppressed(throwable);
+		for(Throwable suppressed : throwable.getSuppressed()) {
+			underlying.addSuppressed(suppressed);
+		}
+		return underlying;
+	}
+
+
 	/**
+	 * Recursively find the wrapped throwable
+	 *
 	 * @param throwable to be unwrapped
 	 * @return the value of {@link UndeclaredThrowableException#getUndeclaredThrowable()}
 	 */
 	public static Throwable unwrap(UndeclaredThrowableException throwable)
 	{
 		// if underlying is null the world has ended
-		Throwable underlying = throwable.getUndeclaredThrowable();
-		underlying.addSuppressed(throwable);
-		return underlying;
+		return unwrap(addSuppressions(throwable, throwable.getUndeclaredThrowable()));
 	}
 
 
 	/**
+	 * Recursively find the wrapped throwable
+	 *
 	 * @param throwable to be unwrapped
 	 * @return the value of {@link InvocationTargetException#getTargetException()}
 	 */
 	public static Throwable unwrap(InvocationTargetException throwable)
 	{
 		// if underlying is null the world has ended
-		Throwable underlying = throwable.getCause();
-		underlying.addSuppressed(throwable);
-		return underlying;
+		return unwrap(addSuppressions(throwable, throwable.getTargetException()));
+	}
+
+
+	/**
+	 * Recursively find the wrapped throwable
+	 *
+	 * @param throwable to be unwrapped
+	 * @return the value of {@link UncheckedException#getCause()}
+	 * @since 0.4.0
+	 */
+	public static Throwable unwrap(UncheckedException throwable)
+	{
+		// if underlying is null the world has ended
+		return unwrap(addSuppressions(throwable, throwable.getCause()));
 	}
 
 

@@ -538,6 +538,41 @@ public class ExceptionalTest {
 
 
 	@Test
+	public void unwrapUncheckedException()
+	{
+		IllegalStateException expected = new IllegalStateException();
+
+		try {
+			throw new UncheckedException(expected);
+		} catch(Throwable thrown) {
+			Throwable unwrap = unwrap(thrown);
+
+			assertThat(unwrap, is(expected));
+			assertThat(unwrap.getSuppressed(), arrayContaining(thrown));
+		}
+	}
+
+
+	@Test
+	public void unwrapChain()
+	{
+		IllegalStateException ise = new IllegalStateException();
+		InvocationTargetException ite = new InvocationTargetException(ise);
+		UndeclaredThrowableException ute = new UndeclaredThrowableException(ite);
+		UncheckedException ue = new UncheckedException(ute);
+
+		try {
+			throw ue;
+		} catch(Throwable thrown) {
+			Throwable unwrap = unwrap(thrown);
+
+			assertThat(unwrap, is(ise));
+			assertThat(unwrap.getSuppressed(), arrayContainingInAnyOrder(ite, ute, ue));
+		}
+	}
+
+
+	@Test
 	public void nothingIsThrownWhenRunnableExecutesNormally()
 	{
 		AtomicBoolean executed = new AtomicBoolean(false);
