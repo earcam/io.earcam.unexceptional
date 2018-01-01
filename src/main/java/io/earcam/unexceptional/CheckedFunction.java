@@ -37,6 +37,8 @@ public interface CheckedFunction<T, R> {
 	 * @param t the function argument
 	 * @return the function result
 	 * @throws Throwable any throwable
+	 * 
+	 * @since 0.2.0
 	 */
 	@SuppressWarnings("squid:S00112")
 	public abstract R apply(T t) throws Throwable;
@@ -51,6 +53,8 @@ public interface CheckedFunction<T, R> {
 	 * @return a composed function that first applies the {@code before}
 	 * function and then applies this function
 	 * @throws NullPointerException if {@code before} is {@code null}
+	 * 
+	 * @since 0.2.0
 	 *
 	 * @see java.util.function.Function#compose(java.util.function.Function)
 	 */
@@ -70,6 +74,8 @@ public interface CheckedFunction<T, R> {
 	 * @return a composed function that first applies this function and then
 	 * applies the {@code after} function
 	 * @throws NullPointerException if {@code after} is {@code null}
+	 * 
+	 * @since 0.2.0
 	 */
 	public default <V> CheckedFunction<T, V> andThen(CheckedFunction<? super R, ? extends V> after)
 	{
@@ -82,6 +88,8 @@ public interface CheckedFunction<T, R> {
 	 * See {@link java.util.function.Function#identity()}
 	 * 
 	 * @return the argument as given
+	 * 
+	 * @since 0.3.0
 	 */
 	public static <T> CheckedFunction<T, T> identity()
 	{

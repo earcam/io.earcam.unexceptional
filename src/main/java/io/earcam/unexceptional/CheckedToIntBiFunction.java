@@ -23,6 +23,8 @@ package io.earcam.unexceptional;
  * 
  * @param <T> first argument type
  * @param <U> last argument type
+ * 
+ * @since 0.2.0
  */
 @FunctionalInterface
 public interface CheckedToIntBiFunction<T, U> {

@@ -23,6 +23,8 @@ package io.earcam.unexceptional;
  * 
  * @param <R> return type
  * 
+ * @since 0.2.0
+ * 
  * @see java.util.function.IntFunction
  */
 @FunctionalInterface

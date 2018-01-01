@@ -62,8 +62,7 @@ import javax.annotation.WillClose;
  * regardless test coverage suffers without some needless stub/mocked throw-on-create/read/write/close tests.
  * </p>
  * 
- * <p>
- * </p>
+ * @since 0.3.0
  */
 public final class Closing {
 

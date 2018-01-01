@@ -22,6 +22,8 @@ import java.security.GeneralSecurityException;
 
 /**
  * Unchecked exception holding {@link GeneralSecurityException}
+ * 
+ * @since 0.2.0
  */
 public class UncheckedSecurityException extends UncheckedException {
 

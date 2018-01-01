@@ -29,6 +29,8 @@ import javax.annotation.Nonnull;
  * 
  * For the equivalent of {@link java.util.concurrent.Callable}, see {@link io.earcam.unexceptional.CheckedSupplier}
  * 
+ * @since 0.2.0
+ * 
  * @see java.lang.Runnable
  */
 @FunctionalInterface

@@ -20,6 +20,8 @@ package io.earcam.unexceptional;
 
 /**
  * Unchecked exception holding {@link ReflectiveOperationException}
+ * 
+ * @since 0.2.0
  */
 public class UncheckedReflectiveException extends UncheckedException {
 

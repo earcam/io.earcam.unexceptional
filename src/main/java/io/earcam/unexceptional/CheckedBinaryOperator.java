@@ -31,6 +31,8 @@ import javax.annotation.Nonnull;
  * 
  * @param <T> arguments and return type
  * 
+ * @since 0.2.0
+ * 
  * @see java.util.function.BinaryOperator
  */
 @FunctionalInterface

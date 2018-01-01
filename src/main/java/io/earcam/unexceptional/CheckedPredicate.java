@@ -28,6 +28,8 @@ import javax.annotation.Nonnull;
  * 
  * @param <T> argument type
  * 
+ * @since 0.2.0
+ * 
  * @see java.util.function.Predicate
  */
 @FunctionalInterface

@@ -181,7 +181,7 @@ public class ExceptionalExample {
 	@Test
 	public void applyReadAllBytes()
 	{
-		Path file = Paths.get("src", "main", "resources", "to_be_read.txt");
+		Path file = Paths.get("src", "test", "resources", "to_be_read.txt");
 		
 		String a = new String(readAllBytes(file), UTF_8);
 		String b = new String(readAllBytesVanilla(file), UTF_8);

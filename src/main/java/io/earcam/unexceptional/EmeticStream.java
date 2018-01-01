@@ -44,6 +44,8 @@ import java.util.stream.Stream;
  * </p>
  * 
  * @param <T> the element type of this stream
+ * 
+ * @since 0.2.0
  */
 @FunctionalInterface
 public interface EmeticStream<T> {

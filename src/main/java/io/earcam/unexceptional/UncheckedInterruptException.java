@@ -20,6 +20,8 @@ package io.earcam.unexceptional;
 
 /**
  * Unchecked exception holding {@link InterruptedException}. It <b>resets</b> the interrupt flag.
+ * 
+ * @since 0.2.0
  */
 public class UncheckedInterruptException extends UncheckedException {
 

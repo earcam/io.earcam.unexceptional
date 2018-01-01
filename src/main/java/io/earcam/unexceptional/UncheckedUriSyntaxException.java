@@ -22,6 +22,8 @@ import java.net.URISyntaxException;
 
 /**
  * Unchecked exception wrapping {@link URISyntaxException}
+ * 
+ * @since 0.3.0
  */
 public class UncheckedUriSyntaxException extends UncheckedException {
 

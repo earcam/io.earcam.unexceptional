@@ -23,6 +23,8 @@ package io.earcam.unexceptional;
  * 
  * @param <T> the type of supplied Object
  * 
+ * @since 0.2.0
+ * 
  * @see java.util.function.Supplier
  */
 @FunctionalInterface

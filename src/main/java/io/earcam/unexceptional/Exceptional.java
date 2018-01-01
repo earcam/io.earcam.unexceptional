@@ -113,12 +113,16 @@ public final class Exceptional implements Serializable {
 	/**
 	 * An {@link UncaughtExceptionHandler} that simply rethrows,
 	 * wrapping in an appropriate unchecked if necessary
+	 * 
+	 * @since 0.2.0
 	 */
 	public static final UncaughtExceptionHandler RETHROWING = (t, e) -> Exceptional.rethrow(e);
 
 	/**
 	 * An {@link UncaughtExceptionHandler} that simply swallows <i>all</i> exceptions,
 	 * except subclasses of {@link Error}, which are rethrown.
+	 * 
+	 * @since 0.2.0
 	 */
 	public static final UncaughtExceptionHandler SWALLOWING = (t, e) -> Exceptional.swallow(e);
 
@@ -132,6 +136,8 @@ public final class Exceptional implements Serializable {
 	/**
 	 * @param earl the text URL
 	 * @return a {@link URL} representation
+	 * 
+	 * @since 0.2.0
 	 */
 	public static URL url(CharSequence earl)
 	{
@@ -150,6 +156,8 @@ public final class Exceptional implements Serializable {
 	 * @param path the "file" portion of the URL
 	 * @param handler optional URLStreamHandler
 	 * @return a {@link URL} representation
+	 * 
+	 * @since 0.2.0
 	 */
 	public static URL url(String protocol, String host, int port, String path, @Nullable URLStreamHandler handler)
 	{
@@ -164,6 +172,8 @@ public final class Exceptional implements Serializable {
 	/**
 	 * @param ʊri the text URI (as Earl is to URL, so ʊri (as in Uri Geller) is to URI)
 	 * @return a {@link URI} representation
+	 * 
+	 * @since 0.2.0
 	 */
 	@SuppressWarnings("squid:S00117")  // utf8 in a parameter name is fine by me
 	public static URI uri(CharSequence ʊri)
@@ -176,6 +186,15 @@ public final class Exceptional implements Serializable {
 	}
 
 
+	/**
+	 * Invokes {@link URL#toURI()}, catching any {@link URISyntaxException} and rethrowing 
+	 * wrapped as {@link UncheckedUriSyntaxException}
+	 * 
+	 * @param earl the {@link URL} to convert
+	 * @return the {@link URI} form of the <code>earl</code> argument
+	 * 
+	 * @since 0.3.0
+	 */
 	public static URI uri(URL earl)
 	{
 		try {
@@ -187,15 +206,17 @@ public final class Exceptional implements Serializable {
 
 
 	/**
-	 * Will regurgitate any {@link Error} - otherwise will dutifly and silently <i>swallow</i> whole.
+	 * Will regurgitate any {@link Error} - otherwise will dutifully and silently <i>swallow</i> whole.
 	 * Gulping of {@link InterruptedException}s will result in the current {@link Thread}'s interrupt
 	 * flag being reset.
 	 * 
 	 * <b>Caution</b>: used carelessly/incorrectly this foul method will inevitably lead to a frustrating
-	 * debugging session resulting in plenty of "doh"/"wtf" but never a "eurka" moment. Shooting of
+	 * debugging session resulting in plenty of "doh"/"wtf" but never a "eureka" moment. Shooting of
 	 * messenger is in breach of license terms.
 	 * 
 	 * @param caught the caught unmentionable
+	 * 
+	 * @since 0.2.0
 	 */
 	public static void swallow(Throwable caught)
 	{
@@ -212,6 +233,8 @@ public final class Exceptional implements Serializable {
 	 * an instance of {@link InterruptedException}.
 	 * 
 	 * @param thrown possible {@link InterruptedException}
+	 * 
+	 * @since 0.2.0
 	 */
 	public static void resetIfInterrupt(Throwable thrown)
 	{
@@ -230,6 +253,8 @@ public final class Exceptional implements Serializable {
 	 * have return values.
 	 * 
 	 * @see #throwAsUnchecked(Throwable)
+	 * 
+	 * @since 0.2.0
 	 */
 	public static RuntimeException rethrow(Throwable thrown)
 	{
@@ -245,6 +270,8 @@ public final class Exceptional implements Serializable {
 	 * {@link Exception}s rethrowing them as unchecked.
 	 * 
 	 * @param runnable the checked runnable to run
+	 * 
+	 * @since 0.2.0
 	 */
 	public static void run(CheckedRunnable runnable)
 	{
@@ -261,6 +288,8 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @param runnable the checked runnable to wrap
 	 * @return an unchecked wrapper around the <code>runnable</code> argument
+	 * 
+	 * @since 0.2.0
 	 */
 	public static Runnable uncheckRunnable(CheckedRunnable runnable)
 	{
@@ -276,6 +305,8 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @param callable the {@link Callable} to execute
 	 * @return the result of calling the {@link Callable}
+	 * 
+	 * @since 0.2.0
 	 */
 	public static <T> T call(Callable<T> callable)
 	{
@@ -307,6 +338,8 @@ public final class Exceptional implements Serializable {
 	 * @return a {@link RuntimeException}, typically a subclass of {@link UncheckedException} or an
 	 * {@link UncheckedIOException}
 	 * @see #rethrow(Throwable)
+	 * 
+	 * @since 0.2.0
 	 */
 	public static RuntimeException uncheck(Throwable caught)
 	{
@@ -325,6 +358,8 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @param consumer a consumer that declares checked exception(s)
 	 * @return a vanilla {@link java.util.function.Consumer}
+	 * 
+	 * @since 0.2.0
 	 */
 	@SuppressWarnings("squid:S1905") // SonarQube false positives
 	public static <T> Consumer<T> uncheckConsumer(CheckedConsumer<T> consumer)
@@ -341,6 +376,8 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @param consumer the consumer of the {@code value}
 	 * @param value the value to be consumed
+	 * 
+	 * @since 0.2.0
 	 */
 	public static <T> void accept(CheckedConsumer<T> consumer, T value)
 	{
@@ -360,6 +397,8 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @param consumer the checked consumer
 	 * @return an unchecked consumer wrapping the {@code consumer} argument
+	 * 
+	 * @since 0.2.0
 	 */
 	@SuppressWarnings("squid:S1905") // SonarQube false positives
 	public static <T, U> BiConsumer<T, U> uncheckBiConsumer(CheckedBiConsumer<T, U> consumer)
@@ -378,6 +417,8 @@ public final class Exceptional implements Serializable {
 	 * @param consumer the consumer of the {@code value}
 	 * @param t first argument to be consumed
 	 * @param u last argument to be consumed
+	 * 
+	 * @since 0.2.0
 	 */
 	public static <T, U> void accept(CheckedBiConsumer<T, U> consumer, T t, U u)
 	{
@@ -397,6 +438,8 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @param function the checked function
 	 * @return an unchecked function wrapping the {@code function} argument.
+	 * 
+	 * @since 0.2.0
 	 */
 	@SuppressWarnings("squid:S1905") // SonarQube false positives
 	public static <T, R> Function<T, R> uncheckFunction(CheckedFunction<T, R> function)
@@ -415,6 +458,8 @@ public final class Exceptional implements Serializable {
 	 * @param function the checked function to invoke with the {@code argument}
 	 * @param argument the argument to apply to the function
 	 * @return the result of applying {@code argument} to {@code function}
+	 * 
+	 * @since 0.2.0
 	 */
 	public static <T, R> R apply(CheckedFunction<T, R> function, T argument)
 	{
@@ -435,6 +480,8 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @param function the checked bi-function
 	 * @return an unchecked bi-function wrapping the {@code function} argument.
+	 * 
+	 * @since 0.2.0
 	 */
 	@SuppressWarnings("squid:S1905") // SonarQube false positives
 	public static <T, U, R> BiFunction<T, U, R> uncheckBiFunction(CheckedBiFunction<T, U, R> function)
@@ -455,6 +502,8 @@ public final class Exceptional implements Serializable {
 	 * @param t the first argument to apply to the function
 	 * @param u the second argument to apply to the function
 	 * @return the result of applying {@code function} to the arguments {@code t} and {@code u}
+	 * 
+	 * @since 0.2.0
 	 */
 	public static <T, U, R> R apply(CheckedBiFunction<T, U, R> function, T t, U u)
 	{
@@ -473,6 +522,8 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @param operator the checked binary operator
 	 * @return and unchecked wrapper around the {@code operator} argument
+	 * 
+	 * @since 0.2.0
 	 */
 	@SuppressWarnings("squid:S1905") // SonarQube false positives
 	public static <T> BinaryOperator<T> uncheckBinaryOperator(CheckedBinaryOperator<T> operator)
@@ -488,6 +539,8 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @param function the checked to-double-function
 	 * @return an unchecked to-double-function wrapping the {@code function} argument.
+	 * 
+	 * @since 0.2.0
 	 */
 	@SuppressWarnings("squid:S1905") // SonarQube false positives
 	public static <T> ToDoubleFunction<T> uncheckToDoubleFunction(CheckedToDoubleFunction<T> function)
@@ -505,6 +558,8 @@ public final class Exceptional implements Serializable {
 	 * @param function the checked to-double function
 	 * @param t the function argument
 	 * @return the double result of applying the {@code function} to argument {@code t}
+	 * 
+	 * @since 0.2.0
 	 */
 	public static <T> double applyAsDouble(CheckedToDoubleFunction<T> function, T t)
 	{
@@ -523,6 +578,8 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @param function the checked to-int-function
 	 * @return an unchecked to-int-function wrapping the {@code function} argument.
+	 * 
+	 * @since 0.2.0
 	 */
 	@SuppressWarnings("squid:S1905") // SonarQube false positives
 	public static <T> ToIntFunction<T> uncheckToIntFunction(CheckedToIntFunction<T> function)
@@ -540,6 +597,8 @@ public final class Exceptional implements Serializable {
 	 * @param function the checked to-int function
 	 * @param t the function argument
 	 * @return the int result of applying the {@code function} to argument {@code t}
+	 * 
+	 * @since 0.2.0
 	 */
 	public static <T> int applyAsInt(CheckedToIntFunction<T> function, T t)
 	{
@@ -558,6 +617,8 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @param function the checked to-long-function
 	 * @return an unchecked to-long-function wrapping the {@code function} argument.
+	 * 
+	 * @since 0.2.0
 	 */
 	@SuppressWarnings("squid:S1905") // SonarQube false positives
 	public static <T> ToLongFunction<T> uncheckToLongFunction(CheckedToLongFunction<T> function)
@@ -575,6 +636,8 @@ public final class Exceptional implements Serializable {
 	 * @param function the checked to-long function
 	 * @param t the function argument
 	 * @return the long result of applying the {@code function} to argument {@code t}
+	 * 
+	 * @since 0.2.0
 	 */
 	public static <T> long applyAsLong(CheckedToLongFunction<T> function, T t)
 	{
@@ -593,6 +656,8 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @param supplier the checked supplier to wrap
 	 * @return an unchecked supplier wrapping the {@code supplier} argument
+	 * 
+	 * @since 0.2.0
 	 */
 	@SuppressWarnings("squid:S1905") // SonarQube false positives
 	public static <T> Supplier<T> uncheckSupplier(CheckedSupplier<T> supplier)
@@ -609,6 +674,8 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @param supplier the checked supplier
 	 * @return the result as supplied from the {@code supplier} argument
+	 * 
+	 * @since 0.2.0
 	 */
 	public static <T> T get(CheckedSupplier<T> supplier)
 	{
@@ -627,6 +694,8 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @param predicate the checked predicate to wrap
 	 * @return an unchecked predicate wrapping the {@code predicate} argument
+	 * 
+	 * @since 0.2.0
 	 */
 	@SuppressWarnings("squid:S1905") // SonarQube false positives
 	public static <T> Predicate<T> uncheckPredicate(CheckedPredicate<T> predicate)
@@ -644,6 +713,8 @@ public final class Exceptional implements Serializable {
 	 * @param predicate the checked predicate to test on the {@code value}
 	 * @param value the value to be tested
 	 * @return true IFF value passes predicate's test
+	 * 
+	 * @since 0.2.0
 	 */
 	public static <T> boolean test(CheckedPredicate<T> predicate, T value)
 	{
@@ -662,6 +733,8 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @param comparator the checked comparator to wrap
 	 * @return an unchecked comparator wrapping the {@code comparator} argument
+	 * 
+	 * @since 0.2.0
 	 */
 	@SuppressWarnings("squid:S1905") // SonarQube false positives
 	public static <T> Comparator<T> uncheckComparator(CheckedComparator<T> comparator)
@@ -670,6 +743,15 @@ public final class Exceptional implements Serializable {
 	}
 
 
+	/**
+	 * Converts a {@link CheckedToIntBiFunction} into an unchecked {@link ToIntBiFunction}.
+	 * 
+	 * @param <T> first argument type
+	 * @param <U> last argument type
+	 * 
+	 * @param function the checked bi-function 
+	 * @return an unchecked bi-function  
+	 */
 	@SuppressWarnings("squid:S1905") // SonarQube false positives
 	public static <T, U> ToIntBiFunction<T, U> uncheckToIntBiFunction(CheckedToIntBiFunction<T, U> function)
 	{
@@ -688,6 +770,8 @@ public final class Exceptional implements Serializable {
 	 * @param t the first argument to apply to the function
 	 * @param u the second argument to apply to the function
 	 * @return the result of applying {@code function} to the arguments {@code t} and {@code u}
+	 * 
+	 * @since 0.2.0
 	 */
 	@SuppressWarnings("squid:S00112")  // necessary to declare Throwable
 	public static <T, U> int applyAsInt(CheckedToIntBiFunction<T, U> function, T t, U u)
@@ -715,6 +799,8 @@ public final class Exceptional implements Serializable {
 	 * you may write <code>throws {@link Exceptional#throwAsUnchecked(Throwable)};</code>
 	 * to placate the compiler WRT non-void method returns, and ensure Static Code
 	 * Analysis doesn't accuse you of swallowing the exception.
+	 * 
+	 * @since 0.2.0
 	 * 
 	 * @see #rethrow(Throwable)
 	 */
@@ -746,6 +832,9 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @param throwable to be unwrapped
 	 * @return the root cause, or original throwable if not unwrapped
+	 * 
+	 * @since 0.2.0
+	 * 
 	 */
 	public static Throwable unwrap(Throwable throwable)
 	{
@@ -790,6 +879,8 @@ public final class Exceptional implements Serializable {
 	 * @param throwable to be unwrapped
 	 * @return the value of {@link UndeclaredThrowableException#getUndeclaredThrowable()}
 	 * 
+	 * @since 0.2.0
+	 * 
 	 * @see #unwrap(Throwable)
 	 */
 	public static Throwable unwrap(UndeclaredThrowableException throwable)
@@ -809,6 +900,8 @@ public final class Exceptional implements Serializable {
 	 *
 	 * @param throwable to be unwrapped
 	 * @return the value of {@link InvocationTargetException#getTargetException()}
+	 * 
+	 * @since 0.2.0
 	 */
 	public static Throwable unwrap(InvocationTargetException throwable)
 	{
@@ -827,6 +920,8 @@ public final class Exceptional implements Serializable {
 	 * @param t the argument to apply to the {@code create} function
 	 * @param convert a function applied to the {@link AutoCloseable} to produce the result
 	 * @return the result of applying the {@code convert} function
+	 * 
+	 * @since 0.2.0
 	 * 
 	 * @deprecated functionality moved to {@link Closing}
 	 * @see Closing
@@ -848,6 +943,8 @@ public final class Exceptional implements Serializable {
 	 * @param closeable the closeable subject of the {@code convert} function
 	 * @param convert the function consuming the closeable and supplying the result
 	 * @return the result of applying {@code convert} function to the {@code closeable} argument
+	 * 
+	 * @since 0.2.0
 	 * 
 	 * @deprecated functionality moved to {@link Closing#closeAfterApplying(AutoCloseable, CheckedFunction)}
 	 * @see Closing
@@ -871,6 +968,8 @@ public final class Exceptional implements Serializable {
 	 * @param t the argument that the {@code create} function is applied to
 	 * @param consume the consumer of the {@link AutoCloseable}
 	 * 
+	 * @since 0.2.0
+	 * 
 	 * @deprecated functionality moved to {@link Closing#closeAfterAccepting(CheckedFunction, Object, CheckedConsumer)}
 	 * @see Closing
 	 */
@@ -889,6 +988,8 @@ public final class Exceptional implements Serializable {
 	 * @param closeable the closeable to be consumed and closed
 	 * @param consume the consumer of the {@link AutoCloseable}
 	 * 
+	 * @since 0.2.0
+	 * 
 	 * @deprecated functionality moved to {@link Closing#closeAfterAccepting(AutoCloseable, CheckedConsumer)}
 	 * @see Closing
 	 */
@@ -905,6 +1006,8 @@ public final class Exceptional implements Serializable {
 	 * @param iterable the Iterable to consume each element of
 	 * @param consumer the checked consumer of the Iterable's elements
 	 * 
+	 * @since 0.4.0
+	 * 
 	 * @see #uncheckConsumer(CheckedConsumer)
 	 */
 	public static <T> void forEach(Iterable<T> iterable, CheckedConsumer<T> consumer)
@@ -918,6 +1021,8 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @param map the entries to consume
 	 * @param consumer the consumer of the map's key value pairs
+	 * 
+	 * @since 0.4.0
 	 * 
 	 * @see #uncheckBiConsumer(CheckedBiConsumer)
 	 */

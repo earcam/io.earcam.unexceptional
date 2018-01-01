@@ -23,6 +23,8 @@ import javax.annotation.ParametersAreNullableByDefault;
 /**
  * A general purpose unchecked exception, should probably be abstract, so use sparingly and only when lazy
  * Prefer the more specific subclasses
+ * 
+ * @since 0.2.0
  */
 @ParametersAreNullableByDefault
 public class UncheckedException extends RuntimeException {

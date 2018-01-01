@@ -33,6 +33,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * 
  * @param <T> the type to compare
  * 
+ * @since 0.2.0
+ * 
  * @see java.util.Comparator
  */
 @FunctionalInterface
@@ -81,7 +83,7 @@ public interface CheckedComparator<T> extends CheckedToIntBiFunction<T, T> {
 	{
 		Objects.requireNonNull(other);
 		return (CheckedComparator<T> & Serializable) (c1, c2) -> {
-			int res = compare(c1, c2);// N O S ONAR stfu false positive
+			int res = compare(c1, c2);// NOSONAR stfu false positive
 			return (res == 0) ? other.compare(c1, c2) : res;
 		};
 	}
