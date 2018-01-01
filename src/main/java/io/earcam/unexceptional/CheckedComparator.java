@@ -166,8 +166,6 @@ public interface CheckedComparator<T> extends CheckedToIntBiFunction<T, T> {
 	/**
 	 * See {@link java.util.Comparator#comparing(java.util.function.Function, Comparator)}
 	 * 
-	 * @return the chained {@link CheckedComparator}
-	 * 
 	 * @param <T> the type of element to be compared
 	 * @param <U> the type of the sort key
 	 * 

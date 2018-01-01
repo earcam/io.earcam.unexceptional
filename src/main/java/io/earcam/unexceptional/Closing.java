@@ -27,15 +27,12 @@ import javax.annotation.WillClose;
 /**
  * <p>
  * Succinctly handle {@link AutoCloseable}s that throw checked {@link Exception}s.
- * <p>
+ * </p>
  * 
  * <p>
  * There are two families of static methods; {@code closeAfterApplying(...)} and {@code closeAfterAccepting(...)}, the
  * former <i>applies</i> checked functions (the use-case being <b>read</b>) while the later <i>accepts</i> checked 
  * consumers (the use-case being <b>write</b>)
- * </p>
- * 
- * <p>
  * </p>
  * 
  * <p>
@@ -49,6 +46,7 @@ import javax.annotation.WillClose;
  * <p>
  * <b>Motivation</b>: I/O stream instances typically (and necessarily) requires handling a lot of possible
  * {@link IOException}s - by invoking:
+ * </p>
  * <ul>
  * <li>Constructor</li>
  * <li>A read/write call</li>
@@ -56,7 +54,7 @@ import javax.annotation.WillClose;
  * <li>A read/write call, then subsequently in the call to {@link AutoCloseable#close()} - via
  * {@code try}-with-resources</li>
  * </ul>
- * </p>
+ * 
  * <p>
  * That's a lot of branches to cover - often it is irrelevant to the application which branch actually throws, but
  * regardless test coverage suffers without some needless stub/mocked throw-on-create/read/write/close tests.
@@ -117,8 +115,8 @@ public final class Closing {
 	/**
 	 * Applies the bi-function to the closeable, returning the result and closing the closable - checked exceptions are
 	 * rethrown as unchecked.
-	 * @param closeable the closeable subject of the {@code convert} function
-	 * @param instance
+	 * @param closeable the closeable subject of the {@code convert} bi-function
+	 * @param instance the second argument for the bi-function
 	 * @param convert the function consuming the closeable and supplying the result
 	 * 
 	 * @param <C> the auto-closeable type, will be applied and closed

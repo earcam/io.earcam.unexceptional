@@ -331,8 +331,6 @@ public final class Exceptional implements Serializable {
 	 * <p>
 	 * The interrupt flag will be reset IFF {@code caught instanceof InterruptedException}
 	 * </p>
-	 * <p>
-	 * </p>
 	 * 
 	 * @param caught any {@link Throwable}
 	 * @return a {@link RuntimeException}, typically a subclass of {@link UncheckedException} or an
@@ -1003,6 +1001,8 @@ public final class Exceptional implements Serializable {
 	/**
 	 * Invokes the {@link Iterable#forEach(Consumer)} method having unchecked the consumer
 	 * 
+	 * @param <T> the consumed {@link Iterable}'s element type
+	 * 
 	 * @param iterable the Iterable to consume each element of
 	 * @param consumer the checked consumer of the Iterable's elements
 	 * 
@@ -1017,7 +1017,10 @@ public final class Exceptional implements Serializable {
 
 
 	/**
-	 * Invokes the {@link Map#forEach(Consumer)} method having unchecked the bi-consumer
+	 * Invokes the {@link Map#forEach(BiConsumer)} method having unchecked the bi-consumer
+	 * 
+	 * @param <K> the consumed {@link Map}'s key type
+	 * @param <V> the consumed {@link Map}'s value type
 	 * 
 	 * @param map the entries to consume
 	 * @param consumer the consumer of the map's key value pairs

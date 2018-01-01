@@ -86,7 +86,8 @@ public interface CheckedFunction<T, R> {
 
 	/**
 	 * See {@link java.util.function.Function#identity()}
-	 * 
+	 *
+	 * @param <T> argument and return type
 	 * @return the argument as given
 	 * 
 	 * @since 0.3.0
