@@ -20,6 +20,7 @@ package io.earcam.unexceptional;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,10 +44,36 @@ public class NayMock implements InvocationHandler {
 	List<Invocation> invocations = new ArrayList<>();
 
 
+	@SuppressWarnings("unchecked")
+	public static <T> T proxy(InvocationHandler handler, Class<T> type)
+	{
+		return (T) Proxy.newProxyInstance(NayMock.class.getClassLoader(), new Class<?>[] { type }, handler);
+	}
+
+
+	public static NayMock stub(Object returnValue)
+	{
+		return new NayMock() {
+			@Override
+			public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
+			{
+				super.invoke(proxy, method, args);
+				return returnValue;
+			}
+		};
+	}
+
+
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
 	{
 		invocations.add(new Invocation(proxy, method.getName(), args));
+		if(method.getReturnType().isPrimitive()) {
+			if("boolean".equals(method.getReturnType().getName())) {
+				return false;
+			}
+			return 0;
+		}
 		return null;
 	}
 

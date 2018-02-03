@@ -99,8 +99,7 @@ I'll update this section with link to mailing list archive at a later date.
 
 #### Mutation Testing
 
-At time of writing, there are; x2 [PiTest](http://pitest.org) survived [conditions boundary](http://pitest.org/quickstart/mutators/#CONDITIONALS_BOUNDARY) mutations 
-in `CheckedBinaryOperator` for `maxBy` and `minBy` methods accepting `Comparator` - determined these are acceptable/irrelevant. 
+At time of writing, there are zero survived [PiTest](http://pitest.org) mutations.  A few additional tests were written, with the sole purpose of killing mutations deemed benign. 
 
 
 ### Compiler Warnings

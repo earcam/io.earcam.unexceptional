@@ -256,8 +256,6 @@ public class ClosingTest {
 	}
 
 
-	// Closing.closeAfterApplying(C, CheckedFunction<C, R>)
-
 	@Test
 	public void closesAfterApplying() throws Throwable
 	{

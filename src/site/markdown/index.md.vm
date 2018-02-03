@@ -5,7 +5,7 @@
 #set($h5 = '#####')
 #set($h6 = '######')
 
-A small cohesive module, leveraging Java 8 functional capabilities to remove most of the boiler-plate of handling checked exceptions.  Making sourcecode more concise and reducing branches.  
+A small cohesive module, leveraging Java 8 functional capabilities to remove most of the boiler-plate of handling checked exceptions.  Makes sourcecode more concise and eliminate branches due to try-catch.  
 
 #parse( "../section/examples-carousel.md.vm" )
 

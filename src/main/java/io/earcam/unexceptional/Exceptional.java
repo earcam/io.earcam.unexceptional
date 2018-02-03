@@ -187,7 +187,7 @@ public final class Exceptional implements Serializable {
 
 
 	/**
-	 * Invokes {@link URL#toURI()}, catching any {@link URISyntaxException} and rethrowing 
+	 * Invokes {@link URL#toURI()}, catching any {@link URISyntaxException} and rethrowing
 	 * wrapped as {@link UncheckedUriSyntaxException}
 	 * 
 	 * @param earl the {@link URL} to convert
@@ -747,8 +747,8 @@ public final class Exceptional implements Serializable {
 	 * @param <T> first argument type
 	 * @param <U> last argument type
 	 * 
-	 * @param function the checked bi-function 
-	 * @return an unchecked bi-function  
+	 * @param function the checked bi-function
+	 * @return an unchecked bi-function
 	 */
 	@SuppressWarnings("squid:S1905") // SonarQube false positives
 	public static <T, U> ToIntBiFunction<T, U> uncheckToIntBiFunction(CheckedToIntBiFunction<T, U> function)

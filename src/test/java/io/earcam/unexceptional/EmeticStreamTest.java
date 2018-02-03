@@ -23,7 +23,6 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -252,7 +251,7 @@ public class EmeticStreamTest {
 		List<Integer> consumed = new ArrayList<>();
 
 		@SuppressWarnings("unchecked")
-		Stream<Integer> stream = (Stream<Integer>) Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[] { Stream.class }, nayMock);
+		Stream<Integer> stream = NayMock.proxy(nayMock, Stream.class);
 
 		EmeticStream.emesis(stream).forEachOrdered(consumed::add);
 
@@ -297,5 +296,97 @@ public class EmeticStreamTest {
 				.emesis(Stream.of(zeroToNine().collect(toList()), zeroToNine().collect(toList()), zeroToNine().collect(toList())));
 
 		assertThat(stream.flatMapToDouble(s -> s.stream().mapToDouble(Integer::doubleValue)).count(), is(30L));
+	}
+
+
+	@Test
+	public void unordered()
+	{
+		NayMock nayMock = new NayMock();
+
+		@SuppressWarnings("unchecked")
+		Stream<Integer> stream = NayMock.proxy(nayMock, Stream.class);
+
+		EmeticStream<Integer> unordered = EmeticStream.emesis(stream).unordered();
+
+		assertThat(nayMock.invocations.get(0).name, is(equalTo("unordered")));
+		assertThat(unordered, is(not(nullValue())));
+	}
+
+
+	@Test
+	public void iterator()
+	{
+		NayMock nayMock = new NayMock();
+
+		@SuppressWarnings("unchecked")
+		Stream<Integer> stream = NayMock.proxy(nayMock, Stream.class);
+
+		EmeticStream.emesis(stream).iterator();
+
+		assertThat(nayMock.invocations.get(0).name, is(equalTo("iterator")));
+	}
+
+
+	@Test
+	public void spliterator()
+	{
+		NayMock nayMock = new NayMock();
+
+		@SuppressWarnings("unchecked")
+		Stream<Integer> stream = NayMock.proxy(nayMock, Stream.class);
+
+		EmeticStream.emesis(stream).spliterator();
+
+		assertThat(nayMock.invocations.get(0).name, is(equalTo("spliterator")));
+	}
+
+
+	@Test
+	public void isParallel()
+	{
+		NayMock nayMock = NayMock.stub(true);
+
+		@SuppressWarnings("unchecked")
+		Stream<Integer> stream = NayMock.proxy(nayMock, Stream.class);
+
+		boolean parallel = EmeticStream.emesis(stream).isParallel();
+
+		assertThat(nayMock.invocations.get(0).name, is(equalTo("isParallel")));
+		assertThat(parallel, is(true));
+	}
+
+
+	@Test
+	public void onClose()
+	{
+		NayMock nayMock = new NayMock();
+
+		@SuppressWarnings("unchecked")
+		Stream<Integer> stream = NayMock.proxy(nayMock, Stream.class);
+
+		Runnable closeHandler = new Runnable() {
+			public void run()
+			{};
+		};
+		EmeticStream<Integer> stream2 = EmeticStream.emesis(stream).onClose(closeHandler);
+
+		assertThat(nayMock.invocations.get(0).name, is(equalTo("onClose")));
+		assertThat(nayMock.invocations.get(0).args, is(arrayContaining(closeHandler)));
+		assertThat(stream2, is(not(nullValue())));
+	}
+
+
+	@Test
+	public void close()
+	{
+		NayMock nayMock = new NayMock();
+
+		@SuppressWarnings("unchecked")
+		Stream<Integer> stream = NayMock.proxy(nayMock, Stream.class);
+
+		EmeticStream.emesis(stream).close();
+
+		assertThat(nayMock.invocations.get(0).name, is(equalTo("close")));
 	}
 }

@@ -66,6 +66,46 @@ public class CheckedBinaryOperatorTest implements Serializable {
 	}
 
 
+	/**
+	 * This test exists for the sole purpose of killing PiTest mutation "changed conditional boundary".  
+	 * 
+	 * The mutation is benign, only able to replace less-than with less-than-or-equal.
+	 * 
+	 * @throws Throwable
+	 */
+	@Test
+	public void minByReturnsSecondWhenEqual() throws Throwable
+	{
+		CheckedBinaryOperator<Object> minBy = CheckedBinaryOperator.minBy((a,b) -> 0);
+		Object a = new Object();
+		Object b = new Object();
+		
+		Object applied = minBy.apply(a, b);
+		
+		assertThat(applied, is(sameInstance(b)));
+	}
+
+
+	/**
+	 * This test exists for the sole purpose of killing PiTest mutation "changed conditional boundary".  
+	 * 
+	 * The mutation is benign, only able to replace less-than with less-than-or-equal.
+	 * 
+	 * @throws Throwable
+	 */
+	@Test
+	public void maxByReturnsSecondWhenEqual() throws Throwable
+	{
+		CheckedBinaryOperator<Object> maxBy = CheckedBinaryOperator.maxBy((a,b) -> 0);
+		Object a = new Object();
+		Object b = new Object();
+		
+		Object applied = maxBy.apply(a, b);
+		
+		assertThat(applied, is(sameInstance(b)));
+	}
+
+
 	@Test
 	public void minBy() throws Throwable
 	{

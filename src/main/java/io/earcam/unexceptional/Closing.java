@@ -31,7 +31,7 @@ import javax.annotation.WillClose;
  * 
  * <p>
  * There are two families of static methods; {@code closeAfterApplying(...)} and {@code closeAfterAccepting(...)}, the
- * former <i>applies</i> checked functions (the use-case being <b>read</b>) while the later <i>accepts</i> checked 
+ * former <i>applies</i> checked functions (the use-case being <b>read</b>) while the later <i>accepts</i> checked
  * consumers (the use-case being <b>write</b>)
  * </p>
  * 
@@ -74,6 +74,7 @@ public final class Closing {
 	 * <p>
 	 * Ultra-shorthand for {@link AutoCloseable}/{@link java.io.Closeable}, obvious use for {@link java.io.InputStream}
 	 * </p>
+	 * 
 	 * @param create a function applying {@code t} to produce an {@link AutoCloseable} of type {@code <C>}
 	 * @param t the argument to apply to the {@code create} function
 	 * @param convert a function applied to the {@link AutoCloseable} to produce the result
@@ -94,6 +95,7 @@ public final class Closing {
 	/**
 	 * Applies the function to the closeable, returning the result and closing the closable - checked exceptions are
 	 * rethrown as unchecked.
+	 * 
 	 * @param closeable the closeable subject of the {@code convert} function
 	 * @param convert the function consuming the closeable and supplying the result
 	 * 
@@ -115,6 +117,7 @@ public final class Closing {
 	/**
 	 * Applies the bi-function to the closeable, returning the result and closing the closable - checked exceptions are
 	 * rethrown as unchecked.
+	 * 
 	 * @param closeable the closeable subject of the {@code convert} bi-function
 	 * @param instance the second argument for the bi-function
 	 * @param convert the function consuming the closeable and supplying the result
@@ -139,6 +142,7 @@ public final class Closing {
 	 * Applies the {@code create} function to {@code t}, resulting in a {@link AutoCloseable} which is closed after
 	 * being consumed.
 	 * Checked exceptions are rethrown as unchecked.
+	 * 
 	 * @param create the function creating the {@link AutoCloseable}
 	 * @param t the argument that the {@code create} function is applied to
 	 * @param consume the consumer of the {@link AutoCloseable}
@@ -155,6 +159,7 @@ public final class Closing {
 
 	/**
 	 * Consumes the {@code closeable} before closing. Checked exceptions are rethrown as unchecked.
+	 * 
 	 * @param closeable the closeable to be consumed and closed
 	 * @param consume the consumer of the {@link AutoCloseable}
 	 * 
@@ -180,6 +185,7 @@ public final class Closing {
 	/**
 	 * Consumes both the {@code closeable} and {@code instance} before closing. Checked exceptions are rethrown as
 	 * unchecked.
+	 * 
 	 * @param closeable the closeable to be consumed and closed
 	 * @param instance the instance to consume
 	 * @param consume the consumer of the {@link AutoCloseable}

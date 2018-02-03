@@ -1005,9 +1005,10 @@ public class ExceptionalTest {
 	public void closeAfterApplyingWhenSuccessfulThenCloses()
 	{
 		ServerSocket socket = createRandomPortServerSocket();
-		closeAfterApplying(socket, ServerSocket::getLocalPort);
+		Integer freePort = closeAfterApplying(socket, ServerSocket::getLocalPort);
 
 		assertThat(socket.isClosed(), is(true));
+		assertThat(freePort, is(greaterThan(0)));
 	}
 
 

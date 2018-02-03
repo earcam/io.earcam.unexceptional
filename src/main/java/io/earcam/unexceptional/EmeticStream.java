@@ -21,7 +21,9 @@ package io.earcam.unexceptional;
 import static io.earcam.unexceptional.Exceptional.*;
 
 import java.io.Serializable;   //NOSONAR SonarQube false positive - putting @SuppressWarnings("squid:UselessImportCheck") on class has no effect, can't put at package level either
+import java.util.Iterator;
 import java.util.Optional;
+import java.util.Spliterator;
 import java.util.stream.Collector;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
@@ -48,7 +50,7 @@ import java.util.stream.Stream;
  * @since 0.2.0
  */
 @FunctionalInterface
-public interface EmeticStream<T> {
+public interface EmeticStream<T> extends AutoCloseable {
 
 	/**
 	 * @return the wrapped stream
@@ -64,6 +66,8 @@ public interface EmeticStream<T> {
 	 * 
 	 * @param <T> the function's argument type
 	 * @param <R> the element type of this stream
+	 * 
+	 * @since 0.2.0
 	 */
 	public static <T, R> EmeticStream<R> emesis(CheckedFunction<T, Stream<R>> function, T value)
 	{
@@ -78,6 +82,8 @@ public interface EmeticStream<T> {
 	 * @return an {@link EmeticStream}
 	 * 
 	 * @param <T> the {@code stream}'s element type
+	 * 
+	 * @since 0.2.0
 	 */
 	@SuppressWarnings("squid:S1905") // SonarQube false positive
 	public static <T> EmeticStream<T> emesis(Stream<T> stream)
@@ -90,6 +96,8 @@ public interface EmeticStream<T> {
 	 * @return a parallel emetic stream
 	 * 
 	 * @see Stream#parallel()
+	 * 
+	 * @since 0.2.0
 	 */
 	public default EmeticStream<T> parallel()
 	{
@@ -101,10 +109,72 @@ public interface EmeticStream<T> {
 	 * @return a sequential emetic stream
 	 * 
 	 * @see Stream#sequential()
+	 * 
+	 * @since 0.2.0
 	 */
 	public default EmeticStream<T> sequential()
 	{
 		return !mapToStream().isParallel() ? this : emesis(mapToStream().sequential());
+	}
+
+
+	/**
+	 * Returns an equivalent stream that is unordered.
+	 *
+	 * @return an unordered emetic stream
+	 * 
+	 * @see java.util.stream.BaseStream#unordered()
+	 * 
+	 * @since 0.5.0
+	 */
+	public default EmeticStream<T> unordered()
+	{
+		return emesis(mapToStream().unordered());
+	}
+
+
+	/**
+	 * Returns an iterator for the elements of the wrapped stream.
+	 * 
+	 * @return the element iterator for the wrapped stream
+	 * 
+	 * @see java.util.stream.BaseStream#iterator()
+	 * 
+	 * @since 0.5.0
+	 */
+	public default Iterator<T> iterator()
+	{
+		return mapToStream().iterator();
+	}
+
+
+	/**
+	 * Returns a spliterator for the elements of the wrapped stream.
+	 *
+	 * @return the element spliterator for this stream
+	 * 
+	 * @see java.util.stream.BaseStream#spliterator()
+	 * 
+	 * @since 0.5.0
+	 */
+	public default Spliterator<T> spliterator()
+	{
+		return mapToStream().spliterator();
+	}
+
+
+	/**
+	 * Returns whether the wrapped stream would execute in parallel, if a terminal operation were executed.
+	 *
+	 * @return {@code true} if the wrapped stream would execute in parallel
+	 * 
+	 * @see java.util.stream.BaseStream#isParallel()
+	 * 
+	 * @since 0.5.0
+	 */
+	public default boolean isParallel()
+	{
+		return mapToStream().isParallel();
 	}
 
 
@@ -114,6 +184,8 @@ public interface EmeticStream<T> {
 	 * @return ∀ e ∈ 𝕊: 𝗣(e)
 	 * 
 	 * @see Stream#allMatch(java.util.function.Predicate)
+	 * 
+	 * @since 0.2.0
 	 */
 	public default boolean allMatch(CheckedPredicate<? super T> predicate)
 	{
@@ -127,6 +199,8 @@ public interface EmeticStream<T> {
 	 * @return ∃ e ∈ 𝕊: 𝗣(e)
 	 * 
 	 * @see Stream#anyMatch(java.util.function.Predicate)
+	 * 
+	 * @since 0.2.0
 	 */
 	public default boolean anyMatch(CheckedPredicate<? super T> predicate)
 	{
@@ -142,6 +216,8 @@ public interface EmeticStream<T> {
 	 * @param <R> reduction result type
 	 * 
 	 * @see Stream#collect(Collector)
+	 * 
+	 * @since 0.2.0
 	 */
 	public default <R, A> R collect(Collector<? super T, A, R> collector)
 	{
@@ -158,6 +234,8 @@ public interface EmeticStream<T> {
 	 * @param <R> result type
 	 * 
 	 * @see Stream#collect(java.util.function.Supplier, java.util.function.BiConsumer, java.util.function.BiConsumer)
+	 * 
+	 * @since 0.2.0
 	 */
 	public default <R> R collect(CheckedSupplier<R> supplier, CheckedBiConsumer<R, ? super T> accumulator, CheckedBiConsumer<R, R> combiner)
 	{
@@ -170,6 +248,8 @@ public interface EmeticStream<T> {
 	 * @return the new {@link EmeticStream}
 	 * 
 	 * @see Stream#filter(java.util.function.Predicate)
+	 * 
+	 * @since 0.2.0
 	 */
 	public default EmeticStream<T> filter(CheckedPredicate<? super T> predicate)
 	{
@@ -184,6 +264,8 @@ public interface EmeticStream<T> {
 	 * @return the new {@link EmeticStream}
 	 * 
 	 * @see Stream#flatMap(java.util.function.Function)
+	 * 
+	 * @since 0.2.0
 	 */
 	public default <R> EmeticStream<R> flatMap(CheckedFunction<? super T, ? extends Stream<? extends R>> mapper)
 	{
@@ -196,6 +278,8 @@ public interface EmeticStream<T> {
 	 * @return the new {@link DoubleStream}
 	 * 
 	 * @see Stream#flatMapToDouble(java.util.function.Function)
+	 * 
+	 * @since 0.2.0
 	 */
 	public default DoubleStream flatMapToDouble(CheckedFunction<? super T, ? extends DoubleStream> mapper)
 	{
@@ -208,6 +292,8 @@ public interface EmeticStream<T> {
 	 * @return the new {@link IntStream}
 	 * 
 	 * @see Stream#flatMapToInt(java.util.function.Function)
+	 * 
+	 * @since 0.2.0
 	 */
 	public default IntStream flatMapToInt(CheckedFunction<? super T, ? extends IntStream> mapper)
 	{
@@ -220,6 +306,8 @@ public interface EmeticStream<T> {
 	 * @return the new {@link EmeticStream}
 	 * 
 	 * @see Stream#flatMapToLong(java.util.function.Function)
+	 * 
+	 * @since 0.2.0
 	 */
 	public default LongStream flatMapToLong(CheckedFunction<? super T, ? extends LongStream> mapper)
 	{
@@ -230,6 +318,8 @@ public interface EmeticStream<T> {
 	/**
 	 * @param action a non-interfering action to apply to each element
 	 * @see Stream#forEach(java.util.function.Consumer)
+	 * 
+	 * @since 0.2.0
 	 */
 	public default void forEach(CheckedConsumer<? super T> action)
 	{
@@ -240,6 +330,8 @@ public interface EmeticStream<T> {
 	/**
 	 * @param action a non-interfering action to apply to each element
 	 * @see Stream#forEachOrdered(java.util.function.Consumer)
+	 * 
+	 * @since 0.2.0
 	 */
 	public default void forEachOrdered(CheckedConsumer<? super T> action)
 	{
@@ -254,6 +346,8 @@ public interface EmeticStream<T> {
 	 * @return the new {@link EmeticStream}
 	 * 
 	 * @see Stream#map(java.util.function.Function)
+	 * 
+	 * @since 0.2.0
 	 */
 	public default <R> EmeticStream<R> map(CheckedFunction<? super T, ? extends R> mapper)
 	{
@@ -266,6 +360,8 @@ public interface EmeticStream<T> {
 	 * @return the new {@link EmeticStream}
 	 * 
 	 * @see Stream#mapToDouble(java.util.function.ToDoubleFunction)
+	 * 
+	 * @since 0.2.0
 	 */
 	public default DoubleStream mapToDouble(CheckedToDoubleFunction<? super T> mapper)
 	{
@@ -278,6 +374,8 @@ public interface EmeticStream<T> {
 	 * @return the new {@link EmeticStream}
 	 * 
 	 * @see Stream#mapToInt(java.util.function.ToIntFunction)
+	 * 
+	 * @since 0.2.0
 	 */
 	public default IntStream mapToInt(CheckedToIntFunction<? super T> mapper)
 	{
@@ -290,6 +388,8 @@ public interface EmeticStream<T> {
 	 * @return the new {@link EmeticStream}
 	 * 
 	 * @see Stream#mapToLong(java.util.function.ToLongFunction)
+	 * 
+	 * @since 0.2.0
 	 */
 	public default LongStream mapToLong(CheckedToLongFunction<? super T> mapper)
 	{
@@ -302,6 +402,8 @@ public interface EmeticStream<T> {
 	 * @return an {@link Optional} as per {@link Stream#max(java.util.Comparator)}
 	 * 
 	 * @see Stream#max(java.util.Comparator)
+	 * 
+	 * @since 0.2.0
 	 */
 	public default Optional<T> max(CheckedComparator<? super T> comparator)
 	{
@@ -314,6 +416,8 @@ public interface EmeticStream<T> {
 	 * @return an {@link Optional} as per {@link Stream#max(java.util.Comparator)}
 	 * 
 	 * @see Stream#min(java.util.Comparator)
+	 * 
+	 * @since 0.2.0
 	 */
 	public default Optional<T> min(CheckedComparator<? super T> comparator)
 	{
@@ -328,6 +432,8 @@ public interface EmeticStream<T> {
 	 * @return ∄ e ∈ 𝕊: 𝗣(e)
 	 * 
 	 * @see Stream#noneMatch(java.util.function.Predicate)
+	 * 
+	 * @since 0.2.0
 	 */
 	public default boolean noneMatch(CheckedPredicate<? super T> predicate)
 	{
@@ -340,6 +446,8 @@ public interface EmeticStream<T> {
 	 * @return the new EmeticStream
 	 * 
 	 * @see Stream#peek(java.util.function.Consumer)
+	 * 
+	 * @since 0.2.0
 	 */
 	public default EmeticStream<T> peek(CheckedConsumer<? super T> action)
 	{
@@ -353,6 +461,8 @@ public interface EmeticStream<T> {
 	 * @return the reduction
 	 * 
 	 * @see Stream#reduce(java.util.function.BinaryOperator)
+	 * 
+	 * @since 0.2.0
 	 */
 	public default Optional<T> reduce(CheckedBinaryOperator<T> accumulator)
 	{
@@ -367,6 +477,8 @@ public interface EmeticStream<T> {
 	 * @return the reduction
 	 * 
 	 * @see Stream#reduce(Object, java.util.function.BinaryOperator)
+	 * 
+	 * @since 0.2.0
 	 */
 	public default T reduce(T identity, CheckedBinaryOperator<T> accumulator)
 	{
@@ -380,6 +492,8 @@ public interface EmeticStream<T> {
 	 * @return an emetic stream wrapping the underlying sorted stream
 	 * 
 	 * @see Stream#sorted(java.util.Comparator)
+	 * 
+	 * @since 0.2.0
 	 */
 	public default EmeticStream<T> sorted(CheckedComparator<? super T> comparator)
 	{
@@ -391,9 +505,42 @@ public interface EmeticStream<T> {
 	 * @return count of elements in this stream
 	 * 
 	 * @see Stream#count()
+	 * 
+	 * @since 0.2.0
 	 */
 	public default long count()
 	{
 		return mapToStream().count();
+	}
+
+
+	/**
+	 * Returns an equivalent stream with the additional close handler.
+	 * 
+	 * @param closeHandler A runnable executed when the stream is closed
+	 * @return a stream with a handler registered
+	 * 
+	 * @see java.util.stream.BaseStream#onClose(Runnable)
+	 * 
+	 * @since 0.5.0
+	 */
+	public default EmeticStream<T> onClose(Runnable closeHandler)
+	{
+		return emesis(mapToStream().onClose(closeHandler));
+	}
+
+
+	/**
+	 * Closes the wrapped stream, invoking all registered close handlers.
+	 *
+	 * @see AutoCloseable#close()
+	 * @see java.util.stream.BaseStream#unordered()
+	 * 
+	 * @since 0.5.0
+	 */
+	@Override
+	public default void close()
+	{
+		mapToStream().close();
 	}
 }
