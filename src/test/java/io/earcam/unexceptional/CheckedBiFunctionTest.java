@@ -18,11 +18,11 @@
  */
 package io.earcam.unexceptional;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CheckedBiFunctionTest {
 
@@ -43,7 +43,7 @@ public class CheckedBiFunctionTest {
 		CheckedFunction<Double, String> after = null;
 		try {
 			div.andThen(after);
-			fail();
+			fail("should not reach here");
 		} catch(NullPointerException npe) {}
 	}
 }

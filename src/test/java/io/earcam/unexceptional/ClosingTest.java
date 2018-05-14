@@ -19,9 +19,14 @@
 package io.earcam.unexceptional;
 
 import static io.earcam.unexceptional.Exceptional.unwrap;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.arrayContaining;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -30,7 +35,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Cases that can't be met as we're assigning method arg to local var in the "with" of try-with-resources:
@@ -452,7 +457,7 @@ public class ClosingTest {
 
 		try {
 			Closing.closeAfterAccepting(DodgyConstructorOutputStream::new, chuckInConstructor, ref::set);
-			fail();
+			fail("should not reach here");
 		} catch(UnsupportedOperationException e) {
 			assertThat(e, is(sameInstance(chuckInConstructor)));
 			assertThat(ref.get(), is(nullValue()));
@@ -482,7 +487,7 @@ public class ClosingTest {
 
 		try {
 			Closing.closeAfterAccepting(DodgyConstructorOutputStream::new, chuckInConstructor, 42, biConsumer);
-			fail();
+			fail("should not reach here");
 		} catch(UnsupportedOperationException e) {
 			assertThat(e, is(sameInstance(chuckInConstructor)));
 			assertThat(ref.get(), is(nullValue()));
@@ -507,7 +512,7 @@ public class ClosingTest {
 
 		try {
 			Closing.closeAfterApplying(DodgyConstructorOutputStream::new, chuckInConstructor, CheckedFunction.identity());
-			fail();
+			fail("should not reach here");
 		} catch(UnsupportedOperationException e) {
 			assertThat(e, is(sameInstance(chuckInConstructor)));
 			assertThat(ref.get(), is(nullValue()));
@@ -522,7 +527,7 @@ public class ClosingTest {
 		constructor.setAccessible(true);
 		try {
 			constructor.newInstance();
-			fail();
+			fail("should not reach here");
 		} catch(InvocationTargetException e) {
 			assertThat(unwrap(e), is(instanceOf(IllegalStateException.class)));
 		}

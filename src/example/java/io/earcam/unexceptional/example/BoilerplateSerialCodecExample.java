@@ -18,8 +18,8 @@
  */
 package io.earcam.unexceptional.example;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -29,7 +29,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.UncheckedIOException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import io.earcam.unexceptional.CheckedPredicate;
 

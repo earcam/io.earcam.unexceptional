@@ -18,12 +18,11 @@
  */
 package io.earcam.unexceptional;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
-import org.junit.Test;
-
-import io.earcam.unexceptional.UncheckedException;
+import org.junit.jupiter.api.Test;
 
 public class UncheckedExceptionTest {
 

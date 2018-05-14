@@ -19,16 +19,14 @@
 package io.earcam.unexceptional;
 
 import static io.earcam.unexceptional.Exceptional.uncheckRunnable;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.sameInstance;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.Serializable;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
 public class CheckedRunnableTest {
 
@@ -41,9 +39,6 @@ public class CheckedRunnableTest {
 		nastyWasRun = true;
 		throw EXCEPTION;
 	};
-
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();
 
 
 	@Test
@@ -68,10 +63,11 @@ public class CheckedRunnableTest {
 	@Test
 	public void invokesSequentiallyThenThrows()
 	{
-		thrown.expect(sameInstance(EXCEPTION));
 		try {
 			uncheckRunnable(nice.andThen(nasty)).run();
-		} finally {
+			fail("should not reach here");
+		} catch(Throwable thrown) {
+			assertThat(thrown, is(sameInstance(EXCEPTION)));
 			assertThat(niceWasRun, is(true));
 			assertThat(nastyWasRun, is(true));
 		}
@@ -81,10 +77,11 @@ public class CheckedRunnableTest {
 	@Test
 	public void thrownExceptionTerminatesEarly()
 	{
-		thrown.expect(sameInstance(EXCEPTION));
 		try {
 			uncheckRunnable(nasty.andThen(nice)).run();
-		} finally {
+			fail("should not reach here");
+		} catch(Throwable thrown) {
+			assertThat(thrown, is(sameInstance(EXCEPTION)));
 			assertThat(niceWasRun, is(false));
 			assertThat(nastyWasRun, is(true));
 		}
@@ -96,7 +93,7 @@ public class CheckedRunnableTest {
 	{
 		try {
 			nice.andThen(null);
-			fail();
+			fail("should not reach here");
 		} catch(NullPointerException npe) {}
 	}
 }

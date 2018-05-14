@@ -19,12 +19,15 @@
 package io.earcam.unexceptional;
 
 import static io.earcam.unexceptional.SerialCodec.serializable;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.Serializable;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CheckedBinaryOperatorTest implements Serializable {
 
@@ -51,7 +54,7 @@ public class CheckedBinaryOperatorTest implements Serializable {
 	{
 		try {
 			CheckedBinaryOperator.maxBy(null);
-			fail();
+			fail("should not reach here");
 		} catch(NullPointerException e) {}
 	}
 
@@ -61,7 +64,7 @@ public class CheckedBinaryOperatorTest implements Serializable {
 	{
 		try {
 			CheckedBinaryOperator.minBy(null);
-			fail();
+			fail("should not reach here");
 		} catch(NullPointerException e) {}
 	}
 

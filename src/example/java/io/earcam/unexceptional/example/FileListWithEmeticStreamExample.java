@@ -23,16 +23,16 @@ package io.earcam.unexceptional.example;
 import static io.earcam.unexceptional.EmeticStream.emesis;
 import static java.nio.file.Paths.get;
 import static java.util.stream.Collectors.toList;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 // EARCAM_SNIPPET_END: import
 

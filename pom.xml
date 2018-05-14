@@ -47,6 +47,7 @@
 		<coordinate.username.project>earcam/${project.artifactId}</coordinate.username.project>
 
 		<skip.execution.pitest>false</skip.execution.pitest>
+		<version.junit5>5.2.0</version.junit5>
 	</properties>
 
 	<dependencies>
@@ -59,16 +60,24 @@
 		</dependency>
 
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>${version.junit5}</version>
 			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.hamcrest</groupId>
-					<artifactId>hamcrest-core</artifactId>
-				</exclusion>
-			</exclusions>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.junit.platform</groupId>
+			<artifactId>junit-platform-launcher</artifactId>
+			<version>1.2.0</version>
+			<scope>test</scope>
+		</dependency>
+	
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>${version.junit5}</version>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>

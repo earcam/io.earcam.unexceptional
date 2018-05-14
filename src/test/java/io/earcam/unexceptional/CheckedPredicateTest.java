@@ -18,12 +18,13 @@
  */
 package io.earcam.unexceptional;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.Serializable;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CheckedPredicateTest {
 
@@ -151,7 +152,7 @@ public class CheckedPredicateTest {
 	{
 		try {
 			YES.or(null);
-			fail();
+			fail("should not reach here");
 		} catch(NullPointerException npe) {}
 	}
 
@@ -161,7 +162,6 @@ public class CheckedPredicateTest {
 	{
 		try {
 			YES.and(null);
-			fail();
 		} catch(NullPointerException npe) {}
 	}
 }

@@ -18,11 +18,44 @@
  */
 package io.earcam.unexceptional;
 
-import static io.earcam.unexceptional.Exceptional.*;
+import static io.earcam.unexceptional.Exceptional.RETHROWING;
+import static io.earcam.unexceptional.Exceptional.SWALLOWING;
+import static io.earcam.unexceptional.Exceptional.apply;
+import static io.earcam.unexceptional.Exceptional.call;
+import static io.earcam.unexceptional.Exceptional.closeAfterAccepting;
+import static io.earcam.unexceptional.Exceptional.closeAfterApplying;
+import static io.earcam.unexceptional.Exceptional.get;
+import static io.earcam.unexceptional.Exceptional.run;
+import static io.earcam.unexceptional.Exceptional.swallow;
+import static io.earcam.unexceptional.Exceptional.throwAsUnchecked;
+import static io.earcam.unexceptional.Exceptional.uncheckBiConsumer;
+import static io.earcam.unexceptional.Exceptional.uncheckBiFunction;
+import static io.earcam.unexceptional.Exceptional.uncheckBinaryOperator;
+import static io.earcam.unexceptional.Exceptional.uncheckConsumer;
+import static io.earcam.unexceptional.Exceptional.uncheckFunction;
+import static io.earcam.unexceptional.Exceptional.uncheckPredicate;
+import static io.earcam.unexceptional.Exceptional.uncheckRunnable;
+import static io.earcam.unexceptional.Exceptional.uncheckSupplier;
+import static io.earcam.unexceptional.Exceptional.uncheckToDoubleFunction;
+import static io.earcam.unexceptional.Exceptional.uncheckToIntBiFunction;
+import static io.earcam.unexceptional.Exceptional.uncheckToIntFunction;
+import static io.earcam.unexceptional.Exceptional.uncheckToLongFunction;
+import static io.earcam.unexceptional.Exceptional.unwrap;
+import static io.earcam.unexceptional.Exceptional.uri;
+import static io.earcam.unexceptional.Exceptional.url;
 import static java.lang.Thread.currentThread;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
-import static org.junit.Assume.assumeFalse;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.arrayContaining;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasToString;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
@@ -62,10 +95,8 @@ import java.util.function.ToIntBiFunction;
 import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ExceptionalTest {
 
@@ -87,11 +118,8 @@ public class ExceptionalTest {
 		}
 	};
 
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();
 
-
-	@Before
+	@BeforeEach
 	public void clearInterrupt()
 	{
 		while(Thread.interrupted());
@@ -106,7 +134,7 @@ public class ExceptionalTest {
 			get(() -> {
 				throw new InterruptedException("Excuse me");
 			});
-			fail();
+			fail("should not reach here");
 		} catch(Exception e) {
 			assertThat(e, instanceOf(UncheckedInterruptException.class));
 			assertThat(e.getCause(), instanceOf(InterruptedException.class));
@@ -132,9 +160,12 @@ public class ExceptionalTest {
 	public void swallowRethrowsErrors()
 	{
 		OutOfMemoryError oom = new OutOfMemoryError("Not really");
-		thrown.expect(sameInstance(oom));
-
-		swallow(oom);
+		try {
+			swallow(oom);
+			fail("should not reach here");
+		} catch(Throwable thrown) {
+			assertThat(thrown, is(sameInstance(oom)));
+		}
 	}
 
 
@@ -148,7 +179,7 @@ public class ExceptionalTest {
 				throw new ReflectiveOperationException("Think back");
 			};
 			run(executable);
-			fail();
+			fail("should not reach here");
 		} catch(Exception e) {
 			assertThat(e, instanceOf(UncheckedReflectiveException.class));
 			assertThat(currentThread().isInterrupted(), is(false));
@@ -160,9 +191,12 @@ public class ExceptionalTest {
 	public void throwCheckedAsUnchecked()
 	{
 		IOException ioe = new IOException("check this out");
-		thrown.expect(is(ioe));
-
-		throwAsUnchecked(ioe);
+		try {
+			throwAsUnchecked(ioe);
+			fail("should not reach here");
+		} catch(Throwable thrown) {
+			assertThat(thrown, is(sameInstance(ioe)));
+		}
 	}
 
 
@@ -171,7 +205,7 @@ public class ExceptionalTest {
 	{
 		try {
 			throwAsUnchecked(new InterruptedException("Terribly sorry to butt in, but..."));
-			fail();
+			fail("should not reach here");
 		} catch(Exception e) {}
 		assertThat(Thread.currentThread().isInterrupted(), is(true));
 	}
@@ -181,15 +215,19 @@ public class ExceptionalTest {
 	public void uncheckedConsumerThrows()
 	{
 		Exception kaboom = new IOException();
-		thrown.expect(is(instanceOf(UncheckedIOException.class)));
-		thrown.expectCause(is(sameInstance(kaboom)));
 
 		CheckedConsumer<String> checked = (t) -> {
 			throw kaboom;
 		};
 		Consumer<String> consumer = uncheckConsumer(checked);
 
-		consumer.accept("oh yeah");
+		try {
+			consumer.accept("oh yeah");
+			fail("should not reach here");
+		} catch(Throwable thrown) {
+			assertThat(thrown, is(instanceOf(UncheckedIOException.class)));
+			assertThat(thrown.getCause(), is(sameInstance(kaboom)));
+		}
 	}
 
 
@@ -213,15 +251,19 @@ public class ExceptionalTest {
 	public void uncheckedSupplierThrows()
 	{
 		Exception kaboom = new IOException();
-		thrown.expect(is(instanceOf(UncheckedIOException.class)));
-		thrown.expectCause(is(sameInstance(kaboom)));
 
 		CheckedSupplier<String> checked = () -> {
 			throw kaboom;
 		};
-		Supplier<String> consumer = uncheckSupplier(checked);
+		Supplier<String> supplier = uncheckSupplier(checked);
 
-		consumer.get();
+		try {
+			supplier.get();
+			fail("should not reach here");
+		} catch(Throwable thrown) {
+			assertThat(thrown, is(instanceOf(UncheckedIOException.class)));
+			assertThat(thrown.getCause(), is(sameInstance(kaboom)));
+		}
 	}
 
 
@@ -241,15 +283,19 @@ public class ExceptionalTest {
 	public void uncheckedBiConsumerThrows()
 	{
 		Exception kaboom = new IOException();
-		thrown.expect(is(instanceOf(UncheckedIOException.class)));
-		thrown.expectCause(is(sameInstance(kaboom)));
 
 		CheckedBiConsumer<String, String> checked = (a, b) -> {
 			throw kaboom;
 		};
 		BiConsumer<String, String> consumer = uncheckBiConsumer(checked);
 
-		consumer.accept("oh", "noes");
+		try {
+			consumer.accept("oh", "noes");
+			fail("should not reach here");
+		} catch(Throwable thrown) {
+			assertThat(thrown, is(instanceOf(UncheckedIOException.class)));
+			assertThat(thrown.getCause(), is(sameInstance(kaboom)));
+		}
 	}
 
 
@@ -272,15 +318,19 @@ public class ExceptionalTest {
 	public void uncheckedBiFunctionThrows()
 	{
 		Exception kaboom = new IOException();
-		thrown.expect(is(instanceOf(UncheckedIOException.class)));
-		thrown.expectCause(is(sameInstance(kaboom)));
 
 		CheckedBiFunction<String, String, Integer> checked = (a, b) -> {
 			throw kaboom;
 		};
 		BiFunction<String, String, Integer> func = uncheckBiFunction(checked);
 
-		func.apply("oh", "noes");
+		try {
+			func.apply("oh", "noes");
+			fail("should not reach here");
+		} catch(Throwable thrown) {
+			assertThat(thrown, is(instanceOf(UncheckedIOException.class)));
+			assertThat(thrown.getCause(), is(sameInstance(kaboom)));
+		}
 	}
 
 
@@ -300,15 +350,19 @@ public class ExceptionalTest {
 	public void uncheckedBinaryOperatorThrows()
 	{
 		Exception kaboom = new IOException();
-		thrown.expect(is(instanceOf(UncheckedIOException.class)));
-		thrown.expectCause(is(sameInstance(kaboom)));
 
 		CheckedBinaryOperator<Integer> checked = (a, b) -> {
 			throw kaboom;
 		};
-		BinaryOperator<Integer> consumer = uncheckBinaryOperator(checked);
+		BinaryOperator<Integer> operator = uncheckBinaryOperator(checked);
 
-		consumer.apply(2, 2);
+		try {
+			operator.apply(2, 2);
+			fail("should not reach here");
+		} catch(Throwable thrown) {
+			assertThat(thrown, is(instanceOf(UncheckedIOException.class)));
+			assertThat(thrown.getCause(), is(sameInstance(kaboom)));
+		}
 	}
 
 
@@ -327,15 +381,19 @@ public class ExceptionalTest {
 	public void uncheckedPredicateThrows()
 	{
 		Exception kaboom = new IOException();
-		thrown.expect(is(instanceOf(UncheckedIOException.class)));
-		thrown.expectCause(is(sameInstance(kaboom)));
 
 		CheckedPredicate<Integer> checked = i -> {
 			throw kaboom;
 		};
 		Predicate<Integer> predicate = uncheckPredicate(checked);
 
-		predicate.test(2);
+		try {
+			predicate.test(2);
+			fail("should not reach here");
+		} catch(Throwable thrown) {
+			assertThat(thrown, is(instanceOf(UncheckedIOException.class)));
+			assertThat(thrown.getCause(), is(sameInstance(kaboom)));
+		}
 	}
 
 
@@ -355,15 +413,19 @@ public class ExceptionalTest {
 	public void uncheckedFunctionThrows()
 	{
 		Exception kaboom = new IOException();
-		thrown.expect(is(instanceOf(UncheckedIOException.class)));
-		thrown.expectCause(is(sameInstance(kaboom)));
 
 		CheckedFunction<String, Integer> checked = a -> {
 			throw kaboom;
 		};
 		Function<String, Integer> func = uncheckFunction(checked);
 
-		func.apply("oops");
+		try {
+			func.apply("oops");
+			fail("should not reach here");
+		} catch(Throwable thrown) {
+			assertThat(thrown, is(instanceOf(UncheckedIOException.class)));
+			assertThat(thrown.getCause(), is(sameInstance(kaboom)));
+		}
 	}
 
 
@@ -383,15 +445,19 @@ public class ExceptionalTest {
 	public void uncheckedToIntFunctionThrows()
 	{
 		Exception kaboom = new IOException();
-		thrown.expect(is(instanceOf(UncheckedIOException.class)));
-		thrown.expectCause(is(sameInstance(kaboom)));
 
 		CheckedToIntFunction<String> checked = a -> {
 			throw kaboom;
 		};
 		ToIntFunction<String> func = uncheckToIntFunction(checked);
 
-		func.applyAsInt("oops");
+		try {
+			func.applyAsInt("oops");
+			fail("should not reach here");
+		} catch(Throwable thrown) {
+			assertThat(thrown, is(instanceOf(UncheckedIOException.class)));
+			assertThat(thrown.getCause(), is(sameInstance(kaboom)));
+		}
 	}
 
 
@@ -411,15 +477,19 @@ public class ExceptionalTest {
 	public void uncheckedToDoubleFunctionThrows()
 	{
 		Exception kaboom = new IOException();
-		thrown.expect(is(instanceOf(UncheckedIOException.class)));
-		thrown.expectCause(is(sameInstance(kaboom)));
 
 		CheckedToDoubleFunction<String> checked = a -> {
 			throw kaboom;
 		};
 		ToDoubleFunction<String> func = uncheckToDoubleFunction(checked);
 
-		func.applyAsDouble("oops");
+		try {
+			func.applyAsDouble("oops");
+			fail("should not reach here");
+		} catch(Throwable thrown) {
+			assertThat(thrown, is(instanceOf(UncheckedIOException.class)));
+			assertThat(thrown.getCause(), is(sameInstance(kaboom)));
+		}
 	}
 
 
@@ -439,15 +509,19 @@ public class ExceptionalTest {
 	public void uncheckedToLongFunctionThrows()
 	{
 		Exception kaboom = new IOException();
-		thrown.expect(is(instanceOf(UncheckedIOException.class)));
-		thrown.expectCause(is(sameInstance(kaboom)));
 
 		CheckedToLongFunction<String> checked = a -> {
 			throw kaboom;
 		};
 		ToLongFunction<String> func = uncheckToLongFunction(checked);
 
-		func.applyAsLong("oops");
+		try {
+			func.applyAsLong("oops");
+			fail("should not reach here");
+		} catch(Throwable thrown) {
+			assertThat(thrown, is(instanceOf(UncheckedIOException.class)));
+			assertThat(thrown.getCause(), is(sameInstance(kaboom)));
+		}
 	}
 
 
@@ -475,7 +549,7 @@ public class ExceptionalTest {
 
 		try {
 			proxy.compareTo(new Object());
-			fail();
+			fail("should not reach here");
 		} catch(Throwable t) {
 			Throwable unwrapped = unwrap(t);
 			assertThat(unwrapped, instanceOf(IOException.class));
@@ -502,7 +576,7 @@ public class ExceptionalTest {
 
 		try {
 			proxy.compareTo(new Object());
-			fail();
+			fail("should not reach here");
 		} catch(Throwable t) {
 			Throwable unwrapped = unwrap(t);
 			assertThat(unwrapped, instanceOf(IllegalStateException.class));
@@ -526,7 +600,7 @@ public class ExceptionalTest {
 
 		try {
 			BadlyBehaved.class.getMethod("seeminglyInnocuous").invoke(bad);
-			fail();
+			fail("should not reach here");
 		} catch(Throwable thrown) {
 			Throwable unwrap = unwrap(thrown);
 
@@ -655,7 +729,7 @@ public class ExceptionalTest {
 		constructor.setAccessible(true);
 		try {
 			constructor.newInstance();
-			fail();
+			fail("should not reach here");
 		} catch(InvocationTargetException e) {
 			assertThat(unwrap(e), is(instanceOf(IllegalStateException.class)));
 		}
@@ -671,7 +745,7 @@ public class ExceptionalTest {
 				throw thrown;
 			};
 			call(action);
-			fail();
+			fail("should not reach here");
 		} catch(Exception caught) {
 			assertThat(caught, is(sameInstance(thrown)));
 		}
@@ -687,7 +761,7 @@ public class ExceptionalTest {
 				throw thrown;
 			};
 			call(action);
-			fail();
+			fail("should not reach here");
 		} catch(Exception caught) {
 			assertThat(caught, is(instanceOf(UncheckedIOException.class)));
 			assertThat(caught.getCause(), is(sameInstance(thrown)));
@@ -704,7 +778,7 @@ public class ExceptionalTest {
 				throw thrown;
 			};
 			call(action);
-			fail();
+			fail("should not reach here");
 		} catch(Exception caught) {
 			assertThat(caught, is(instanceOf(UncheckedReflectiveException.class)));
 			assertThat(caught.getCause(), is(sameInstance(thrown)));
@@ -721,7 +795,7 @@ public class ExceptionalTest {
 				throw thrown;
 			};
 			run(action);
-			fail();
+			fail("should not reach here");
 		} catch(Exception caught) {
 			assertThat(caught, is(instanceOf(UncheckedSecurityException.class)));
 			assertThat(caught.getCause(), is(sameInstance(thrown)));
@@ -738,7 +812,7 @@ public class ExceptionalTest {
 				throw thrown;
 			};
 			run(action);
-			fail();
+			fail("should not reach here");
 		} catch(Exception caught) {
 			assertThat(caught, is(instanceOf(UncheckedException.class)));
 			assertThat(caught.getCause(), is(sameInstance(thrown)));
@@ -759,10 +833,13 @@ public class ExceptionalTest {
 	@Test
 	public void invalidUrlStringThrownAsUnchecked()
 	{
-		thrown.expect(is(instanceOf(UncheckedIOException.class)));
-		thrown.expectCause(is(instanceOf(MalformedURLException.class)));
-
-		url("http ://bad/protocol");
+		try {
+			url("http ://bad/protocol");
+			fail("should not reach here");
+		} catch(Throwable thrown) {
+			assertThat(thrown, is(instanceOf(UncheckedIOException.class)));
+			assertThat(thrown.getCause(), is(instanceOf(MalformedURLException.class)));
+		}
 	}
 
 
@@ -792,10 +869,13 @@ public class ExceptionalTest {
 	@Test
 	public void invalidUrlThrownAsUnchecked()
 	{
-		thrown.expect(is(instanceOf(UncheckedIOException.class)));
-		thrown.expectCause(is(instanceOf(MalformedURLException.class)));
-
-		url("gobbledygook", "horrid-books.com", 80, "/which/path/to/persia?they-never-mention=peace&love", null);
+		try {
+			url("gobbledygook", "horrid-books.com", 80, "/which/path/to/persia?they-never-mention=peace&love", null);
+			fail("should not reach here");
+		} catch(Throwable thrown) {
+			assertThat(thrown, is(instanceOf(UncheckedIOException.class)));
+			assertThat(thrown.getCause(), is(instanceOf(MalformedURLException.class)));
+		}
 	}
 
 
@@ -812,10 +892,13 @@ public class ExceptionalTest {
 	@Test
 	public void invalidUriThrownAsUnchecked()
 	{
-		thrown.expect(is(instanceOf(UncheckedException.class)));
-		thrown.expectCause(is(instanceOf(URISyntaxException.class)));
-
-		uri("http://this is not a valid URI");
+		try {
+			uri("http://this is not a valid URI");
+			fail("should not reach here");
+		} catch(Throwable thrown) {
+			assertThat(thrown, is(instanceOf(UncheckedUriSyntaxException.class)));
+			assertThat(thrown.getCause(), is(instanceOf(URISyntaxException.class)));
+		}
 	}
 
 
@@ -823,9 +906,13 @@ public class ExceptionalTest {
 	public void rethrowingUncaughtExceptionHandlerRethrows()
 	{
 		NullPointerException exception = new NullPointerException();
-		thrown.expect(sameInstance(exception));
 
-		RETHROWING.uncaughtException(currentThread(), exception);
+		try {
+			RETHROWING.uncaughtException(currentThread(), exception);
+			fail("should not reach here");
+		} catch(Throwable thrown) {
+			assertThat(thrown, is(sameInstance(exception)));
+		}
 	}
 
 
@@ -833,10 +920,13 @@ public class ExceptionalTest {
 	public void rethrowingUncaughtExceptionHandlerRethrowsWrappedCheckedException()
 	{
 		IOException exception = new IOException();
-		thrown.expect(UncheckedIOException.class);
-		thrown.expectCause(sameInstance(exception));
 
-		RETHROWING.uncaughtException(currentThread(), exception);
+		try {
+			RETHROWING.uncaughtException(currentThread(), exception);
+			fail("should not reach here");
+		} catch(Throwable thrown) {
+			assertThat(thrown.getCause(), is(sameInstance(exception)));
+		}
 	}
 
 
@@ -851,40 +941,50 @@ public class ExceptionalTest {
 	public void swallowingUncaughtExceptionHandlerRethrowsErrors()
 	{
 		ThreadDeath error = new ThreadDeath();
-		thrown.expect(sameInstance(error));
 
-		SWALLOWING.uncaughtException(currentThread(), error);
+		try {
+			SWALLOWING.uncaughtException(currentThread(), error);
+			fail("should not reach here");
+		} catch(Throwable thrown) {
+			assertThat(thrown, is(sameInstance(error)));
+		}
 	}
 
 
 	@Test
 	public void callableUncheckedThrows()
 	{
-		CertificateException ioe = new CertificateException();
+		CertificateException e = new CertificateException();
 		Callable<String> callable = () -> {
-			throw ioe;
+			throw e;
 		};
 
-		thrown.expect(UncheckedSecurityException.class);
-		thrown.expectCause(sameInstance(ioe));
-
-		call(callable);
+		try {
+			call(callable);
+			fail("should not reach here");
+		} catch(Throwable thrown) {
+			assertThat(thrown, is(instanceOf(UncheckedSecurityException.class)));
+			assertThat(thrown.getCause(), is(sameInstance(e)));
+		}
 	}
 
 
 	@Test
 	public void runnableUncheckedThrows()
 	{
-		IllegalAccessException iae = new IllegalAccessException();
+		IllegalAccessException e = new IllegalAccessException();
 		CheckedRunnable checked = () -> {
-			throw iae;
+			throw e;
 		};
 
-		thrown.expect(UncheckedReflectiveException.class);
-		thrown.expectCause(sameInstance(iae));
-
 		Runnable unchecked = uncheckRunnable(checked);
-		unchecked.run();
+		try {
+			unchecked.run();
+			fail("should not reach here");
+		} catch(Throwable thrown) {
+			assertThat(thrown, is(instanceOf(UncheckedReflectiveException.class)));
+			assertThat(thrown.getCause(), is(sameInstance(e)));
+		}
 	}
 
 
@@ -928,11 +1028,14 @@ public class ExceptionalTest {
 	@Test
 	public void functionThrowsUnchecked()
 	{
-		thrown.expect(NumberFormatException.class);
-
 		CheckedFunction<String, Integer> function = Integer::parseInt;
 
-		apply(function, "forty two");
+		try {
+			apply(function, "forty two");
+			fail("should not reach here");
+		} catch(Throwable thrown) {
+			assertThat(thrown, is(instanceOf(NumberFormatException.class)));
+		}
 	}
 
 
@@ -954,7 +1057,7 @@ public class ExceptionalTest {
 
 		try {
 			closeAfterAccepting(ServerSocket::new, Integer.MAX_VALUE, c -> wasCalled.set(true));
-			fail();
+			fail("should not reach here");
 		} catch(IllegalArgumentException e) {}
 
 		assertThat(wasCalled.get(), is(false));
@@ -970,7 +1073,7 @@ public class ExceptionalTest {
 
 		try {
 			closeAfterAccepting(new ThrowsAtClosingTime(exception), c -> wasCalled.set(true));
-			fail();
+			fail("should not reach here");
 		} catch(UncheckedIOException e) {
 			assertThat(e.getCause(), is(sameInstance(exception)));
 		}
@@ -991,7 +1094,7 @@ public class ExceptionalTest {
 				wasCalled.set(true);
 				return null;
 			});
-			fail();
+			fail("should not reach here");
 		} catch(UncheckedIOException e) {
 			assertThat(e.getCause(), is(sameInstance(exception)));
 		}
@@ -1022,7 +1125,7 @@ public class ExceptionalTest {
 			closeAfterApplying(socket, s -> {
 				throw checked;
 			});
-			fail();
+			fail("should not reach here");
 		} catch(UncheckedIOException e) {
 			assertThat(e.getCause(), is(sameInstance(checked)));
 		}
@@ -1051,7 +1154,7 @@ public class ExceptionalTest {
 			closeAfterAccepting(socket, c -> {
 				throw new IOException("nay hungry, nay acceptin' that");
 			});
-			fail();
+			fail("should not reach here");
 		} catch(Exception e) {}
 
 		assertThat(socket.isClosed(), is(true));
@@ -1073,7 +1176,7 @@ public class ExceptionalTest {
 			closeAfterAccepting(socket, c -> {
 				throw new InterruptedException("'scuse me!");
 			});
-			fail();
+			fail("should not reach here");
 		} catch(Exception e) {}
 
 		assertThat(socket.isClosed(), is(true));
@@ -1087,7 +1190,7 @@ public class ExceptionalTest {
 		ToIntBiFunction<String, String> fn = uncheckToIntBiFunction(ExceptionalTest::cmp);
 		try {
 			fn.applyAsInt(null, null);
-			fail();
+			fail("should not reach here");
 		} catch(NullPointerException npe) {}
 	}
 
@@ -1115,7 +1218,7 @@ public class ExceptionalTest {
 			Exceptional.forEach(Collections.singleton("bang?"), s -> {
 				throw curveBall;
 			});
-			fail();
+			fail("should not reach here");
 		} catch(UncheckedIOException e) {
 			assertThat(e.getCause(), is(sameInstance(curveBall)));
 		}
@@ -1142,7 +1245,7 @@ public class ExceptionalTest {
 			Exceptional.forEach(Collections.singletonMap("crash?", "bang?"), (k, v) -> {
 				throw curveBall;
 			});
-			fail();
+			fail("should not reach here");
 		} catch(UncheckedIOException e) {
 			assertThat(e.getCause(), is(sameInstance(curveBall)));
 		}

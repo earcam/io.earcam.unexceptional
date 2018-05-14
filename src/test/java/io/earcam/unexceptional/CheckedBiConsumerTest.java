@@ -18,17 +18,17 @@
  */
 package io.earcam.unexceptional;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.sameInstance;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CheckedBiConsumerTest {
 
@@ -117,7 +117,7 @@ public class CheckedBiConsumerTest {
 
 		try {
 			nice.andThen(nasty).andThen(notCalled).accept(t, u);
-			fail();
+			fail("should not reach here");
 		} catch(Throwable e) {
 			assertThat(e, sameInstance(chuck));
 		} finally {
@@ -134,7 +134,7 @@ public class CheckedBiConsumerTest {
 		CheckedBiConsumer<? super String, ? super Integer> after = null;
 		try {
 			new NiceBiConsumer().andThen(after);
-			fail();
+			fail("should not reach here");
 		} catch(NullPointerException npe) {}
 	}
 }

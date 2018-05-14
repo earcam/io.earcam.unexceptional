@@ -18,21 +18,17 @@
  */
 package io.earcam.unexceptional;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.sameInstance;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
 public class CheckedConsumerTest {
-
-	@Rule
-	public ExpectedException expectedException = ExpectedException.none();
 
 	class NiceStubCheckedConsumer implements CheckedConsumer<String> {
 
@@ -72,20 +68,26 @@ public class CheckedConsumerTest {
 	{
 		IOException wobbly = new IOException("boom!");
 
-		expectedException.expect(sameInstance(wobbly));
-
 		CheckedConsumer<String> uncheckedConsumer = new NiceStubCheckedConsumer().andThen(new NastyStubCheckedConsumer(wobbly));
 
-		uncheckedConsumer.accept("no chance");
+		try {
+			uncheckedConsumer.accept("no chance");
+			fail("should not reach here");
+		} catch(Throwable thrown) {
+			assertThat(thrown, is(sameInstance(wobbly)));
+		}
 	}
 
 
 	@Test
 	public void andThenRequiresNonNullCheckedConsumer()
 	{
-		expectedException.expect(NullPointerException.class);
-
-		new NiceStubCheckedConsumer().andThen(null);
+		try {
+			new NiceStubCheckedConsumer().andThen(null);
+			fail("should not reach here");
+		} catch(Throwable thrown) {
+			assertThat(thrown, is(instanceOf(NullPointerException.class)));
+		}
 	}
 
 
@@ -109,14 +111,15 @@ public class CheckedConsumerTest {
 	{
 		String t = "hello";
 		IOException wobbly = new IOException("goodbye");
-		expectedException.expect(sameInstance(wobbly));
 
 		NiceStubCheckedConsumer nice = new NiceStubCheckedConsumer();
 		CheckedConsumer<String> nasty = new NastyStubCheckedConsumer(wobbly);
 
 		try {
 			nice.andThen(nasty).accept(t);
-		} finally {
+			fail("should not reach here");
+		} catch(Throwable thrown) {
+			assertThat(thrown, is(sameInstance(wobbly)));
 			assertThat(nice.t, is(t));
 		}
 	}
@@ -127,14 +130,15 @@ public class CheckedConsumerTest {
 	{
 		String t = "hello";
 		IOException wobbly = new IOException("goodbye");
-		expectedException.expect(sameInstance(wobbly));
 
 		CheckedConsumer<String> nasty = new NastyStubCheckedConsumer(wobbly);
 		NiceStubCheckedConsumer nice = new NiceStubCheckedConsumer();
 
 		try {
 			nasty.andThen(nice).accept(t);
-		} finally {
+			fail("should not reach here");
+		} catch(Throwable thrown) {
+			assertThat(thrown, is(sameInstance(wobbly)));
 			assertThat(nice.t, is(nullValue()));
 		}
 	}
