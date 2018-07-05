@@ -16,7 +16,7 @@
 
 
 *##set( $coordinate = $context.get( 'coordinate.username.project' ) )#*
-*##set( $sonarCoordinate = "io.earcam%3A" + $context.get( 'earcam.project.root.artifactId' ) )#*
+*##set( $sonarCoordinate = "io.earcam%3A" + $project.artifactId )#*
 
 *##set( $indexHeadFile = "$project.basedir/src/site/section/index-head.md.vm" )#*
 *##set( $indexFootFile = "$project.basedir/src/site/section/index-foot.md.vm" )#*
