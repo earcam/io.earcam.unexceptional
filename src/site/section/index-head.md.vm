@@ -1,0 +1,62 @@
+#set( $coordinate = $context.get( 'coordinate.username.project' ) )
+#set($h1 = '#')
+#set($h2 = '##')
+#set($h3 = '###')
+#set($h4 = '####')
+#set($h5 = '#####')
+#set($h6 = '######')
+
+
+#parse( "../section/examples-carousel.md.vm" )
+
+<br/>
+
+
+${h3} What's inside?
+ 
+0. Types equivalent to those found in [java.util.function][package-summary-java-util-function] but with checked methods (declaring `Throwable`)
+0. A small family of unchecked exceptions; reflective operation, security, interrupt, etc.
+0. Static helper **Exceptional**:
+    * Convert checked method handles to `java.util.function`al interfaces
+    * Invoke checked functional types without `try-catch`
+    * _Dirty_ compiler trick; throwing a checked exception as unchecked
+    * Factories for some common types where the constructor declares a checked exception (e.g. java.net.URI, java.net.URL)
+    * Convert checked exceptions to unchecked equivalents
+    * _Swallow_ exceptions (accepts throwables, but only swallows exceptions - errors are rethrown)  
+    * Unwrap reflective exceptions
+0. Static helper **Closing**:
+    * Concise IO stream usage (re-read as terse one-liner), condenses _create-operate-close_ - arguably laconic over expressive
+	* Does all the dirty work for I-don't-care-but-IOExceptions-on-AutoCloseable-are-destroying-my-branch-coverage 
+0. Simple mirror **EmeticStream**: 
+	* wraps `java.util.stream.Stream` providing equivalent methods taking checked functional types (terminates immediately on exception)
+
+
+${h3} Usage
+
+The intended use of this library is to make code more concise by removing the need to handle checked exceptions.  It should really only be used for the **impossible** (logically we *know* this cannot occur) or **fatal** (unrecoverable, cannot degrade with grace, game over) cases.
+
+Please use responsibly; first consider if a raised exception can actually be handled, and if not, then could it be propagated with a more contextual type/message?  Be considerate to readers of logs, unlucky users and your future self.
+
+${h3} Brief note on `try-with-resources` branch coverage
+
+A nice side effect is the removal of, potential but often unrealistic, branches; a typical `try-with-resources` block for IO streams typically result in 8 branches - the causes of which are often misunderstood (see this old [StackOverflow post][stackoverflow-try-with-branches] - I've added a rambling answer with more detail). 
+
+<br/><br/><br/>
+
+<ul class="nav nav-list" style="float:right;width:50%">
+	<li class="nav-header">Unexceptional</li>
+	<li>/ʌnɪkˈsɛpʃ(ə)n(ə)l,ʌnɛkˈsɛpʃ(ə)n(ə)l/&nbsp;&nbsp;<span title="Pronunciation" style="display:inline-block;"><input src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAQAAAC1QeVaAAAAi0lEQVQokWNgQAYyQFzGsIJBnwED8DNcBpK+DM8YfjMUokqxMRxg+A9m8TJsBLLSEFKMDCuBAv/hCncxfGWQhUn2gaVAktkMXkBSHmh0OwNU8D9csoHhO4MikN7BcAGb5H+GYiDdCTQYq2QubkkkY/E6CLtXdiJ7BTMQMnAHXxFm6IICvhwY8AYQLgCw2U9d90B8BAAAAABJRU5ErkJggg==" width="14" height="14" type="image" onclick="pronounce('unexceptional--_gb_1.mp3')" /></span></li>
+	<li><i>adjective:</i> not out of the ordinary; usual.</li>
+	<li><i>synonyms:</i> ordinary, average, typical, common, everyday, run-of-the-mill, middle-of-the-road, stock, mediocre, so-so, pedestrian, unremarkable, undistinguished, indifferent, unimpressive.</li>
+</ul>
+
+<ul class="nav nav-list">
+	<li class="nav-header">Emetic</li>
+	<li>/ɪˈmɛtɪk/&nbsp;&nbsp;<span title="Pronunciation" style="display:inline-block;"><input src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAQAAAC1QeVaAAAAi0lEQVQokWNgQAYyQFzGsIJBnwED8DNcBpK+DM8YfjMUokqxMRxg+A9m8TJsBLLSEFKMDCuBAv/hCncxfGWQhUn2gaVAktkMXkBSHmh0OwNU8D9csoHhO4MikN7BcAGb5H+GYiDdCTQYq2QubkkkY/E6CLtXdiJ7BTMQMnAHXxFm6IICvhwY8AYQLgCw2U9d90B8BAAAAABJRU5ErkJggg==" width="14" height="14" type="image" onclick="pronounce('emetic--_gb_1.8.mp3')" /></span></li>
+	<li><i>adjective:</i> (of a substance) causing vomiting.</li>
+</ul>
+
+
+[package-summary-java-util-function]: https://docs.oracle.com/javase/8/docs/api/java/util/function/package-summary.html
+[jacoco-issue-82]: https://github.com/jacoco/jacoco/issues/82
+[stackoverflow-try-with-branches]: https://stackoverflow.com/questions/17354150/8-branches-for-try-with-resources-jacoco-coverage-possible

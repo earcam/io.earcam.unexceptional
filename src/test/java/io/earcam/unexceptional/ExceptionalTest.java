@@ -33,6 +33,7 @@ import static io.earcam.unexceptional.Exceptional.uncheckBiFunction;
 import static io.earcam.unexceptional.Exceptional.uncheckBinaryOperator;
 import static io.earcam.unexceptional.Exceptional.uncheckConsumer;
 import static io.earcam.unexceptional.Exceptional.uncheckFunction;
+import static io.earcam.unexceptional.Exceptional.uncheckIntConsumer;
 import static io.earcam.unexceptional.Exceptional.uncheckPredicate;
 import static io.earcam.unexceptional.Exceptional.uncheckRunnable;
 import static io.earcam.unexceptional.Exceptional.uncheckSupplier;
@@ -82,12 +83,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.IntConsumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.ToDoubleFunction;
@@ -241,6 +244,42 @@ public class ExceptionalTest {
 
 		Consumer<String> consumer = uncheckConsumer(checked);
 		String passed = "oh noes";
+		consumer.accept(passed);
+
+		assertThat(accepted.get(), is(equalTo(passed)));
+	}
+
+
+	@Test
+	public void uncheckedIntConsumerThrows()
+	{
+		Exception kaboom = new IOException();
+
+		CheckedIntConsumer checked = (t) -> {
+			throw kaboom;
+		};
+		IntConsumer consumer = uncheckIntConsumer(checked);
+
+		try {
+			consumer.accept(101);
+			fail("should not reach here");
+		} catch(Throwable thrown) {
+			assertThat(thrown, is(instanceOf(UncheckedIOException.class)));
+			assertThat(thrown.getCause(), is(sameInstance(kaboom)));
+		}
+	}
+
+
+	@Test
+	public void uncheckedIntConsumerDoesNotThrow()
+	{
+		final AtomicInteger accepted = new AtomicInteger(0);
+		CheckedIntConsumer checked = (t) -> {
+			accepted.set(t);
+		};
+
+		IntConsumer consumer = uncheckIntConsumer(checked);
+		int passed = 42;
 		consumer.accept(passed);
 
 		assertThat(accepted.get(), is(equalTo(passed)));

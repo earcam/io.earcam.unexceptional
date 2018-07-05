@@ -43,6 +43,7 @@ import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.IntConsumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.ToDoubleFunction;
@@ -89,10 +90,11 @@ import javax.annotation.concurrent.Immutable;
  * 1. unusual; not typical.
  * </p>
  */
-@SuppressWarnings("serial")
 @ParametersAreNonnullByDefault
 @Immutable
 public final class Exceptional implements Serializable {
+
+	private static final long serialVersionUID = -1350140594550206145L;
 
 	private static final Map<Class<? extends Throwable>, Function<Throwable, RuntimeException>> UNCHECK_MAP;
 
@@ -378,6 +380,40 @@ public final class Exceptional implements Serializable {
 	 * @since 0.2.0
 	 */
 	public static <T> void accept(CheckedConsumer<T> consumer, T value)
+	{
+		try {
+			consumer.accept(value);
+		} catch(@SuppressWarnings("squid:S00112") Throwable thrown) {
+			rethrow(thrown);
+		}
+	}
+
+
+	/**
+	 * Converts {@link CheckedIntConsumer} to {@link IntConsumer}
+	 * 
+	 * @param consumer a consumer of primitive integer that declares checked exception(s)
+	 * @return a vanilla {@link java.util.function.IntConsumer}
+	 * 
+	 * @since 0.5.0
+	 */
+	@SuppressWarnings("squid:S1905") // SonarQube false positives
+	public static IntConsumer uncheckIntConsumer(CheckedIntConsumer consumer)
+	{
+		return (IntConsumer & Serializable) t -> Exceptional.accept(consumer, t);
+	}
+
+
+	/**
+	 * Invokes {@link CheckedIntConsumer#accept(int)} catching any checked
+	 * {@link Exception}s rethrowing as unchecked.
+	 * 
+	 * @param consumer the consumer of the {@code int value}
+	 * @param value the value to be consumed
+	 * 
+	 * @since 0.5.0
+	 */
+	public static void accept(CheckedIntConsumer consumer, int value)
 	{
 		try {
 			consumer.accept(value);

@@ -21,6 +21,7 @@ package io.earcam.unexceptional;
 import static io.earcam.unexceptional.Exceptional.uncheck;
 
 import java.io.IOException;
+import java.util.function.Supplier;
 
 import javax.annotation.WillClose;
 
@@ -200,5 +201,54 @@ public final class Closing {
 		} catch(Exception e) {
 			throw uncheck(e);
 		}
+	}
+
+	public static class AutoClosed<T, E extends Exception> implements AutoCloseable, Supplier<T> {
+
+		private final T instance;
+		private final CheckedTypedConsumer<T, E> closeMethod;
+
+
+		AutoClosed(T instance, CheckedTypedConsumer<T, E> closeMethod)
+		{
+			this.instance = instance;
+			this.closeMethod = closeMethod;
+		}
+
+
+		@Override
+		public T get()
+		{
+			return instance;
+		}
+
+
+		@Override
+		public void close() throws E
+		{
+			closeMethod.accept(instance);
+		}
+	}
+
+
+	/**
+	 * Reshape instances to fit try-catch autoclose.
+	 * 
+	 * Example usage:
+	 * <code>
+	 * 		try(AutoClosed<VirtualMachine, IOException> vm = Closing.autoClosing(getCurrentVm(), VirtualMachine::detach)) {
+	 * 			vm.get().loadAgent(x, y);
+	 * 		}
+	 * </code>
+	 * 
+	 * @param instance
+	 * @param closeMethod
+	 * @return
+	 * 
+	 * @since 0.5.0
+	 */
+	public static <T, E extends Exception> AutoClosed<T, E> autoClosing(T instance, CheckedTypedConsumer<T, E> closeMethod)
+	{
+		return new AutoClosed<>(instance, closeMethod);
 	}
 }

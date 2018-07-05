@@ -18,6 +18,7 @@
  */
 package io.earcam.unexceptional;
 
+import static io.earcam.unexceptional.Closing.autoClosing;
 import static io.earcam.unexceptional.Exceptional.unwrap;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.arrayContaining;
@@ -33,9 +34,12 @@ import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.jupiter.api.Test;
+
+import io.earcam.unexceptional.Closing.AutoClosed;
 
 /**
  * Cases that can't be met as we're assigning method arg to local var in the "with" of try-with-resources:
@@ -531,5 +535,42 @@ public class ClosingTest {
 		} catch(InvocationTargetException e) {
 			assertThat(unwrap(e), is(instanceOf(IllegalStateException.class)));
 		}
+	}
+
+	private final CheckedTypedConsumer<AtomicBoolean, IOException> closeMethod = i -> i.set(true);
+	private final AtomicBoolean unclosable = new AtomicBoolean(false);
+
+
+	@Test
+	public void autoClosingInstanceAvailable()
+	{
+		try(AutoClosed<AtomicBoolean, IOException> closable = autoClosing(unclosable, closeMethod)) {
+			assertThat(closable.get(), is(sameInstance(unclosable)));
+		} catch(IOException ioe) {
+			fail();
+		}
+	}
+
+
+	@Test
+	public void autoClosingNotCalledWithinTryBody()
+	{
+		try(AutoClosed<AtomicBoolean, IOException> closable = autoClosing(unclosable, closeMethod)) {
+			assertThat(closable.get().get(), is(false));
+		} catch(IOException ioe) {
+			fail();
+		}
+	}
+
+
+	@Test
+	public void autoClosingInvokedImplicitlyByTryWithStatement()
+	{
+		try(AutoClosed<AtomicBoolean, IOException> closable = autoClosing(unclosable, closeMethod)) {
+
+		} catch(IOException ioe) {
+			fail();
+		}
+		assertThat(unclosable.get(), is(true));
 	}
 }
