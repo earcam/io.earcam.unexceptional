@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 public class CheckedTypedConsumerTest {
 
 	@Test
-	void andThenThrowsWhenReceivingNull()
+	public void andThenThrowsWhenReceivingNull()
 	{
 		CheckedTypedConsumer<String, IOException> ok = t -> {};
 
@@ -42,7 +42,7 @@ public class CheckedTypedConsumerTest {
 
 
 	@Test
-	void andThenBothAccepted() throws IOException
+	public void andThenBothAccepted() throws IOException
 	{
 		AtomicReference<String> a = new AtomicReference<>("");
 		CheckedTypedConsumer<String, IOException> aOk = a::set;

@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>io.earcam.maven</groupId>
 		<artifactId>io.earcam.maven.pom</artifactId>
-		<version>2.2.0</version>
+		<version>2.2.1</version>
 	</parent>
 
 	<groupId>io.earcam</groupId>
@@ -48,8 +48,11 @@
 		<coordinate.username.project>earcam/${project.artifactId}</coordinate.username.project>
 
 		<version.junit5>5.2.0</version.junit5>
-		<version.maven.plugin.site>3.6</version.maven.plugin.site><!-- downgraded due to doxia issues -->
 
+		<!-- downgraded due to doxia issues -->
+		<version.maven.plugin.site>3.6</version.maven.plugin.site>
+
+		<java.home.8>/usr/lib/jvm/java-8-oracle</java.home.8>
 		<java.home.9>/usr/lib/jvm/java-9-oracle</java.home.9>
 		<java.home.10>/usr/lib/jvm/java-10-oracle</java.home.10>
 
@@ -57,14 +60,6 @@
 	</properties>
 
 	<dependencies>
-		<dependency>
-			<groupId>com.google.code.findbugs</groupId>
-			<artifactId>jsr305</artifactId>
-			<version>3.0.2</version>
-			<scope>provided</scope>
-			<optional>true</optional>
-		</dependency>
-
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
@@ -124,6 +119,23 @@
 						</lifecycleMappingMetadata>
 					</configuration>
 				</plugin>
+				
+				<plugin>
+					<groupId>org.revapi</groupId>
+					<artifactId>revapi-maven-plugin</artifactId>
+					<configuration>
+						<analysisConfiguration>
+							<revapi.ignore>
+								<item>
+									<regex>true</regex>
+									<code>java.annotation.removed</code>
+									<package>${project.groupId}.*</package>
+									<justification>Annotations do not form part of the API</justification>
+								</item>
+							</revapi.ignore>		
+						</analysisConfiguration>
+					</configuration>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
@@ -150,15 +162,42 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.7.0</version>
 				<configuration>
-					<source>${maven.compiler.source}</source>
-					<target>${maven.compiler.target}</target>
 					<encoding>${project.build.sourceEncoding}</encoding>
 					<showDeprecation>true</showDeprecation>
 					<showWarnings>true</showWarnings>
 					<compilerArgument>-Xlint:all</compilerArgument>
+					<jdkToolchain>
+						<vendor>oracle</vendor>
+						<version>[1.8,9)</version>
+					</jdkToolchain>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
+					<verbose>true</verbose>
 				</configuration>
+				<executions>
+					<execution>
+						<id>default-compile</id>
+						<configuration>
+							<jdkToolchain>
+								<vendor>oracle</vendor>
+								<version>9</version>
+							</jdkToolchain>
+							<release>9</release>
+						</configuration>
+					</execution>
+					<execution>
+						<id>base-compile</id>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+						<configuration>
+							<excludes>
+								<exclude>module-info.java</exclude>
+							</excludes>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 
 			<plugin>
@@ -174,9 +213,7 @@
 						<supportedProjectType>jar</supportedProjectType>
 					</supportedProjectTypes>
 					<instructions>
-						<Automatic-Module-Name>${project.artifactId}</Automatic-Module-Name>
-						<Bundle-Vendor>${project.developers[0].name} -
-							${project.organization.name}</Bundle-Vendor>
+						<Bundle-Vendor>${project.developers[0].name} - ${project.organization.name}</Bundle-Vendor>
 						<Bundle-ContactAddress>${project.organization.url}</Bundle-ContactAddress>
 						<Bundle-Description>${project.description}</Bundle-Description>
 						<Bundle-DocURL>${project.url}</Bundle-DocURL>
@@ -210,23 +247,37 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<testFailureIgnore>false</testFailureIgnore>
-					<includes>
-						<include>**/*Test.java</include>
-						<include>**/*Example.java</include>
-					</includes>
-					<systemProperties>
-						<org.openjdk.java.util.stream.tripwire>true</org.openjdk.java.util.stream.tripwire>
-					</systemProperties>
-				</configuration>
 				<executions>
 					<execution>
 						<id>default-test</id>
 						<goals>
 							<goal>test</goal>
 						</goals>
+						<configuration>
+							<skip>true</skip><!-- the default JDK v8, see comment below -->
+						</configuration>
 					</execution>
+					<!-- 
+						surefire doesn't add "target/classes" dir, 
+						in fact it strips out any attempt to add, 
+						so we're entirely reliant on an integration 
+						test verifying the java major version.
+					-->
+					<!-- <execution> -->
+					<!-- 	<id>jdk8-test</id> -->
+					<!-- 	<goals> -->
+					<!-- 		<goal>test</goal> -->
+					<!-- 	</goals> -->
+					<!-- 	<configuration> -->
+					<!-- 		<jvm>${java.home.8}/bin/java</jvm> -->
+					<!-- 		<classesDirectory>${project.build.outputDirectory}</classesDirectory> -->
+					<!-- 		<additionalClasspathElements> -->
+					<!-- 			<additionalClasspathElement>${project.build.outputDirectory}/</additionalClasspathElement> -->
+					<!-- 		</additionalClasspathElements> -->
+					<!-- 		<useManifestOnlyJar>false</useManifestOnlyJar> -->
+					<!-- 	</configuration> -->
+					<!-- </execution> -->
+					
 					<execution>
 						<id>jdk9-test</id>
 						<goals>
@@ -246,6 +297,11 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>

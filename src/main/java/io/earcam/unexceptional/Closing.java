@@ -23,8 +23,6 @@ import static io.earcam.unexceptional.Exceptional.uncheck;
 import java.io.IOException;
 import java.util.function.Supplier;
 
-import javax.annotation.WillClose;
-
 /**
  * <p>
  * Succinctly handle {@link AutoCloseable}s that throw checked {@link Exception}s.
@@ -105,7 +103,7 @@ public final class Closing {
 	 * 
 	 * @return the result of applying {@code convert} function to the {@code closeable} argument
 	 */
-	public static <C extends AutoCloseable, R> R closeAfterApplying(@WillClose C closeable, CheckedFunction<C, R> convert)
+	public static <C extends AutoCloseable, R> R closeAfterApplying(C closeable, CheckedFunction<C, R> convert)
 	{
 		try(C autoClose = closeable) {
 			return Exceptional.apply(convert, autoClose);
@@ -129,7 +127,7 @@ public final class Closing {
 	 * 
 	 * @return the result of applying {@code convert} function to the {@code closeable} argument
 	 */
-	public static <C extends AutoCloseable, U, R> R closeAfterApplying(@WillClose C closeable, U instance, CheckedBiFunction<C, U, R> convert)
+	public static <C extends AutoCloseable, U, R> R closeAfterApplying(C closeable, U instance, CheckedBiFunction<C, U, R> convert)
 	{
 		try(C autoClose = closeable) {
 			return Exceptional.apply(convert, autoClose, instance);
@@ -166,7 +164,7 @@ public final class Closing {
 	 * 
 	 * @param <C> the auto-closeable type
 	 */
-	public static <C extends AutoCloseable> void closeAfterAccepting(@WillClose C closeable, CheckedConsumer<C> consume)
+	public static <C extends AutoCloseable> void closeAfterAccepting(C closeable, CheckedConsumer<C> consume)
 	{
 		try(C autoClose = closeable) {
 			Exceptional.accept(consume, autoClose);
@@ -194,7 +192,7 @@ public final class Closing {
 	 * @param <C> the auto-closeable type to consume
 	 * @param <U> the type of consumer's second argument
 	 */
-	public static <C extends AutoCloseable, U> void closeAfterAccepting(@WillClose C closeable, U instance, CheckedBiConsumer<C, U> consume)
+	public static <C extends AutoCloseable, U> void closeAfterAccepting(C closeable, U instance, CheckedBiConsumer<C, U> consume)
 	{
 		try(C autoClose = closeable) {
 			Exceptional.accept(consume, autoClose, instance);

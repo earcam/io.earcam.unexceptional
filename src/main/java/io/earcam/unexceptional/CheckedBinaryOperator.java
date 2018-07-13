@@ -24,8 +24,6 @@ import java.io.Serializable;//NOSONAR stfu false positive (suspect Sonar Squid i
 import java.util.Comparator;
 import java.util.Objects;
 
-import javax.annotation.Nonnull;
-
 /**
  * A checked parallel of {@link java.util.function.BinaryOperator}
  * 
@@ -48,7 +46,7 @@ public interface CheckedBinaryOperator<T> extends CheckedBiFunction<T, T, T> {
 	 * @throws NullPointerException if {@code comparator} is {@code null}
 	 */
 	@SuppressWarnings("squid:S1905") // SonarQube false positive
-	public static <T> CheckedBinaryOperator<T> minBy(@Nonnull CheckedComparator<? super T> comparator)
+	public static <T> CheckedBinaryOperator<T> minBy(/* @Nonnull */ CheckedComparator<? super T> comparator)
 	{
 		requireNonNull(comparator);
 		return (CheckedBinaryOperator<T> & Serializable) (a, b) -> comparator.compare(a, b) < 0 ? a : b;
@@ -65,7 +63,7 @@ public interface CheckedBinaryOperator<T> extends CheckedBiFunction<T, T, T> {
 	 * @throws NullPointerException if {@code comparator} is {@code null}
 	 */
 	@SuppressWarnings("squid:S1905") // SonarQube false positive
-	public static <T> CheckedBinaryOperator<T> maxBy(@Nonnull CheckedComparator<? super T> comparator)
+	public static <T> CheckedBinaryOperator<T> maxBy(/* @Nonnull */ CheckedComparator<? super T> comparator)
 	{
 		Objects.requireNonNull(comparator);
 		return (CheckedBinaryOperator<T> & Serializable) (a, b) -> comparator.compare(a, b) > 0 ? a : b;

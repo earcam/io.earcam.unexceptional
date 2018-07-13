@@ -21,8 +21,6 @@ package io.earcam.unexceptional;
 import java.io.Serializable;   //NOSONAR SonarQube false positive - putting @SuppressWarnings("squid:UselessImportCheck") on class has no effect, can't put at package level either
 import java.util.Objects;
 
-import javax.annotation.Nonnull;
-
 /**
  * A checked parallel of {@link java.util.function.Predicate}
  * 
@@ -55,7 +53,7 @@ public interface CheckedPredicate<T> {
 	 * @throws NullPointerException if {@code other} is {@code null}
 	 */
 	@SuppressWarnings("squid:S1905") // SonarQube false positive
-	public default CheckedPredicate<T> and(@Nonnull CheckedPredicate<? super T> other)
+	public default CheckedPredicate<T> and(/* @Nonnull */ CheckedPredicate<? super T> other)
 	{
 		Objects.requireNonNull(other);
 		return (CheckedPredicate<T> & Serializable) t -> test(t) && other.test(t);
@@ -82,7 +80,7 @@ public interface CheckedPredicate<T> {
 	 * @throws NullPointerException if {@code other} is {@code null}
 	 */
 	@SuppressWarnings("squid:S1905") // SonarQube false positive
-	public default CheckedPredicate<T> or(@Nonnull CheckedPredicate<? super T> other)
+	public default CheckedPredicate<T> or(/* @Nonnull */ CheckedPredicate<? super T> other)
 	{
 		Objects.requireNonNull(other);
 		return (CheckedPredicate<T> & Serializable) t -> test(t) || other.test(t);

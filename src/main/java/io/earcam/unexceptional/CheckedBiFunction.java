@@ -20,8 +20,6 @@ package io.earcam.unexceptional;
 
 import java.util.Objects;
 
-import javax.annotation.Nonnull;
-
 /**
  * A checked parallel of {@link java.util.function.BiFunction}
  * 
@@ -57,7 +55,7 @@ public interface CheckedBiFunction<T, U, R> {
 	 * @return the composite {@link CheckedBiFunction}
 	 * @throws NullPointerException if {@code after} is {@code null}
 	 */
-	public default <V> CheckedBiFunction<T, U, V> andThen(@Nonnull CheckedFunction<? super R, ? extends V> after)
+	public default <V> CheckedBiFunction<T, U, V> andThen(CheckedFunction<? super R, ? extends V> after)
 	{
 		Objects.requireNonNull(after);
 		return (CheckedBiFunction<T, U, V> & java.io.Serializable) (T t, U u) -> after.apply(apply(t, u));

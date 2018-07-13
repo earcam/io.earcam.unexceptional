@@ -20,8 +20,6 @@ package io.earcam.unexceptional;
 
 import java.util.Objects;
 
-import javax.annotation.Nonnull;
-
 /**
  * A checked exception version of {@link java.util.function.Consumer}
  * 
@@ -51,7 +49,7 @@ public interface CheckedConsumer<T> {
 	 * 
 	 * @throws NullPointerException if {@code after} is {@code null}
 	 */
-	public default CheckedConsumer<T> andThen(@Nonnull CheckedConsumer<? super T> after)
+	public default CheckedConsumer<T> andThen(/* @Nonnull */ CheckedConsumer<? super T> after)
 	{
 		Objects.requireNonNull(after);
 		return (T t) -> {

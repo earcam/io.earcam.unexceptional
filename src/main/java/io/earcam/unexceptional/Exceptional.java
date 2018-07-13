@@ -52,10 +52,6 @@ import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
 import java.util.stream.Stream;
 
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import javax.annotation.concurrent.Immutable;
-
 /**
  * <p>
  * Static utility for easy conversion of checked exceptions, and invocation of methods declaring checked exceptions.
@@ -90,8 +86,9 @@ import javax.annotation.concurrent.Immutable;
  * 1. unusual; not typical.
  * </p>
  */
-@ParametersAreNonnullByDefault
-@Immutable
+/* @javax.annotation.ParametersAreNonnullByDefault */
+/* @edu.umd.cs.findbugs.annotations.ReturnValuesAreNonnullByDefault */
+/* @net.jcip.annotations.Immutable */
 public final class Exceptional implements Serializable {
 
 	private static final long serialVersionUID = -1350140594550206145L;
@@ -161,7 +158,7 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public static URL url(String protocol, String host, int port, String path, @Nullable URLStreamHandler handler)
+	public static URL url(String protocol, String host, int port, String path, /* @Nullable */ URLStreamHandler handler)
 	{
 		try {
 			return new URL(protocol, host, port, path, handler);
@@ -361,7 +358,7 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	@SuppressWarnings("squid:S1905") // SonarQube false positives
+	@SuppressWarnings({ "squid:S1905", "unchecked" }) // SonarQube false positives
 	public static <T> Consumer<T> uncheckConsumer(CheckedConsumer<T> consumer)
 	{
 		return (Consumer<T> & Serializable) t -> Exceptional.accept(consumer, t);
@@ -434,7 +431,7 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	@SuppressWarnings("squid:S1905") // SonarQube false positives
+	@SuppressWarnings({ "squid:S1905", "unchecked" }) // SonarQube false positives
 	public static <T, U> BiConsumer<T, U> uncheckBiConsumer(CheckedBiConsumer<T, U> consumer)
 	{
 		return (BiConsumer<T, U> & Serializable) (t, u) -> Exceptional.accept(consumer, t, u);
@@ -475,7 +472,7 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	@SuppressWarnings("squid:S1905") // SonarQube false positives
+	@SuppressWarnings({ "squid:S1905", "unchecked" }) // SonarQube false positives
 	public static <T, R> Function<T, R> uncheckFunction(CheckedFunction<T, R> function)
 	{
 		return (Function<T, R> & Serializable) t -> Exceptional.apply(function, t);
@@ -517,7 +514,7 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	@SuppressWarnings("squid:S1905") // SonarQube false positives
+	@SuppressWarnings({ "squid:S1905", "unchecked" }) // SonarQube false positives
 	public static <T, U, R> BiFunction<T, U, R> uncheckBiFunction(CheckedBiFunction<T, U, R> function)
 	{
 		return (BiFunction<T, U, R> & Serializable) (t, u) -> Exceptional.apply(function, t, u);
@@ -559,7 +556,7 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	@SuppressWarnings("squid:S1905") // SonarQube false positives
+	@SuppressWarnings({ "squid:S1905", "unchecked" }) // SonarQube false positives
 	public static <T> BinaryOperator<T> uncheckBinaryOperator(CheckedBinaryOperator<T> operator)
 	{
 		return (BinaryOperator<T> & Serializable) (a, b) -> Exceptional.apply(operator, a, b);
@@ -576,7 +573,7 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	@SuppressWarnings("squid:S1905") // SonarQube false positives
+	@SuppressWarnings({ "squid:S1905", "unchecked" }) // SonarQube false positives
 	public static <T> ToDoubleFunction<T> uncheckToDoubleFunction(CheckedToDoubleFunction<T> function)
 	{
 		return (ToDoubleFunction<T> & Serializable) t -> Exceptional.applyAsDouble(function, t);
@@ -615,7 +612,7 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	@SuppressWarnings("squid:S1905") // SonarQube false positives
+	@SuppressWarnings({ "squid:S1905", "unchecked" }) // SonarQube false positives
 	public static <T> ToIntFunction<T> uncheckToIntFunction(CheckedToIntFunction<T> function)
 	{
 		return (ToIntFunction<T> & Serializable) t -> Exceptional.applyAsInt(function, t);
@@ -654,7 +651,7 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	@SuppressWarnings("squid:S1905") // SonarQube false positives
+	@SuppressWarnings({ "squid:S1905", "unchecked" }) // SonarQube false positives
 	public static <T> ToLongFunction<T> uncheckToLongFunction(CheckedToLongFunction<T> function)
 	{
 		return (ToLongFunction<T> & Serializable) t -> Exceptional.applyAsLong(function, t);
@@ -693,7 +690,7 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	@SuppressWarnings("squid:S1905") // SonarQube false positives
+	@SuppressWarnings({ "squid:S1905", "unchecked" }) // SonarQube false positives
 	public static <T> Supplier<T> uncheckSupplier(CheckedSupplier<T> supplier)
 	{
 		return (Supplier<T> & Serializable) () -> Exceptional.get(supplier);
@@ -731,7 +728,7 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	@SuppressWarnings("squid:S1905") // SonarQube false positives
+	@SuppressWarnings({ "squid:S1905", "unchecked" }) // SonarQube false positives
 	public static <T> Predicate<T> uncheckPredicate(CheckedPredicate<T> predicate)
 	{
 		return (Predicate<T> & Serializable) t -> Exceptional.test(predicate, t);
@@ -770,7 +767,7 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	@SuppressWarnings("squid:S1905") // SonarQube false positives
+	@SuppressWarnings({ "squid:S1905", "unchecked" }) // SonarQube false positives
 	public static <T> Comparator<T> uncheckComparator(CheckedComparator<T> comparator)
 	{
 		return (Comparator<T> & Serializable) (a, b) -> Exceptional.applyAsInt(comparator, a, b);
@@ -786,7 +783,7 @@ public final class Exceptional implements Serializable {
 	 * @param function the checked bi-function
 	 * @return an unchecked bi-function
 	 */
-	@SuppressWarnings("squid:S1905") // SonarQube false positives
+	@SuppressWarnings({ "squid:S1905", "unchecked" }) // SonarQube false positives
 	public static <T, U> ToIntBiFunction<T, U> uncheckToIntBiFunction(CheckedToIntBiFunction<T, U> function)
 	{
 		return (ToIntBiFunction<T, U> & Serializable) (a, b) -> Exceptional.applyAsInt(function, a, b);

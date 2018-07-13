@@ -20,8 +20,6 @@ package io.earcam.unexceptional;
 
 import java.util.Objects;
 
-import javax.annotation.Nonnull;
-
 /**
  * A checked parallel of {@link java.util.function.BiConsumer}
  * 
@@ -54,7 +52,7 @@ public interface CheckedBiConsumer<T, U> {
 	 * @throws NullPointerException if {@code after} is {@code null}
 	 */
 	@SuppressWarnings("squid:S1905") // SonarQube false positives
-	public default CheckedBiConsumer<T, U> andThen(@Nonnull CheckedBiConsumer<? super T, ? super U> after)
+	public default CheckedBiConsumer<T, U> andThen(CheckedBiConsumer<? super T, ? super U> after)
 	{
 		Objects.requireNonNull(after);
 
