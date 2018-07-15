@@ -55,7 +55,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.io.ByteArrayOutputStream;
@@ -906,6 +906,17 @@ public class ExceptionalTest {
 
 
 	@Test
+	public void invalidUrlToUri() throws MalformedURLException
+	{
+		URL earl = new URL("http:// ");
+		try {
+			Exceptional.uri(earl);
+			fail("should not reach here");
+		} catch(UncheckedException e) {}
+	}
+
+
+	@Test
 	public void invalidUrlThrownAsUnchecked()
 	{
 		try {
@@ -1300,5 +1311,31 @@ public class ExceptionalTest {
 		Exceptional.forEach(source, sink::put);
 
 		assertThat(sink, is(equalTo(source)));
+	}
+
+
+	@Test
+	public void rethrowDoesNotWrapRuntimeException()
+	{
+		UncheckedIOException uie = new UncheckedIOException(new IOException());
+		try {
+			Exceptional.rethrow(uie);
+			fail("should not reach here");
+		} catch(UncheckedIOException caught) {
+			assertThat(caught, is(sameInstance(uie)));
+		}
+	}
+
+
+	@Test
+	public void rethrowDoesNotWrapError()
+	{
+		OutOfMemoryError oom = new OutOfMemoryError();
+		try {
+			Exceptional.rethrow(oom);
+			fail("should not reach here");
+		} catch(OutOfMemoryError caught) {
+			assertThat(caught, is(sameInstance(oom)));
+		}
 	}
 }

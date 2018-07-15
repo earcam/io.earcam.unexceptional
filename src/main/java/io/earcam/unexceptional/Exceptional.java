@@ -221,7 +221,7 @@ public final class Exceptional implements Serializable {
 	{
 		resetIfInterrupt(caught);
 		if(caught instanceof Error) {
-			rethrow(caught);
+			throw (Error) caught;
 		}
 	}
 
@@ -311,8 +311,8 @@ public final class Exceptional implements Serializable {
 	{
 		try {
 			return callable.call();
-		} catch(Exception thrown) {  // NO SONAR
-			throw uncheck(thrown);
+		} catch(Throwable thrown) {  // NO SONAR
+			throw rethrow(thrown);
 		}
 	}
 
