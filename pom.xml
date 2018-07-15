@@ -57,6 +57,14 @@
 		<java.home.10>/usr/lib/jvm/java-10-oracle</java.home.10>
 
 		<skip.execution.pitest>false</skip.execution.pitest>
+
+		<!-- 
+			jacoco's argLine not merged,
+			even with 'combine.self="append"', 
+			but we can use late binding
+		-->
+		<surefire.argLine></surefire.argLine>
+		<jpms.surefire.argLine>--add-opens ${project.artifactId}/${project.artifactId}=ALL-UNNAMED</jpms.surefire.argLine>
 	</properties>
 
 	<dependencies>
@@ -284,6 +292,7 @@
 						</goals>
 						<configuration>
 							<jvm>${java.home.9}/bin/java</jvm>
+							<argLine>@{surefire.argLine} ${jpms.surefire.argLine}</argLine>
 						</configuration>
 					</execution>
 					<execution>
@@ -293,6 +302,7 @@
 						</goals>
 						<configuration>
 							<jvm>${java.home.10}/bin/java</jvm>
+							<argLine>@{surefire.argLine} ${jpms.surefire.argLine}</argLine>
 						</configuration>
 					</execution>
 				</executions>

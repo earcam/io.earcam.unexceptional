@@ -276,8 +276,10 @@ public final class Exceptional implements Serializable {
 	{
 		try {
 			runnable.run();
+		} catch(Error error) {  // repeated tedious (likewise with tests) as Jacoco does not add enough probes
+			throw error;
 		} catch(@SuppressWarnings("squid:S00112") Throwable thrown) {
-			rethrow(thrown);
+			throw uncheck(thrown);
 		}
 	}
 
@@ -311,8 +313,10 @@ public final class Exceptional implements Serializable {
 	{
 		try {
 			return callable.call();
-		} catch(Throwable thrown) {  // NO SONAR
-			throw rethrow(thrown);
+		} catch(@SuppressWarnings("squid:S1181") Error error) {  // repeated tedious (likewise with tests) as Jacoco does not add enough probes
+			throw error;
+		} catch(@SuppressWarnings("squid:S1181") Throwable thrown) {
+			throw uncheck(thrown);
 		}
 	}
 
@@ -380,8 +384,10 @@ public final class Exceptional implements Serializable {
 	{
 		try {
 			consumer.accept(value);
+		} catch(Error error) {  // repeated tedious (likewise with tests) as Jacoco does not add enough probes
+			throw error;
 		} catch(@SuppressWarnings("squid:S00112") Throwable thrown) {
-			rethrow(thrown);
+			throw uncheck(thrown);
 		}
 	}
 
@@ -414,8 +420,10 @@ public final class Exceptional implements Serializable {
 	{
 		try {
 			consumer.accept(value);
+		} catch(Error error) {  // repeated tedious (likewise with tests) as Jacoco does not add enough probes
+			throw error;
 		} catch(@SuppressWarnings("squid:S00112") Throwable thrown) {
-			rethrow(thrown);
+			throw uncheck(thrown);
 		}
 	}
 
@@ -455,8 +463,10 @@ public final class Exceptional implements Serializable {
 	{
 		try {
 			consumer.accept(t, u);
+		} catch(Error error) {  // repeated tedious (likewise with tests) as Jacoco does not add enough probes
+			throw error;
 		} catch(@SuppressWarnings("squid:S00112") Throwable thrown) {
-			rethrow(thrown);
+			throw uncheck(thrown);
 		}
 	}
 
@@ -496,8 +506,10 @@ public final class Exceptional implements Serializable {
 	{
 		try {
 			return function.apply(argument);
+		} catch(Error error) {  // repeated tedious (likewise with tests) as Jacoco does not add enough probes
+			throw error;
 		} catch(@SuppressWarnings("squid:S00112") Throwable thrown) {
-			throw rethrow(thrown);
+			throw uncheck(thrown);
 		}
 	}
 
@@ -540,8 +552,10 @@ public final class Exceptional implements Serializable {
 	{
 		try {
 			return function.apply(t, u);
+		} catch(Error error) {  // repeated tedious (likewise with tests) as Jacoco does not add enough probes
+			throw error;
 		} catch(@SuppressWarnings("squid:S00112") Throwable thrown) {
-			throw rethrow(thrown);
+			throw uncheck(thrown);
 		}
 	}
 
@@ -596,8 +610,10 @@ public final class Exceptional implements Serializable {
 	{
 		try {
 			return function.applyAsDouble(t);
+		} catch(Error error) {  // repeated tedious (likewise with tests) as Jacoco does not add enough probes
+			throw error;
 		} catch(@SuppressWarnings("squid:S00112") Throwable thrown) {
-			throw rethrow(thrown);
+			throw uncheck(thrown);
 		}
 	}
 
@@ -635,8 +651,10 @@ public final class Exceptional implements Serializable {
 	{
 		try {
 			return function.applyAsInt(t);
+		} catch(Error error) {  // repeated tedious (likewise with tests) as Jacoco does not add enough probes
+			throw error;
 		} catch(@SuppressWarnings("squid:S00112") Throwable thrown) {
-			throw rethrow(thrown);
+			throw uncheck(thrown);
 		}
 	}
 
@@ -674,8 +692,10 @@ public final class Exceptional implements Serializable {
 	{
 		try {
 			return function.applyAsLong(t);
+		} catch(Error error) {  // repeated tedious (likewise with tests) as Jacoco does not add enough probes
+			throw error;
 		} catch(@SuppressWarnings("squid:S00112") Throwable thrown) {
-			throw rethrow(thrown);
+			throw uncheck(thrown);
 		}
 	}
 
@@ -712,8 +732,10 @@ public final class Exceptional implements Serializable {
 	{
 		try {
 			return supplier.get();
+		} catch(Error error) {  // repeated tedious (likewise with tests) as Jacoco does not add enough probes
+			throw error;
 		} catch(@SuppressWarnings("squid:S00112") Throwable thrown) {
-			throw rethrow(thrown);
+			throw uncheck(thrown);
 		}
 	}
 
@@ -751,8 +773,10 @@ public final class Exceptional implements Serializable {
 	{
 		try {
 			return predicate.test(value);
+		} catch(Error error) {  // repeated tedious (likewise with tests) as Jacoco does not add enough probes
+			throw error;
 		} catch(@SuppressWarnings("squid:S00112") Throwable thrown) {
-			throw rethrow(thrown);
+			throw uncheck(thrown);
 		}
 	}
 
@@ -809,8 +833,10 @@ public final class Exceptional implements Serializable {
 	{
 		try {
 			return function.applyAsInt(t, u);
+		} catch(Error error) {  // repeated tedious (likewise with tests) as Jacoco does not add enough probes
+			throw error;
 		} catch(@SuppressWarnings("squid:S00112") Throwable thrown) {
-			throw rethrow(thrown);
+			throw uncheck(thrown);
 		}
 	}
 
@@ -1007,7 +1033,8 @@ public final class Exceptional implements Serializable {
 	@Deprecated
 	public static <C extends AutoCloseable, T> void closeAfterAccepting(CheckedFunction<T, C> create, T t, CheckedConsumer<C> consume)
 	{
-		Closing.closeAfterAccepting(create, t, consume);
+		C closeable = Exceptional.apply(create, t);
+		closeAfterAccepting(closeable, consume);
 	}
 
 
