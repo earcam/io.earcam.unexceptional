@@ -542,34 +542,31 @@ public class ClosingTest {
 
 
 	@Test
-	public void autoClosingInstanceAvailable()
+	public void autoClosingInstanceAvailable() throws IOException
 	{
 		try(AutoClosed<AtomicBoolean, IOException> closable = autoClosing(unclosable, closeMethod)) {
 			assertThat(closable.get(), is(sameInstance(unclosable)));
-		} catch(IOException ioe) {
-			fail();
 		}
 	}
 
 
 	@Test
-	public void autoClosingNotCalledWithinTryBody()
+	public void autoClosingInvokedImplicitlyByTryWithStatementOnSuccess() throws IOException
 	{
 		try(AutoClosed<AtomicBoolean, IOException> closable = autoClosing(unclosable, closeMethod)) {
 			assertThat(closable.get().get(), is(false));
-		} catch(IOException ioe) {
-			fail();
 		}
+		assertThat(unclosable.get(), is(true));
 	}
 
 
 	@Test
-	public void autoClosingInvokedImplicitlyByTryWithStatement()
+	public void autoClosingInvokedImplicitlyByTryWithStatementOnError()
 	{
 		try(AutoClosed<AtomicBoolean, IOException> closable = autoClosing(unclosable, closeMethod)) {
-
-		} catch(IOException ioe) {
-			fail();
+			throw new IOException("bang! " + closable.get().get());
+		} catch(IOException e) {
+			Exceptional.swallow(e);
 		}
 		assertThat(unclosable.get(), is(true));
 	}

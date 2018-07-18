@@ -22,26 +22,22 @@ import static org.hamcrest.Matchers.is;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
 
 public class JavaVersionIntegrationTest {
 
-	private static final int MAX_BUFFER_SIZE = Integer.MAX_VALUE - 8;
-	private static final int DEFAULT_BUFFER_SIZE = 8192;
-
+	private static final int CLASS_FILE_MAJOR_VERSION_8 = 52;
 	private static final byte[] CAFEBABE = { (byte) 0xCA, (byte) 0xFE, (byte) 0xBA, (byte) 0xBE };
 
 
 	@Test
 	public void ensureClassesAreTargetedForJavaVersionEight() throws IOException
 	{
-		int classFileMajorVersion = 52;
-		assertJavaMajorVersion(Exceptional.class, classFileMajorVersion);
-		assertJavaMajorVersion(Closing.class, classFileMajorVersion);
-		assertJavaMajorVersion(UncheckedException.class, classFileMajorVersion);
-		assertJavaMajorVersion(EmeticStream.class, classFileMajorVersion);
+		assertJavaMajorVersion(Exceptional.class, CLASS_FILE_MAJOR_VERSION_8);
+		assertJavaMajorVersion(Closing.class, CLASS_FILE_MAJOR_VERSION_8);
+		assertJavaMajorVersion(UncheckedException.class, CLASS_FILE_MAJOR_VERSION_8);
+		assertJavaMajorVersion(EmeticStream.class, CLASS_FILE_MAJOR_VERSION_8);
 	}
 
 
@@ -51,7 +47,7 @@ public class JavaVersionIntegrationTest {
 		ClassLoader loader = type.getClassLoader();
 
 		try(InputStream inputStream = loader.getResourceAsStream(name)) {
-			byte[] bytes = readAllBytes(inputStream);
+			byte[] bytes = readFirstEightBytes(inputStream);
 
 			assertMagicNumber(bytes);
 			assertTargetVersion(bytes, classFileMajorVersion);
@@ -75,31 +71,13 @@ public class JavaVersionIntegrationTest {
 	}
 
 
-	private static byte[] readAllBytes(InputStream in) throws IOException
+	private static byte[] readFirstEightBytes(InputStream in) throws IOException
 	{
-		byte[] buf = new byte[DEFAULT_BUFFER_SIZE];
-		int capacity = buf.length;
-		int nread = 0;
-		int n;
-		for(;;) {
-			// read to EOF which may read more or less than initial buffer size
-			while((n = in.read(buf, nread, capacity - nread)) > 0)
-				nread += n;
-
-			// if the last call to read returned -1, then we're done
-			if(n < 0)
-				break;
-
-			// need to allocate a larger buffer
-			if(capacity <= MAX_BUFFER_SIZE - capacity) {
-				capacity = capacity << 1;
-			} else {
-				if(capacity == MAX_BUFFER_SIZE)
-					throw new OutOfMemoryError("Required array size too large");
-				capacity = MAX_BUFFER_SIZE;
-			}
-			buf = Arrays.copyOf(buf, capacity);
+		byte[] buf = new byte[8];
+		int b, i = 0;
+		while((b = in.read()) != -1 && i < 8) {
+			buf[i++] = (byte) b;
 		}
-		return (capacity == nread) ? buf : Arrays.copyOf(buf, nread);
+		return buf;
 	}
 }
