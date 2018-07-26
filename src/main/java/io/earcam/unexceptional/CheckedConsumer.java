@@ -24,11 +24,12 @@ import java.util.Objects;
  * A checked exception version of {@link java.util.function.Consumer}
  * 
  * @param <T> the input type of the {@link #accept(Object)} operation
+ * @param <E> the type of Throwable declared
  * 
  * @see java.util.function.Consumer
  */
 @FunctionalInterface
-public interface CheckedConsumer<T> {
+public interface CheckedConsumer<T, E extends Throwable> {
 
 	/**
 	 * See {@link java.util.function.Consumer#accept(Object)}
@@ -36,8 +37,7 @@ public interface CheckedConsumer<T> {
 	 * @param t the input argument
 	 * @throws Exception a possible checked exception
 	 */
-	@SuppressWarnings("squid:S00112")
-	public abstract void accept(T t) throws Throwable;
+	public abstract void accept(T t) throws E;
 
 
 	/**
@@ -49,7 +49,7 @@ public interface CheckedConsumer<T> {
 	 * 
 	 * @throws NullPointerException if {@code after} is {@code null}
 	 */
-	public default CheckedConsumer<T> andThen(/* @Nonnull */ CheckedConsumer<? super T> after)
+	public default CheckedConsumer<T, E> andThen(/* @Nonnull */ CheckedConsumer<? super T, ? extends E> after)
 	{
 		Objects.requireNonNull(after);
 		return (T t) -> {

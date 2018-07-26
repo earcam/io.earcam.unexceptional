@@ -32,7 +32,7 @@ import java.util.Objects;
  * @see java.util.function.BiFunction
  */
 @FunctionalInterface
-public interface CheckedBiFunction<T, U, R> {
+public interface CheckedBiFunction<T, U, R, E extends Throwable> {
 
 	/**
 	 * See {@link java.util.function.BiFunction#apply(Object, Object)}
@@ -42,8 +42,7 @@ public interface CheckedBiFunction<T, U, R> {
 	 * @return result of applying {@code this} function.
 	 * @throws Throwable a possible checked exception
 	 */
-	@SuppressWarnings("squid:S00112")
-	public abstract R apply(T t, U u) throws Throwable;
+	public abstract R apply(T t, U u) throws E;
 
 
 	/**
@@ -55,9 +54,9 @@ public interface CheckedBiFunction<T, U, R> {
 	 * @return the composite {@link CheckedBiFunction}
 	 * @throws NullPointerException if {@code after} is {@code null}
 	 */
-	public default <V> CheckedBiFunction<T, U, V> andThen(CheckedFunction<? super R, ? extends V> after)
+	public default <V> CheckedBiFunction<T, U, V, E> andThen(CheckedFunction<? super R, ? extends V, ? extends E> after)
 	{
 		Objects.requireNonNull(after);
-		return (CheckedBiFunction<T, U, V> & java.io.Serializable) (T t, U u) -> after.apply(apply(t, u));
+		return (CheckedBiFunction<T, U, V, E> & java.io.Serializable) (T t, U u) -> after.apply(apply(t, u));
 	}
 }

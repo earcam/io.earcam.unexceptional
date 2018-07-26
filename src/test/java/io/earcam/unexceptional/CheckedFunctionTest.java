@@ -26,8 +26,8 @@ import org.junit.jupiter.api.Test;
 
 public class CheckedFunctionTest {
 
-	private final CheckedFunction<Integer, Integer> plusOne = t -> t + 1;
-	private final CheckedFunction<Integer, Integer> timesTwo = t -> t * 2;
+	private final CheckedFunction<Integer, Integer, Throwable> plusOne = t -> t + 1;
+	private final CheckedFunction<Integer, Integer, Throwable> timesTwo = t -> t * 2;
 
 
 	@Test

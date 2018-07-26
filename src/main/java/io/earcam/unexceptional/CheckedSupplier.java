@@ -22,13 +22,14 @@ package io.earcam.unexceptional;
  * A checked parallel of {@link java.util.function.Supplier}
  * 
  * @param <T> the type of supplied Object
+ * @param <E> the type of Throwable declared
  * 
  * @since 0.2.0
  * 
  * @see java.util.function.Supplier
  */
 @FunctionalInterface
-public interface CheckedSupplier<T> {
+public interface CheckedSupplier<T, E extends Throwable> {
 
 	/**
 	 * See {@link java.util.function.Supplier#get()}
@@ -36,6 +37,5 @@ public interface CheckedSupplier<T> {
 	 * @return result
 	 * @throws Throwable any throwable
 	 */
-	@SuppressWarnings("squid:S00112")
-	public abstract T get() throws Throwable;
+	public abstract T get() throws E;
 }

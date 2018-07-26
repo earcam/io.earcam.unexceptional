@@ -69,9 +69,9 @@ public class BoilerplateSerialCodecExample {
 	@Test
 	public void symetric() throws Throwable
 	{
-		CheckedPredicate<String> p = (CheckedPredicate<String> & Serializable) "yes"::equals;
+		CheckedPredicate<String, ?> p = (CheckedPredicate<String, ?> & Serializable) "yes"::equals;
 
-		CheckedPredicate<String> phydrated = deserialize(serialize(p), p.getClass());
+		CheckedPredicate<String, ?> phydrated = deserialize(serialize(p), p.getClass());
 
 		assertThat(phydrated.test("yes"), is(true));
 	}

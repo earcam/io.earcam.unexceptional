@@ -25,11 +25,12 @@ import java.util.Objects;
  * 
  * @param <T> argument type
  * @param <R> return type
+ * @param <E> the type of Throwable declared
  * 
  * @see java.util.function.Function
  */
 @FunctionalInterface
-public interface CheckedFunction<T, R> {
+public interface CheckedFunction<T, R, E extends Throwable> {
 
 	/**
 	 * See {@link java.util.function.Function#apply(Object)}
@@ -40,8 +41,7 @@ public interface CheckedFunction<T, R> {
 	 * 
 	 * @since 0.2.0
 	 */
-	@SuppressWarnings("squid:S00112")
-	public abstract R apply(T t) throws Throwable;
+	public abstract R apply(T t) throws E;
 
 
 	/**
@@ -58,7 +58,7 @@ public interface CheckedFunction<T, R> {
 	 *
 	 * @see java.util.function.Function#compose(java.util.function.Function)
 	 */
-	public default <V> CheckedFunction<V, R> compose(CheckedFunction<? super V, ? extends T> before)
+	public default <V> CheckedFunction<V, R, E> compose(CheckedFunction<? super V, ? extends T, ? extends E> before)
 	{
 		Objects.requireNonNull(before);
 		return (V v) -> apply(before.apply(v));
@@ -77,7 +77,7 @@ public interface CheckedFunction<T, R> {
 	 * 
 	 * @since 0.2.0
 	 */
-	public default <V> CheckedFunction<T, V> andThen(CheckedFunction<? super R, ? extends V> after)
+	public default <V> CheckedFunction<T, V, E> andThen(CheckedFunction<? super R, ? extends V, ? extends E> after)
 	{
 		Objects.requireNonNull(after);
 		return (T t) -> after.apply(apply(t));
@@ -92,7 +92,7 @@ public interface CheckedFunction<T, R> {
 	 * 
 	 * @since 0.3.0
 	 */
-	public static <T> CheckedFunction<T, T> identity()
+	public static <T, E extends Throwable> CheckedFunction<T, T, E> identity()
 	{
 		return t -> t;
 	}

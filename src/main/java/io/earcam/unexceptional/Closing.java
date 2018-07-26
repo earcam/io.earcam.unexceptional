@@ -84,7 +84,7 @@ public final class Closing {
 	 * 
 	 * @return the result of applying the {@code convert} function
 	 */
-	public static <C extends AutoCloseable, T, R> R closeAfterApplying(CheckedFunction<T, C> create, T t, CheckedFunction<C, R> convert)
+	public static <C extends AutoCloseable, T, R> R closeAfterApplying(CheckedFunction<T, C, ?> create, T t, CheckedFunction<C, R, ?> convert)
 	{
 		C closeable = Exceptional.apply(create, t);
 		return closeAfterApplying(closeable, convert);
@@ -103,7 +103,7 @@ public final class Closing {
 	 * 
 	 * @return the result of applying {@code convert} function to the {@code closeable} argument
 	 */
-	public static <C extends AutoCloseable, R> R closeAfterApplying(C closeable, CheckedFunction<C, R> convert)
+	public static <C extends AutoCloseable, R> R closeAfterApplying(C closeable, CheckedFunction<C, R, ?> convert)
 	{
 		try(C autoClose = closeable) {
 			return Exceptional.apply(convert, autoClose);
@@ -127,7 +127,7 @@ public final class Closing {
 	 * 
 	 * @return the result of applying {@code convert} function to the {@code closeable} argument
 	 */
-	public static <C extends AutoCloseable, U, R> R closeAfterApplying(C closeable, U instance, CheckedBiFunction<C, U, R> convert)
+	public static <C extends AutoCloseable, U, R, E extends Throwable> R closeAfterApplying(C closeable, U instance, CheckedBiFunction<C, U, R, E> convert)
 	{
 		try(C autoClose = closeable) {
 			return Exceptional.apply(convert, autoClose, instance);
@@ -149,7 +149,7 @@ public final class Closing {
 	 * @param <C> the auto-closeable type, to be created, consumed and closed
 	 * @param <T> the function's argument type, used to create the auto-closeable
 	 */
-	public static <C extends AutoCloseable, T> void closeAfterAccepting(CheckedFunction<T, C> create, T t, CheckedConsumer<C> consume)
+	public static <C extends AutoCloseable, T> void closeAfterAccepting(CheckedFunction<T, C, ?> create, T t, CheckedConsumer<C, ?> consume)
 	{
 		C closeable = Exceptional.apply(create, t);
 		closeAfterAccepting(closeable, consume);
@@ -164,7 +164,7 @@ public final class Closing {
 	 * 
 	 * @param <C> the auto-closeable type
 	 */
-	public static <C extends AutoCloseable> void closeAfterAccepting(C closeable, CheckedConsumer<C> consume)
+	public static <C extends AutoCloseable> void closeAfterAccepting(C closeable, CheckedConsumer<C, ?> consume)
 	{
 		try(C autoClose = closeable) {
 			Exceptional.accept(consume, autoClose);
@@ -174,7 +174,7 @@ public final class Closing {
 	}
 
 
-	public static <C extends AutoCloseable, T, U> void closeAfterAccepting(CheckedFunction<T, C> create, T t, U instance, CheckedBiConsumer<C, U> consume)
+	public static <C extends AutoCloseable, T, U> void closeAfterAccepting(CheckedFunction<T, C, ?> create, T t, U instance, CheckedBiConsumer<C, U, ?> consume)
 	{
 		C closeable = Exceptional.apply(create, t);
 		closeAfterAccepting(closeable, instance, consume);
@@ -192,7 +192,7 @@ public final class Closing {
 	 * @param <C> the auto-closeable type to consume
 	 * @param <U> the type of consumer's second argument
 	 */
-	public static <C extends AutoCloseable, U> void closeAfterAccepting(C closeable, U instance, CheckedBiConsumer<C, U> consume)
+	public static <C extends AutoCloseable, U> void closeAfterAccepting(C closeable, U instance, CheckedBiConsumer<C, U, ?> consume)
 	{
 		try(C autoClose = closeable) {
 			Exceptional.accept(consume, autoClose, instance);
@@ -204,10 +204,10 @@ public final class Closing {
 	public static class AutoClosed<T, E extends Exception> implements AutoCloseable, Supplier<T> {
 
 		private final T instance;
-		private final CheckedTypedConsumer<T, E> closeMethod;
+		private final CheckedConsumer<T, E> closeMethod;
 
 
-		AutoClosed(T instance, CheckedTypedConsumer<T, E> closeMethod)
+		AutoClosed(T instance, CheckedConsumer<T, E> closeMethod)
 		{
 			this.instance = instance;
 			this.closeMethod = closeMethod;
@@ -245,7 +245,7 @@ public final class Closing {
 	 * 
 	 * @since 0.5.0
 	 */
-	public static <T, E extends Exception> AutoClosed<T, E> autoClosing(T instance, CheckedTypedConsumer<T, E> closeMethod)
+	public static <T, E extends Exception> AutoClosed<T, E> autoClosing(T instance, CheckedConsumer<T, E> closeMethod)
 	{
 		return new AutoClosed<>(instance, closeMethod);
 	}

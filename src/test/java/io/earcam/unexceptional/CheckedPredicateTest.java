@@ -22,19 +22,21 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.Serializable;
 
 import org.junit.jupiter.api.Test;
 
 public class CheckedPredicateTest {
 
-	private static final CheckedPredicate<String> YES = (CheckedPredicate<String> & Serializable) "yes"::equals;
+	private static final CheckedPredicate<String, Throwable> YES = (CheckedPredicate<String, Throwable> & Serializable) "yes"::equals;
 
 
 	@Test
 	public void and() throws Throwable
 	{
-		CheckedPredicate<String> b = (CheckedPredicate<String> & Serializable) "yesterday"::startsWith;
+		CheckedPredicate<String, Throwable> b = (CheckedPredicate<String, Throwable> & Serializable) "yesterday"::startsWith;
 
 		assertThat(YES.and(b).test("yes"), is(true));
 	}
@@ -43,7 +45,7 @@ public class CheckedPredicateTest {
 	@Test
 	public void andFirstFails() throws Throwable
 	{
-		CheckedPredicate<String> b = (CheckedPredicate<String> & Serializable) "yesterday"::startsWith;
+		CheckedPredicate<String, ?> b = (CheckedPredicate<String, ?> & Serializable) "yesterday"::startsWith;
 
 		assertThat(YES.and(b).test("yup"), is(false));
 	}
@@ -52,8 +54,8 @@ public class CheckedPredicateTest {
 	@Test
 	public void andLastFails() throws Throwable
 	{
-		CheckedPredicate<String> a = (CheckedPredicate<String> & Serializable) "yeah"::equals;
-		CheckedPredicate<String> b = (CheckedPredicate<String> & Serializable) "ya know"::startsWith;
+		CheckedPredicate<String, IOException> a = (CheckedPredicate<String, IOException> & Serializable) "yeah"::equals;
+		CheckedPredicate<String, FileNotFoundException> b = (CheckedPredicate<String, FileNotFoundException> & Serializable) "ya know"::startsWith;
 
 		assertThat(a.and(b).test("yeah"), is(false));
 	}
@@ -62,7 +64,7 @@ public class CheckedPredicateTest {
 	@Test
 	public void orFirstSucceeds() throws Throwable
 	{
-		CheckedPredicate<String> b = (CheckedPredicate<String> & Serializable) "yesterday"::startsWith;
+		CheckedPredicate<String, ?> b = (CheckedPredicate<String, ?> & Serializable) "yesterday"::startsWith;
 
 		assertThat(YES.or(b).test("yes"), is(true));
 	}
@@ -71,8 +73,8 @@ public class CheckedPredicateTest {
 	@Test
 	public void orLastSucceeds() throws Throwable
 	{
-		CheckedPredicate<String> a = (CheckedPredicate<String> & Serializable) "yeah"::equals;
-		CheckedPredicate<String> b = (CheckedPredicate<String> & Serializable) "yesterday"::startsWith;
+		CheckedPredicate<String, Throwable> a = (CheckedPredicate<String, Throwable> & Serializable) "yeah"::equals;
+		CheckedPredicate<String, Throwable> b = (CheckedPredicate<String, Throwable> & Serializable) "yesterday"::startsWith;
 
 		assertThat(a.or(b).test("yes"), is(true));
 	}
@@ -81,8 +83,8 @@ public class CheckedPredicateTest {
 	@Test
 	public void orBothFail() throws Throwable
 	{
-		CheckedPredicate<String> a = (CheckedPredicate<String> & Serializable) "nope"::equals;
-		CheckedPredicate<String> b = (CheckedPredicate<String> & Serializable) "no"::startsWith;
+		CheckedPredicate<String, Throwable> a = (CheckedPredicate<String, Throwable> & Serializable) "nope"::equals;
+		CheckedPredicate<String, Throwable> b = (CheckedPredicate<String, Throwable> & Serializable) "no"::startsWith;
 
 		assertThat(a.or(b).test("yes"), is(false));
 	}
@@ -91,7 +93,7 @@ public class CheckedPredicateTest {
 	@Test
 	public void theNegatedPredicateFromDelmonteSaysYes() throws Throwable
 	{
-		CheckedPredicate<String> predicate = (CheckedPredicate<String> & Serializable) "no"::startsWith;
+		CheckedPredicate<String, Throwable> predicate = (CheckedPredicate<String, Throwable> & Serializable) "no"::startsWith;
 
 		assertThat(predicate.negate().test("yes"), is(true));
 	}
@@ -107,10 +109,10 @@ public class CheckedPredicateTest {
 	@Test
 	public void negatePredicateIsSerializable() throws Throwable
 	{
-		CheckedPredicate<String> negated = YES.negate();
+		CheckedPredicate<String, Throwable> negated = YES.negate();
 
 		@SuppressWarnings("unchecked")
-		CheckedPredicate<String> deserialized = SerialCodec.deserialize(SerialCodec.serialize(negated), CheckedPredicate.class);
+		CheckedPredicate<String, Throwable> deserialized = SerialCodec.deserialize(SerialCodec.serialize(negated), CheckedPredicate.class);
 
 		assertThat(deserialized.test("yes"), is(false));
 	}
@@ -119,13 +121,13 @@ public class CheckedPredicateTest {
 	@Test
 	public void unionPredicateIsSerializable() throws Throwable
 	{
-		CheckedPredicate<String> s = (CheckedPredicate<String> & Serializable) t -> t.startsWith("ye");
-		CheckedPredicate<String> e = (CheckedPredicate<String> & Serializable) t -> t.endsWith("es");
+		CheckedPredicate<String, Throwable> s = (CheckedPredicate<String, Throwable> & Serializable) t -> t.startsWith("ye");
+		CheckedPredicate<String, Throwable> e = (CheckedPredicate<String, Throwable> & Serializable) t -> t.endsWith("es");
 
-		CheckedPredicate<String> united = YES.and(s).and(e);
+		CheckedPredicate<String, Throwable> united = YES.and(s).and(e);
 
 		@SuppressWarnings("unchecked")
-		CheckedPredicate<String> deserialized = SerialCodec.deserialize(SerialCodec.serialize(united), CheckedPredicate.class);
+		CheckedPredicate<String, Throwable> deserialized = SerialCodec.deserialize(SerialCodec.serialize(united), CheckedPredicate.class);
 
 		assertThat(deserialized.test("yes"), is(true));
 	}
@@ -134,14 +136,14 @@ public class CheckedPredicateTest {
 	@Test
 	public void intersectionPredicateIsSerializable() throws Throwable
 	{
-		CheckedPredicate<String> p = (CheckedPredicate<String> & Serializable) "yes"::equals;
-		CheckedPredicate<String> s = (CheckedPredicate<String> & Serializable) t -> t.startsWith("NO");
-		CheckedPredicate<String> e = (CheckedPredicate<String> & Serializable) t -> t.endsWith("es");
+		CheckedPredicate<String, Throwable> p = (CheckedPredicate<String, Throwable> & Serializable) "yes"::equals;
+		CheckedPredicate<String, Throwable> s = (CheckedPredicate<String, Throwable> & Serializable) t -> t.startsWith("NO");
+		CheckedPredicate<String, Throwable> e = (CheckedPredicate<String, Throwable> & Serializable) t -> t.endsWith("es");
 
-		CheckedPredicate<String> united = p.or(s).or(e);
+		CheckedPredicate<String, Throwable> united = p.or(s).or(e);
 
 		@SuppressWarnings("unchecked")
-		CheckedPredicate<String> deserialized = SerialCodec.deserialize(SerialCodec.serialize(united), CheckedPredicate.class);
+		CheckedPredicate<String, Throwable> deserialized = SerialCodec.deserialize(SerialCodec.serialize(united), CheckedPredicate.class);
 
 		assertThat(deserialized.test("Yes"), is(true));
 	}

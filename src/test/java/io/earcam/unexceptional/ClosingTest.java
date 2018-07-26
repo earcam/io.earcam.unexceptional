@@ -139,7 +139,7 @@ public class ClosingTest {
 	{
 		DummyOutputStream output = new DummyOutputStream(onWrite, null);
 
-		CheckedConsumer<OutputStream> consumer = o -> o.write(1);
+		CheckedConsumer<OutputStream, IOException> consumer = o -> o.write(1);
 		try {
 			Closing.closeAfterAccepting(output, consumer);
 		} catch(UncheckedIOException e) {
@@ -155,7 +155,7 @@ public class ClosingTest {
 	{
 		DummyOutputStream output = new DummyOutputStream(null, onClose);
 
-		CheckedConsumer<OutputStream> consumer = o -> o.write(1);
+		CheckedConsumer<OutputStream, IOException> consumer = o -> o.write(1);
 		try {
 			Closing.closeAfterAccepting(output, consumer);
 		} catch(UncheckedIOException e) {
@@ -171,7 +171,7 @@ public class ClosingTest {
 	{
 		DummyOutputStream output = new DummyOutputStream(onWrite, onClose);
 
-		CheckedConsumer<OutputStream> consumer = o -> o.write(1);
+		CheckedConsumer<OutputStream, IOException> consumer = o -> o.write(1);
 		try {
 			Closing.closeAfterAccepting(output, consumer);
 		} catch(UncheckedIOException e) {
@@ -192,7 +192,7 @@ public class ClosingTest {
 
 		AtomicReference<OutputStream> ref = new AtomicReference<>();
 
-		CheckedBiConsumer<OutputStream, Integer> biConsumer = (o, x) -> ref.set(o);
+		CheckedBiConsumer<OutputStream, Integer, IOException> biConsumer = (o, x) -> ref.set(o);
 
 		Closing.closeAfterAccepting(output, 42, biConsumer);
 
@@ -208,7 +208,7 @@ public class ClosingTest {
 
 		AtomicReference<OutputStream> ref = new AtomicReference<>();
 
-		CheckedBiConsumer<OutputStream, Integer> biConsumer = (o, x) -> ref.set(o);
+		CheckedBiConsumer<OutputStream, Integer, IOException> biConsumer = (o, x) -> ref.set(o);
 
 		Closing.closeAfterAccepting(output, 42, biConsumer);
 
@@ -221,7 +221,7 @@ public class ClosingTest {
 	{
 		DummyOutputStream output = new DummyOutputStream(onWrite, null);
 
-		CheckedBiConsumer<OutputStream, Integer> consumer = (o, x) -> o.write(1);
+		CheckedBiConsumer<OutputStream, Integer, IOException> consumer = (o, x) -> o.write(1);
 		try {
 			Closing.closeAfterAccepting(output, 42, consumer);
 		} catch(UncheckedIOException e) {
@@ -237,7 +237,7 @@ public class ClosingTest {
 	{
 		DummyOutputStream output = new DummyOutputStream(null, onClose);
 
-		CheckedBiConsumer<OutputStream, Integer> consumer = (o, x) -> o.write(1);
+		CheckedBiConsumer<OutputStream, Integer, IOException> consumer = (o, x) -> o.write(1);
 		try {
 			Closing.closeAfterAccepting(output, 42, consumer);
 		} catch(UncheckedIOException e) {
@@ -253,7 +253,7 @@ public class ClosingTest {
 	{
 		DummyOutputStream output = new DummyOutputStream(onWrite, onClose);
 
-		CheckedBiConsumer<OutputStream, Integer> consumer = (o, x) -> o.write(1);
+		CheckedBiConsumer<OutputStream, Integer, IOException> consumer = (o, x) -> o.write(1);
 		try {
 			Closing.closeAfterAccepting(output, 42, consumer);
 		} catch(UncheckedIOException e) {
@@ -294,7 +294,7 @@ public class ClosingTest {
 		DummyOutputStream output = new DummyOutputStream(onWrite, null);
 
 		@SuppressWarnings("resource")
-		CheckedFunction<OutputStream, Void> function = o -> {
+		CheckedFunction<OutputStream, Void, IOException> function = o -> {
 			output.write(1);
 			return null;
 		};
@@ -314,7 +314,7 @@ public class ClosingTest {
 		DummyOutputStream output = new DummyOutputStream(null, onClose);
 
 		@SuppressWarnings("resource")
-		CheckedFunction<OutputStream, Void> function = o -> {
+		CheckedFunction<OutputStream, Void, IOException> function = o -> {
 			output.write(1);
 			return null;
 		};
@@ -334,7 +334,7 @@ public class ClosingTest {
 		DummyOutputStream output = new DummyOutputStream(onWrite, onClose);
 
 		@SuppressWarnings("resource")
-		CheckedFunction<OutputStream, Void> function = o -> {
+		CheckedFunction<OutputStream, Void, IOException> function = o -> {
 			output.write(1);
 			return null;
 		};
@@ -357,7 +357,7 @@ public class ClosingTest {
 		DummyOutputStream output = new DummyOutputStream(null, null);
 
 		String ok = "ok";
-		CheckedBiFunction<OutputStream, Integer, String> function = (o, n) -> ok;
+		CheckedBiFunction<OutputStream, Integer, String, IOException> function = (o, n) -> ok;
 
 		String everything = Closing.closeAfterApplying(output, 42, function);
 
@@ -371,7 +371,7 @@ public class ClosingTest {
 	{
 		DummyOutputStream output = null;
 
-		CheckedBiFunction<OutputStream, Integer, OutputStream> function = (o, n) -> o;
+		CheckedBiFunction<OutputStream, Integer, OutputStream, IOException> function = (o, n) -> o;
 
 		OutputStream returned = Closing.closeAfterApplying(output, 42, function);
 
@@ -385,7 +385,7 @@ public class ClosingTest {
 		DummyOutputStream output = new DummyOutputStream(onWrite, null);
 
 		@SuppressWarnings("resource")
-		CheckedBiFunction<OutputStream, Void, Void> function = (o, v) -> {
+		CheckedBiFunction<OutputStream, Void, Void, IOException> function = (o, v) -> {
 			output.write(1);
 			return null;
 		};
@@ -405,7 +405,7 @@ public class ClosingTest {
 		DummyOutputStream output = new DummyOutputStream(null, onClose);
 
 		@SuppressWarnings("resource")
-		CheckedBiFunction<OutputStream, Void, Void> function = (o, v) -> {
+		CheckedBiFunction<OutputStream, Void, Void, IOException> function = (o, v) -> {
 			output.write(1);
 			return null;
 		};
@@ -425,7 +425,7 @@ public class ClosingTest {
 		DummyOutputStream output = new DummyOutputStream(onWrite, onClose);
 
 		@SuppressWarnings("resource")
-		CheckedBiFunction<OutputStream, Void, Void> function = (o, v) -> {
+		CheckedBiFunction<OutputStream, Void, Void, IOException> function = (o, v) -> {
 			output.write(1);
 			return null;
 		};
@@ -473,7 +473,7 @@ public class ClosingTest {
 	public void closesAfterCreatingThenBiAccepting() throws Throwable
 	{
 		AtomicReference<OutputStream> ref = new AtomicReference<>();
-		CheckedBiConsumer<OutputStream, Integer> biConsumer = (o, x) -> ref.set(o);
+		CheckedBiConsumer<OutputStream, Integer, IOException> biConsumer = (o, x) -> ref.set(o);
 
 		Closing.closeAfterAccepting(DodgyConstructorOutputStream::new, null, 42, biConsumer);
 
@@ -487,7 +487,7 @@ public class ClosingTest {
 		AtomicReference<OutputStream> ref = new AtomicReference<>();
 		UnsupportedOperationException chuckInConstructor = new UnsupportedOperationException("bang");
 
-		CheckedBiConsumer<OutputStream, Integer> biConsumer = (o, x) -> ref.set(o);
+		CheckedBiConsumer<OutputStream, Integer, IOException> biConsumer = (o, x) -> ref.set(o);
 
 		try {
 			Closing.closeAfterAccepting(DodgyConstructorOutputStream::new, chuckInConstructor, 42, biConsumer);
@@ -537,7 +537,7 @@ public class ClosingTest {
 		}
 	}
 
-	private final CheckedTypedConsumer<AtomicBoolean, IOException> closeMethod = i -> i.set(true);
+	private final CheckedConsumer<AtomicBoolean, IOException> closeMethod = i -> i.set(true);
 	private final AtomicBoolean unclosable = new AtomicBoolean(false);
 
 

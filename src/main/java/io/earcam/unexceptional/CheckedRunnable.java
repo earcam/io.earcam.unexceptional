@@ -27,20 +27,21 @@ import java.util.Objects;
  * 
  * For the equivalent of {@link java.util.concurrent.Callable}, see {@link io.earcam.unexceptional.CheckedSupplier}
  * 
+ * @param <E> the type of Throwable declared
+ * 
  * @since 0.2.0
  * 
  * @see java.lang.Runnable
  */
 @FunctionalInterface
-public interface CheckedRunnable {
+public interface CheckedRunnable<E extends Throwable> {
 
 	/**
 	 * See {@link Runnable#run()}
 	 * 
 	 * @throws Exception a checked exception
 	 */
-	@SuppressWarnings("squid:S00112")
-	public abstract void run() throws Throwable;
+	public abstract void run() throws E;
 
 
 	/**
@@ -49,10 +50,10 @@ public interface CheckedRunnable {
 	 * @throws NullPointerException if {@code after} is {@code null}
 	 */
 	@SuppressWarnings("squid:S1905") // SonarQube false positive
-	public default CheckedRunnable andThen(/* @Nonnull */ CheckedRunnable after)
+	public default CheckedRunnable<E> andThen(/* @Nonnull */ CheckedRunnable<? extends E> after)
 	{
 		Objects.requireNonNull(after);
-		return (CheckedRunnable & Serializable) () -> {
+		return (CheckedRunnable<E> & Serializable) () -> {
 			run();
 			after.run();
 		};

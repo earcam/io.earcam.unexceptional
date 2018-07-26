@@ -23,11 +23,12 @@ package io.earcam.unexceptional;
  * 
  * @param <T> first argument type
  * @param <U> last argument type
+ * @param <E> the type of Throwable declared
  * 
  * @since 0.2.0
  */
 @FunctionalInterface
-public interface CheckedToIntBiFunction<T, U> {
+public interface CheckedToIntBiFunction<T, U, E extends Throwable> {
 
 	/**
 	 * Applies this function to the given arguments.
@@ -37,7 +38,6 @@ public interface CheckedToIntBiFunction<T, U> {
 	 * @return the function result
 	 * @throws Throwable Any throwable
 	 */
-	@SuppressWarnings("squid:S00112")
-	int applyAsInt(T t, U u) throws Throwable;
+	int applyAsInt(T t, U u) throws E;
 
 }

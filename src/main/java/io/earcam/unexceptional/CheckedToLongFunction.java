@@ -22,13 +22,14 @@ package io.earcam.unexceptional;
  * A checked parallel of {@link java.util.function.ToLongFunction}
  * 
  * @param <T> the argument type
+ * @param <E> the type of Throwable declared
  * 
  * @since 0.2.0
  * 
  * @see java.util.function.ToLongFunction
  */
 @FunctionalInterface
-public interface CheckedToLongFunction<T> {
+public interface CheckedToLongFunction<T, E extends Throwable> {
 
 	/**
 	 * See {@link java.util.function.ToLongFunction#applyAsLong(Object)}
@@ -37,6 +38,5 @@ public interface CheckedToLongFunction<T> {
 	 * @return long result of applying argument
 	 * @throws Throwable any throwable
 	 */
-	@SuppressWarnings("squid:S00112")
-	public abstract long applyAsLong(T value) throws Throwable;
+	public abstract long applyAsLong(T value) throws E;
 }

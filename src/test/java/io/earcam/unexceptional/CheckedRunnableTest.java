@@ -34,8 +34,8 @@ public class CheckedRunnableTest {
 	private boolean niceWasRun = false;
 	private boolean nastyWasRun = false;
 
-	private final CheckedRunnable nice = (CheckedRunnable & Serializable) () -> niceWasRun = true;
-	private final CheckedRunnable nasty = (CheckedRunnable & Serializable) () -> {
+	private final CheckedRunnable<Throwable> nice = (CheckedRunnable<Throwable> & Serializable) () -> niceWasRun = true;
+	private final CheckedRunnable<Throwable> nasty = (CheckedRunnable<Throwable> & Serializable) () -> {
 		nastyWasRun = true;
 		throw EXCEPTION;
 	};
@@ -44,8 +44,8 @@ public class CheckedRunnableTest {
 	@Test
 	public void isSerializable()
 	{
-		final CheckedRunnable a = (CheckedRunnable & Serializable) () -> {};
-		final CheckedRunnable b = (CheckedRunnable & Serializable) () -> {};
+		final CheckedRunnable<Throwable> a = (CheckedRunnable<Throwable> & Serializable) () -> {};
+		final CheckedRunnable<Throwable> b = (CheckedRunnable<Throwable> & Serializable) () -> {};
 
 		assertThat(SerialCodec.isSerializable(a.andThen(b)), is(true));
 	}

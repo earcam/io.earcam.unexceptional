@@ -24,13 +24,14 @@ import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
 
 public class CheckedConsumerTest {
 
-	class NiceStubCheckedConsumer implements CheckedConsumer<String> {
+	class NiceStubCheckedConsumer implements CheckedConsumer<String, IOException> {
 
 		String t;
 
@@ -44,19 +45,19 @@ public class CheckedConsumerTest {
 
 	}
 
-	class NastyStubCheckedConsumer implements CheckedConsumer<String> {
+	class NastyStubCheckedConsumer<E extends IOException> implements CheckedConsumer<String, E> {
 
-		Exception chuck;
+		E chuck;
 
 
-		NastyStubCheckedConsumer(Exception chuck)
+		NastyStubCheckedConsumer(E chuck)
 		{
 			this.chuck = chuck;
 		}
 
 
 		@Override
-		public void accept(String t) throws Exception
+		public void accept(String t) throws E
 		{
 			throw chuck;
 		}
@@ -66,9 +67,9 @@ public class CheckedConsumerTest {
 	@Test
 	public void andThenReturnsAnUncheckedConsumer() throws Throwable
 	{
-		IOException wobbly = new IOException("boom!");
+		FileNotFoundException wobbly = new FileNotFoundException("boom!");
 
-		CheckedConsumer<String> uncheckedConsumer = new NiceStubCheckedConsumer().andThen(new NastyStubCheckedConsumer(wobbly));
+		CheckedConsumer<String, IOException> uncheckedConsumer = new NiceStubCheckedConsumer().andThen(new NastyStubCheckedConsumer<>(wobbly));
 
 		try {
 			uncheckedConsumer.accept("no chance");
@@ -110,10 +111,10 @@ public class CheckedConsumerTest {
 	public void andThenInvokesAcceptInOrderWhenLastConsumerThrows() throws Throwable
 	{
 		String t = "hello";
-		IOException wobbly = new IOException("goodbye");
+		FileNotFoundException wobbly = new FileNotFoundException("goodbye");
 
 		NiceStubCheckedConsumer nice = new NiceStubCheckedConsumer();
-		CheckedConsumer<String> nasty = new NastyStubCheckedConsumer(wobbly);
+		CheckedConsumer<String, IOException> nasty = new NastyStubCheckedConsumer<>(wobbly);
 
 		try {
 			nice.andThen(nasty).accept(t);
@@ -129,9 +130,9 @@ public class CheckedConsumerTest {
 	public void andThenThrowsFirstExceptionWithoutInvokingSubsequentConsumersAccept() throws Throwable
 	{
 		String t = "hello";
-		IOException wobbly = new IOException("goodbye");
+		IOException wobbly = new FileNotFoundException("goodbye");
 
-		CheckedConsumer<String> nasty = new NastyStubCheckedConsumer(wobbly);
+		CheckedConsumer<String, IOException> nasty = new NastyStubCheckedConsumer<>(wobbly);
 		NiceStubCheckedConsumer nice = new NiceStubCheckedConsumer();
 
 		try {

@@ -89,6 +89,10 @@ import java.util.stream.Stream;
 /* @javax.annotation.ParametersAreNonnullByDefault */
 /* @edu.umd.cs.findbugs.annotations.ReturnValuesAreNonnullByDefault */
 /* @net.jcip.annotations.Immutable */
+@SuppressWarnings({
+		"squid:S1905", // SonarQube false positives
+		"squid:S1181"  // SonarQube necessary evil
+})
 public final class Exceptional implements Serializable {
 
 	private static final long serialVersionUID = -1350140594550206145L;
@@ -272,13 +276,13 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public static void run(CheckedRunnable runnable)
+	public static void run(CheckedRunnable<?> runnable)
 	{
 		try {
 			runnable.run();
 		} catch(Error error) {  // repeated tedious (likewise with tests) as Jacoco does not add enough probes
 			throw error;
-		} catch(@SuppressWarnings("squid:S00112") Throwable thrown) {
+		} catch(Throwable thrown) {
 			throw uncheck(thrown);
 		}
 	}
@@ -292,7 +296,7 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public static Runnable uncheckRunnable(CheckedRunnable runnable)
+	public static Runnable uncheckRunnable(CheckedRunnable<?> runnable)
 	{
 		return () -> run(runnable);
 	}
@@ -313,9 +317,9 @@ public final class Exceptional implements Serializable {
 	{
 		try {
 			return callable.call();
-		} catch(@SuppressWarnings("squid:S1181") Error error) {  // repeated tedious (likewise with tests) as Jacoco does not add enough probes
+		} catch(Error error) {  // repeated tedious (likewise with tests) as Jacoco does not add enough probes
 			throw error;
-		} catch(@SuppressWarnings("squid:S1181") Throwable thrown) {
+		} catch(Throwable thrown) {
 			throw uncheck(thrown);
 		}
 	}
@@ -362,8 +366,8 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	@SuppressWarnings({ "squid:S1905", "unchecked" }) // SonarQube false positives
-	public static <T> Consumer<T> uncheckConsumer(CheckedConsumer<T> consumer)
+	@SuppressWarnings("unchecked")
+	public static <T> Consumer<T> uncheckConsumer(CheckedConsumer<T, ?> consumer)
 	{
 		return (Consumer<T> & Serializable) t -> Exceptional.accept(consumer, t);
 	}
@@ -380,13 +384,13 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public static <T> void accept(CheckedConsumer<T> consumer, T value)
+	public static <T> void accept(CheckedConsumer<T, ?> consumer, T value)
 	{
 		try {
 			consumer.accept(value);
 		} catch(Error error) {  // repeated tedious (likewise with tests) as Jacoco does not add enough probes
 			throw error;
-		} catch(@SuppressWarnings("squid:S00112") Throwable thrown) {
+		} catch(Throwable thrown) {
 			throw uncheck(thrown);
 		}
 	}
@@ -400,8 +404,7 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.5.0
 	 */
-	@SuppressWarnings("squid:S1905") // SonarQube false positives
-	public static IntConsumer uncheckIntConsumer(CheckedIntConsumer consumer)
+	public static IntConsumer uncheckIntConsumer(CheckedIntConsumer<?> consumer)
 	{
 		return (IntConsumer & Serializable) t -> Exceptional.accept(consumer, t);
 	}
@@ -416,13 +419,13 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.5.0
 	 */
-	public static void accept(CheckedIntConsumer consumer, int value)
+	public static void accept(CheckedIntConsumer<?> consumer, int value)
 	{
 		try {
 			consumer.accept(value);
 		} catch(Error error) {  // repeated tedious (likewise with tests) as Jacoco does not add enough probes
 			throw error;
-		} catch(@SuppressWarnings("squid:S00112") Throwable thrown) {
+		} catch(Throwable thrown) {
 			throw uncheck(thrown);
 		}
 	}
@@ -439,8 +442,8 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	@SuppressWarnings({ "squid:S1905", "unchecked" }) // SonarQube false positives
-	public static <T, U> BiConsumer<T, U> uncheckBiConsumer(CheckedBiConsumer<T, U> consumer)
+	@SuppressWarnings("unchecked")
+	public static <T, U> BiConsumer<T, U> uncheckBiConsumer(CheckedBiConsumer<T, U, ?> consumer)
 	{
 		return (BiConsumer<T, U> & Serializable) (t, u) -> Exceptional.accept(consumer, t, u);
 	}
@@ -459,13 +462,13 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public static <T, U> void accept(CheckedBiConsumer<T, U> consumer, T t, U u)
+	public static <T, U> void accept(CheckedBiConsumer<T, U, ?> consumer, T t, U u)
 	{
 		try {
 			consumer.accept(t, u);
 		} catch(Error error) {  // repeated tedious (likewise with tests) as Jacoco does not add enough probes
 			throw error;
-		} catch(@SuppressWarnings("squid:S00112") Throwable thrown) {
+		} catch(Throwable thrown) {
 			throw uncheck(thrown);
 		}
 	}
@@ -482,8 +485,8 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	@SuppressWarnings({ "squid:S1905", "unchecked" }) // SonarQube false positives
-	public static <T, R> Function<T, R> uncheckFunction(CheckedFunction<T, R> function)
+	@SuppressWarnings("unchecked")
+	public static <T, R> Function<T, R> uncheckFunction(CheckedFunction<T, R, ?> function)
 	{
 		return (Function<T, R> & Serializable) t -> Exceptional.apply(function, t);
 	}
@@ -502,13 +505,13 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public static <T, R> R apply(CheckedFunction<T, R> function, T argument)
+	public static <T, R> R apply(CheckedFunction<T, R, ?> function, T argument)
 	{
 		try {
 			return function.apply(argument);
 		} catch(Error error) {  // repeated tedious (likewise with tests) as Jacoco does not add enough probes
 			throw error;
-		} catch(@SuppressWarnings("squid:S00112") Throwable thrown) {
+		} catch(Throwable thrown) {
 			throw uncheck(thrown);
 		}
 	}
@@ -526,8 +529,8 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	@SuppressWarnings({ "squid:S1905", "unchecked" }) // SonarQube false positives
-	public static <T, U, R> BiFunction<T, U, R> uncheckBiFunction(CheckedBiFunction<T, U, R> function)
+	@SuppressWarnings("unchecked")
+	public static <T, U, R> BiFunction<T, U, R> uncheckBiFunction(CheckedBiFunction<T, U, R, ?> function)
 	{
 		return (BiFunction<T, U, R> & Serializable) (t, u) -> Exceptional.apply(function, t, u);
 	}
@@ -548,13 +551,13 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public static <T, U, R> R apply(CheckedBiFunction<T, U, R> function, T t, U u)
+	public static <T, U, R> R apply(CheckedBiFunction<T, U, R, ?> function, T t, U u)
 	{
 		try {
 			return function.apply(t, u);
 		} catch(Error error) {  // repeated tedious (likewise with tests) as Jacoco does not add enough probes
 			throw error;
-		} catch(@SuppressWarnings("squid:S00112") Throwable thrown) {
+		} catch(Throwable thrown) {
 			throw uncheck(thrown);
 		}
 	}
@@ -570,8 +573,8 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	@SuppressWarnings({ "squid:S1905", "unchecked" }) // SonarQube false positives
-	public static <T> BinaryOperator<T> uncheckBinaryOperator(CheckedBinaryOperator<T> operator)
+	@SuppressWarnings("unchecked")
+	public static <T> BinaryOperator<T> uncheckBinaryOperator(CheckedBinaryOperator<T, ?> operator)
 	{
 		return (BinaryOperator<T> & Serializable) (a, b) -> Exceptional.apply(operator, a, b);
 	}
@@ -587,8 +590,8 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	@SuppressWarnings({ "squid:S1905", "unchecked" }) // SonarQube false positives
-	public static <T> ToDoubleFunction<T> uncheckToDoubleFunction(CheckedToDoubleFunction<T> function)
+	@SuppressWarnings("unchecked")
+	public static <T> ToDoubleFunction<T> uncheckToDoubleFunction(CheckedToDoubleFunction<T, ?> function)
 	{
 		return (ToDoubleFunction<T> & Serializable) t -> Exceptional.applyAsDouble(function, t);
 	}
@@ -606,13 +609,13 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public static <T> double applyAsDouble(CheckedToDoubleFunction<T> function, T t)
+	public static <T> double applyAsDouble(CheckedToDoubleFunction<T, ?> function, T t)
 	{
 		try {
 			return function.applyAsDouble(t);
 		} catch(Error error) {  // repeated tedious (likewise with tests) as Jacoco does not add enough probes
 			throw error;
-		} catch(@SuppressWarnings("squid:S00112") Throwable thrown) {
+		} catch(Throwable thrown) {
 			throw uncheck(thrown);
 		}
 	}
@@ -628,8 +631,8 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	@SuppressWarnings({ "squid:S1905", "unchecked" }) // SonarQube false positives
-	public static <T> ToIntFunction<T> uncheckToIntFunction(CheckedToIntFunction<T> function)
+	@SuppressWarnings("unchecked")
+	public static <T> ToIntFunction<T> uncheckToIntFunction(CheckedToIntFunction<T, ?> function)
 	{
 		return (ToIntFunction<T> & Serializable) t -> Exceptional.applyAsInt(function, t);
 	}
@@ -647,13 +650,13 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public static <T> int applyAsInt(CheckedToIntFunction<T> function, T t)
+	public static <T> int applyAsInt(CheckedToIntFunction<T, ?> function, T t)
 	{
 		try {
 			return function.applyAsInt(t);
 		} catch(Error error) {  // repeated tedious (likewise with tests) as Jacoco does not add enough probes
 			throw error;
-		} catch(@SuppressWarnings("squid:S00112") Throwable thrown) {
+		} catch(Throwable thrown) {
 			throw uncheck(thrown);
 		}
 	}
@@ -669,8 +672,8 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	@SuppressWarnings({ "squid:S1905", "unchecked" }) // SonarQube false positives
-	public static <T> ToLongFunction<T> uncheckToLongFunction(CheckedToLongFunction<T> function)
+	@SuppressWarnings("unchecked")
+	public static <T> ToLongFunction<T> uncheckToLongFunction(CheckedToLongFunction<T, ?> function)
 	{
 		return (ToLongFunction<T> & Serializable) t -> Exceptional.applyAsLong(function, t);
 	}
@@ -688,13 +691,13 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public static <T> long applyAsLong(CheckedToLongFunction<T> function, T t)
+	public static <T> long applyAsLong(CheckedToLongFunction<T, ?> function, T t)
 	{
 		try {
 			return function.applyAsLong(t);
 		} catch(Error error) {  // repeated tedious (likewise with tests) as Jacoco does not add enough probes
 			throw error;
-		} catch(@SuppressWarnings("squid:S00112") Throwable thrown) {
+		} catch(Throwable thrown) {
 			throw uncheck(thrown);
 		}
 	}
@@ -710,8 +713,8 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	@SuppressWarnings({ "squid:S1905", "unchecked" }) // SonarQube false positives
-	public static <T> Supplier<T> uncheckSupplier(CheckedSupplier<T> supplier)
+	@SuppressWarnings("unchecked")
+	public static <T> Supplier<T> uncheckSupplier(CheckedSupplier<T, ?> supplier)
 	{
 		return (Supplier<T> & Serializable) () -> Exceptional.get(supplier);
 	}
@@ -728,13 +731,13 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public static <T> T get(CheckedSupplier<T> supplier)
+	public static <T> T get(CheckedSupplier<T, ?> supplier)
 	{
 		try {
 			return supplier.get();
 		} catch(Error error) {  // repeated tedious (likewise with tests) as Jacoco does not add enough probes
 			throw error;
-		} catch(@SuppressWarnings("squid:S00112") Throwable thrown) {
+		} catch(Throwable thrown) {
 			throw uncheck(thrown);
 		}
 	}
@@ -750,8 +753,8 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	@SuppressWarnings({ "squid:S1905", "unchecked" }) // SonarQube false positives
-	public static <T> Predicate<T> uncheckPredicate(CheckedPredicate<T> predicate)
+	@SuppressWarnings("unchecked")
+	public static <T> Predicate<T> uncheckPredicate(CheckedPredicate<T, ?> predicate)
 	{
 		return (Predicate<T> & Serializable) t -> Exceptional.test(predicate, t);
 	}
@@ -769,13 +772,13 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public static <T> boolean test(CheckedPredicate<T> predicate, T value)
+	public static <T> boolean test(CheckedPredicate<T, ?> predicate, T value)
 	{
 		try {
 			return predicate.test(value);
 		} catch(Error error) {  // repeated tedious (likewise with tests) as Jacoco does not add enough probes
 			throw error;
-		} catch(@SuppressWarnings("squid:S00112") Throwable thrown) {
+		} catch(Throwable thrown) {
 			throw uncheck(thrown);
 		}
 	}
@@ -791,8 +794,8 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	@SuppressWarnings({ "squid:S1905", "unchecked" }) // SonarQube false positives
-	public static <T> Comparator<T> uncheckComparator(CheckedComparator<T> comparator)
+	@SuppressWarnings("unchecked")
+	public static <T> Comparator<T> uncheckComparator(CheckedComparator<T, ?> comparator)
 	{
 		return (Comparator<T> & Serializable) (a, b) -> Exceptional.applyAsInt(comparator, a, b);
 	}
@@ -807,8 +810,8 @@ public final class Exceptional implements Serializable {
 	 * @param function the checked bi-function
 	 * @return an unchecked bi-function
 	 */
-	@SuppressWarnings({ "squid:S1905", "unchecked" }) // SonarQube false positives
-	public static <T, U> ToIntBiFunction<T, U> uncheckToIntBiFunction(CheckedToIntBiFunction<T, U> function)
+	@SuppressWarnings("unchecked")
+	public static <T, U> ToIntBiFunction<T, U> uncheckToIntBiFunction(CheckedToIntBiFunction<T, U, ?> function)
 	{
 		return (ToIntBiFunction<T, U> & Serializable) (a, b) -> Exceptional.applyAsInt(function, a, b);
 	}
@@ -828,14 +831,13 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @since 0.2.0
 	 */
-	@SuppressWarnings("squid:S00112")  // necessary to declare Throwable
-	public static <T, U> int applyAsInt(CheckedToIntBiFunction<T, U> function, T t, U u)
+	public static <T, U> int applyAsInt(CheckedToIntBiFunction<T, U, ?> function, T t, U u)
 	{
 		try {
 			return function.applyAsInt(t, u);
 		} catch(Error error) {  // repeated tedious (likewise with tests) as Jacoco does not add enough probes
 			throw error;
-		} catch(@SuppressWarnings("squid:S00112") Throwable thrown) {
+		} catch(Throwable thrown) {
 			throw uncheck(thrown);
 		}
 	}
@@ -864,7 +866,7 @@ public final class Exceptional implements Serializable {
 	public static RuntimeException throwAsUnchecked(Throwable throwable)
 	{
 		resetIfInterrupt(throwable);
-		throw Exceptional.<RuntimeException> eraseAndThrow(throwable);
+		return Exceptional.<RuntimeException> eraseAndThrow(throwable);
 	}
 
 
@@ -967,98 +969,6 @@ public final class Exceptional implements Serializable {
 
 
 	/**
-	 * Ultra-shorthand for {@link AutoCloseable}/{@link java.io.Closeable}, obvious use for {@link java.io.InputStream}
-	 * 
-	 * @param <C> {@link AutoCloseable} type
-	 * @param <T> {@code create} function argument type
-	 * @param <R> the result type
-	 * 
-	 * @param create a function applying {@code t} to produce an {@link AutoCloseable} of type {@code <C>}
-	 * @param t the argument to apply to the {@code create} function
-	 * @param convert a function applied to the {@link AutoCloseable} to produce the result
-	 * @return the result of applying the {@code convert} function
-	 * 
-	 * @since 0.2.0
-	 * 
-	 * @deprecated functionality moved to {@link Closing}
-	 * @see Closing
-	 */
-	@Deprecated
-	public static <C extends AutoCloseable, T, R> R closeAfterApplying(CheckedFunction<T, C> create, T t, CheckedFunction<C, R> convert)
-	{
-		return Closing.closeAfterApplying(create, t, convert);
-	}
-
-
-	/**
-	 * Applies the function to the closeable, returning the result and closing the closable - checked exceptions are
-	 * rethrown as unchecked.
-	 * 
-	 * @param <C> the auto-closeable type, to be created, consumed and closed
-	 * @param <R> the result type
-	 * 
-	 * @param closeable the closeable subject of the {@code convert} function
-	 * @param convert the function consuming the closeable and supplying the result
-	 * @return the result of applying {@code convert} function to the {@code closeable} argument
-	 * 
-	 * @since 0.2.0
-	 * 
-	 * @deprecated functionality moved to {@link Closing#closeAfterApplying(AutoCloseable, CheckedFunction)}
-	 * @see Closing
-	 */
-	@Deprecated
-	public static <C extends AutoCloseable, R> R closeAfterApplying(C closeable, CheckedFunction<C, R> convert)
-	{
-		return Closing.closeAfterApplying(closeable, convert);
-	}
-
-
-	/**
-	 * Applies the {@code create} function to {@code t}, resulting in a {@link AutoCloseable} which is closed after
-	 * being consumed.
-	 * Checked exceptions are rethrown as unchecked.
-	 * 
-	 * @param <C> the auto-closeable type, to be created, consumed and closed
-	 * @param <T> the function's argument type, used to create the auto-closeable
-	 * 
-	 * @param create the function creating the {@link AutoCloseable}
-	 * @param t the argument that the {@code create} function is applied to
-	 * @param consume the consumer of the {@link AutoCloseable}
-	 * 
-	 * @since 0.2.0
-	 * 
-	 * @deprecated functionality moved to {@link Closing#closeAfterAccepting(CheckedFunction, Object, CheckedConsumer)}
-	 * @see Closing
-	 */
-	@Deprecated
-	public static <C extends AutoCloseable, T> void closeAfterAccepting(CheckedFunction<T, C> create, T t, CheckedConsumer<C> consume)
-	{
-		C closeable = Exceptional.apply(create, t);
-		closeAfterAccepting(closeable, consume);
-	}
-
-
-	/**
-	 * Consumes the {@code closeable} before closing. Checked exceptions are rethrown as unchecked.
-	 * 
-	 * @param <C> the auto-closeable type
-	 * 
-	 * @param closeable the closeable to be consumed and closed
-	 * @param consume the consumer of the {@link AutoCloseable}
-	 * 
-	 * @since 0.2.0
-	 * 
-	 * @deprecated functionality moved to {@link Closing#closeAfterAccepting(AutoCloseable, CheckedConsumer)}
-	 * @see Closing
-	 */
-	@Deprecated
-	public static <C extends AutoCloseable> void closeAfterAccepting(C closeable, CheckedConsumer<C> consume)
-	{
-		Closing.closeAfterAccepting(closeable, consume);
-	}
-
-
-	/**
 	 * Invokes the {@link Iterable#forEach(Consumer)} method having unchecked the consumer
 	 * 
 	 * @param <T> the consumed {@link Iterable}'s element type
@@ -1070,7 +980,7 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @see #uncheckConsumer(CheckedConsumer)
 	 */
-	public static <T> void forEach(Iterable<T> iterable, CheckedConsumer<T> consumer)
+	public static <T> void forEach(Iterable<T> iterable, CheckedConsumer<T, ?> consumer)
 	{
 		iterable.forEach(uncheckConsumer(consumer));
 	}
@@ -1089,7 +999,7 @@ public final class Exceptional implements Serializable {
 	 * 
 	 * @see #uncheckBiConsumer(CheckedBiConsumer)
 	 */
-	public static <K, V> void forEach(Map<K, V> map, CheckedBiConsumer<K, V> consumer)
+	public static <K, V> void forEach(Map<K, V> map, CheckedBiConsumer<K, V, ?> consumer)
 	{
 		map.forEach(uncheckBiConsumer(consumer));
 	}

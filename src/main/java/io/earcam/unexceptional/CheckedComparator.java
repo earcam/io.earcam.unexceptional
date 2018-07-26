@@ -29,15 +29,16 @@ import java.util.Objects;
  * A checked equivalent of {@link java.util.Comparator}, also extends {@link CheckedToIntBiFunction}
  * 
  * @param <T> the type to compare
+ * @param <E> the type of Throwable declared
  * 
  * @since 0.2.0
  * 
  * @see java.util.Comparator
  */
 @FunctionalInterface
-public interface CheckedComparator<T> extends CheckedToIntBiFunction<T, T> {
+public interface CheckedComparator<T, E extends Throwable> extends CheckedToIntBiFunction<T, T, E> {
 
-	public default int applyAsInt(T t, T u) throws Throwable
+	public default int applyAsInt(T t, T u) throws E
 	{
 		return compare(t, u);
 	}
@@ -53,8 +54,7 @@ public interface CheckedComparator<T> extends CheckedToIntBiFunction<T, T> {
 	 * second, respectively.
 	 * @throws Throwable any throwable
 	 */
-	@SuppressWarnings("squid:S00112")
-	public abstract int compare(T o1, T o2) throws Throwable;
+	public abstract int compare(T o1, T o2) throws E;
 
 
 	/**
@@ -76,10 +76,10 @@ public interface CheckedComparator<T> extends CheckedToIntBiFunction<T, T> {
 	 * @throws NullPointerException if {@code other} is {@code null}
 	 */
 	@SuppressWarnings("squid:S1905") // SonarQube false positive
-	public default CheckedComparator<T> thenComparing(/* @Nonnull */ CheckedComparator<? super T> other)
+	public default CheckedComparator<T, E> thenComparing(/* @Nonnull */ CheckedComparator<? super T, ? extends E> other)
 	{
 		Objects.requireNonNull(other);
-		return (CheckedComparator<T> & Serializable) (c1, c2) -> {
+		return (CheckedComparator<T, E> & Serializable) (c1, c2) -> {
 			int res = compare(c1, c2);// NOSONAR stfu false positive
 			return (res == 0) ? other.compare(c1, c2) : res;
 		};
@@ -97,7 +97,8 @@ public interface CheckedComparator<T> extends CheckedToIntBiFunction<T, T> {
 	 * 
 	 * @see #thenComparing(CheckedComparator)
 	 */
-	public default <U> CheckedComparator<T> thenComparing(CheckedFunction<? super T, ? extends U> keyExtractor, CheckedComparator<? super U> keyComparator)
+	public default <U> CheckedComparator<T, E> thenComparing(CheckedFunction<? super T, ? extends U, E> keyExtractor,
+			CheckedComparator<? super U, E> keyComparator)
 	{
 		return thenComparing(comparing(keyExtractor, keyComparator));
 	}
@@ -113,7 +114,7 @@ public interface CheckedComparator<T> extends CheckedToIntBiFunction<T, T> {
 	 * 
 	 * @see #thenComparing(CheckedComparator)
 	 */
-	public default <U extends Comparable<? super U>> CheckedComparator<T> thenComparing(CheckedFunction<? super T, ? extends U> keyExtractor)
+	public default <U extends Comparable<? super U>> CheckedComparator<T, E> thenComparing(CheckedFunction<? super T, ? extends U, E> keyExtractor)
 	{
 		return thenComparing(comparing(keyExtractor));
 	}
@@ -127,7 +128,7 @@ public interface CheckedComparator<T> extends CheckedToIntBiFunction<T, T> {
 	 * 
 	 * @see #thenComparing(CheckedComparator)
 	 */
-	public default CheckedComparator<T> thenComparingInt(CheckedToIntFunction<? super T> keyExtractor)
+	public default CheckedComparator<T, E> thenComparingInt(CheckedToIntFunction<? super T, ? extends E> keyExtractor)
 	{
 		return thenComparing(comparingInt(keyExtractor));
 	}
@@ -141,7 +142,7 @@ public interface CheckedComparator<T> extends CheckedToIntBiFunction<T, T> {
 	 * 
 	 * @see #thenComparing(CheckedComparator)
 	 */
-	public default CheckedComparator<T> thenComparingLong(CheckedToLongFunction<? super T> keyExtractor)
+	public default CheckedComparator<T, E> thenComparingLong(CheckedToLongFunction<? super T, ? extends E> keyExtractor)
 	{
 		return thenComparing(comparingLong(keyExtractor));
 	}
@@ -154,7 +155,7 @@ public interface CheckedComparator<T> extends CheckedToIntBiFunction<T, T> {
 	 * @return the chained {@link CheckedComparator}
 	 * @see #thenComparing(CheckedComparator)
 	 */
-	public default CheckedComparator<T> thenComparingDouble(CheckedToDoubleFunction<? super T> keyExtractor)
+	public default CheckedComparator<T, E> thenComparingDouble(CheckedToDoubleFunction<? super T, ? extends E> keyExtractor)
 	{
 		return thenComparing(comparingDouble(keyExtractor));
 	}
@@ -172,12 +173,13 @@ public interface CheckedComparator<T> extends CheckedToIntBiFunction<T, T> {
 	 * @throws NullPointerException if either argument is {@code null}.
 	 */
 	@SuppressWarnings("squid:S1905") // SonarQube false positive
-	public static <T, U> CheckedComparator<T> comparing(/* @Nonnull */ CheckedFunction<? super T, ? extends U> keyExtractor,
-			/* @Nonnull */ CheckedComparator<? super U> keyComparator)
+	public static <T, U, E extends Throwable> CheckedComparator<T, E> comparing(
+			/* @Nonnull */ CheckedFunction<? super T, ? extends U, ? extends E> keyExtractor,
+			/* @Nonnull */ CheckedComparator<? super U, ? extends E> keyComparator)
 	{
 		Objects.requireNonNull(keyExtractor);
 		Objects.requireNonNull(keyComparator);
-		return (CheckedComparator<T> & Serializable) (c1, c2) -> keyComparator.compare(apply(keyExtractor, c1), apply(keyExtractor, c2));
+		return (CheckedComparator<T, E> & Serializable) (c1, c2) -> keyComparator.compare(apply(keyExtractor, c1), apply(keyExtractor, c2));
 	}
 
 
@@ -191,10 +193,11 @@ public interface CheckedComparator<T> extends CheckedToIntBiFunction<T, T> {
 	 * @throws NullPointerException if the argument is {@code null}.
 	 */
 	@SuppressWarnings("squid:S1905") // SonarQube false positive
-	public static <T, U extends Comparable<? super U>> CheckedComparator<T> comparing(/* @Nonnull */ CheckedFunction<? super T, ? extends U> keyExtractor)
+	public static <T, U extends Comparable<? super U>, E extends Throwable> CheckedComparator<T, E> comparing(
+			/* @Nonnull */ CheckedFunction<? super T, ? extends U, ? extends E> keyExtractor)
 	{
 		Objects.requireNonNull(keyExtractor);
-		return (CheckedComparator<T> & Serializable) (c1, c2) -> Exceptional.get(() -> keyExtractor.apply(c1).compareTo(keyExtractor.apply(c2)));
+		return (CheckedComparator<T, E> & Serializable) (c1, c2) -> Exceptional.get(() -> keyExtractor.apply(c1).compareTo(keyExtractor.apply(c2)));
 	}
 
 
@@ -210,10 +213,10 @@ public interface CheckedComparator<T> extends CheckedToIntBiFunction<T, T> {
 	 * @see #comparing(CheckedFunction)
 	 */
 	@SuppressWarnings("squid:S1905") // SonarQube false positive
-	public static <T> CheckedComparator<T> comparingInt(/* @Nonnull */ CheckedToIntFunction<? super T> keyExtractor)
+	public static <T, E extends Throwable> CheckedComparator<T, E> comparingInt(/* @Nonnull */ CheckedToIntFunction<? super T, ? extends E> keyExtractor)
 	{
 		Objects.requireNonNull(keyExtractor);
-		return (CheckedComparator<T> & Serializable) (c1, c2) -> Exceptional
+		return (CheckedComparator<T, E> & Serializable) (c1, c2) -> Exceptional
 				.get(() -> Integer.compare(keyExtractor.applyAsInt(c1), keyExtractor.applyAsInt(c2)));
 	}
 
@@ -230,10 +233,10 @@ public interface CheckedComparator<T> extends CheckedToIntBiFunction<T, T> {
 	 * @see #comparing(CheckedFunction)
 	 */
 	@SuppressWarnings("squid:S1905") // SonarQube false positive
-	public static <T> CheckedComparator<T> comparingLong(/* @Nonnull */ CheckedToLongFunction<? super T> keyExtractor)
+	public static <T, E extends Throwable> CheckedComparator<T, E> comparingLong(/* @Nonnull */ CheckedToLongFunction<? super T, ? extends E> keyExtractor)
 	{
 		Objects.requireNonNull(keyExtractor);
-		return (CheckedComparator<T> & Serializable) (c1, c2) -> Exceptional
+		return (CheckedComparator<T, E> & Serializable) (c1, c2) -> Exceptional
 				.get(() -> Long.compare(keyExtractor.applyAsLong(c1), keyExtractor.applyAsLong(c2)));
 	}
 
@@ -250,10 +253,10 @@ public interface CheckedComparator<T> extends CheckedToIntBiFunction<T, T> {
 	 * @see #comparing(CheckedFunction)
 	 */
 	@SuppressWarnings("squid:S1905") // SonarQube false positive
-	public static <T> CheckedComparator<T> comparingDouble(/* @Nonnull */ CheckedToDoubleFunction<? super T> keyExtractor)
+	public static <T, E extends Throwable> CheckedComparator<T, E> comparingDouble(/* @Nonnull */ CheckedToDoubleFunction<? super T, ? extends E> keyExtractor)
 	{
 		Objects.requireNonNull(keyExtractor);
-		return (CheckedComparator<T> & Serializable) (c1, c2) -> Exceptional
+		return (CheckedComparator<T, E> & Serializable) (c1, c2) -> Exceptional
 				.get(() -> Double.compare(keyExtractor.applyAsDouble(c1), keyExtractor.applyAsDouble(c2)));
 	}
 }

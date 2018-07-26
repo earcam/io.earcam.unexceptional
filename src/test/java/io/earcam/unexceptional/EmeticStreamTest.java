@@ -1,6 +1,6 @@
 /*-
  * #%L
- * io.earcam.unexceptional
+ * io.earcam.unexceptiona1l
  * %%
  * Copyright (C) 2016 - 2017 earcam
  * %%
@@ -18,16 +18,15 @@
  */
 package io.earcam.unexceptional;
 
+import static io.earcam.unexceptional.EmeticStream.emesis;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.arrayContaining;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.Matchers.sameInstance;
+import static org.hamcrest.Matchers.*;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -84,9 +83,9 @@ public class EmeticStreamTest {
 	public void collects()
 	{
 		List<Integer> collected = EmeticStream.emesis(zeroToNine()).collect(
-				(CheckedSupplier<List<Integer>>) ArrayList::new,
+				(CheckedSupplier<List<Integer>, ?>) ArrayList::new,
 				List<Integer>::add,
-				(CheckedBiConsumer<List<Integer>, List<Integer>>) (left, right) -> {
+				(CheckedBiConsumer<List<Integer>, List<Integer>, ?>) (left, right) -> {
 					left.addAll(right);
 				});
 
@@ -393,5 +392,17 @@ public class EmeticStreamTest {
 		EmeticStream.emesis(stream).close();
 
 		assertThat(nayMock.invocations.get(0).name, is(equalTo("close")));
+	}
+
+
+	@Test
+	public void streamFromASourceThatThrows()
+	{
+		Path baseDir = Paths.get(".", "target", "test-classes");
+
+		List<Path> paths = emesis(Files::list, baseDir)
+				.collect(toList());
+
+		assertThat(paths, is(not(empty())));
 	}
 }

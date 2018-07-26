@@ -18,20 +18,21 @@
  */
 package io.earcam.unexceptional;
 
-import java.io.Serializable;   //NOSONAR SonarQube false positive - putting @SuppressWarnings("squid:UselessImportCheck") on class has no effect, can't put at package level either
+import java.io.Serializable;   // NOSONAR SonarQube false positive - putting @SuppressWarnings("squid:UselessImportCheck") on class has no effect, can't put at package level either
 import java.util.Objects;
 
 /**
  * A checked parallel of {@link java.util.function.Predicate}
  * 
  * @param <T> argument type
+ * @param <E> the type of Throwable declared
  * 
  * @since 0.2.0
  * 
  * @see java.util.function.Predicate
  */
 @FunctionalInterface
-public interface CheckedPredicate<T> {
+public interface CheckedPredicate<T, E extends Throwable> {
 
 	/**
 	 * See {@link java.util.function.Predicate#test(Object)}
@@ -41,8 +42,7 @@ public interface CheckedPredicate<T> {
 	 * @throws Throwable any throwable
 	 * @see java.util.function.Predicate#test(Object)
 	 */
-	@SuppressWarnings("squid:S00112")
-	public abstract boolean test(T t) throws Throwable;
+	public abstract boolean test(T t) throws E;
 
 
 	/**
@@ -53,10 +53,10 @@ public interface CheckedPredicate<T> {
 	 * @throws NullPointerException if {@code other} is {@code null}
 	 */
 	@SuppressWarnings("squid:S1905") // SonarQube false positive
-	public default CheckedPredicate<T> and(/* @Nonnull */ CheckedPredicate<? super T> other)
+	public default CheckedPredicate<T, E> and(/* @Nonnull */ CheckedPredicate<? super T, ? extends E> other)
 	{
 		Objects.requireNonNull(other);
-		return (CheckedPredicate<T> & Serializable) t -> test(t) && other.test(t);
+		return (CheckedPredicate<T, E> & Serializable) t -> test(t) && other.test(t);
 	}
 
 
@@ -66,9 +66,9 @@ public interface CheckedPredicate<T> {
 	 * @return the negated {@link CheckedPredicate}
 	 */
 	@SuppressWarnings("squid:S1905") // SonarQube false positive
-	public default CheckedPredicate<T> negate()
+	public default CheckedPredicate<T, E> negate()
 	{
-		return (CheckedPredicate<T> & Serializable) t -> !test(t);
+		return (CheckedPredicate<T, E> & Serializable) t -> !test(t);
 	}
 
 
@@ -80,9 +80,9 @@ public interface CheckedPredicate<T> {
 	 * @throws NullPointerException if {@code other} is {@code null}
 	 */
 	@SuppressWarnings("squid:S1905") // SonarQube false positive
-	public default CheckedPredicate<T> or(/* @Nonnull */ CheckedPredicate<? super T> other)
+	public default CheckedPredicate<T, E> or(/* @Nonnull */ CheckedPredicate<? super T, ? extends E> other)
 	{
 		Objects.requireNonNull(other);
-		return (CheckedPredicate<T> & Serializable) t -> test(t) || other.test(t);
+		return (CheckedPredicate<T, E> & Serializable) t -> test(t) || other.test(t);
 	}
 }

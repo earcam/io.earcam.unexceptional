@@ -22,13 +22,14 @@ package io.earcam.unexceptional;
  * A checked parallel of {@link java.util.function.ToIntFunction}
  * 
  * @param <T> the argument type
+ * @param <E> the type of Throwable declared
  * 
  * @since 0.2.0
  * 
  * @see java.util.function.ToIntFunction
  */
 @FunctionalInterface
-public interface CheckedToIntFunction<T> {
+public interface CheckedToIntFunction<T, E extends Throwable> {
 
 	/**
 	 * See {@link java.util.function.ToIntFunction#applyAsInt(Object)}
@@ -37,6 +38,5 @@ public interface CheckedToIntFunction<T> {
 	 * @return int result of applying argument
 	 * @throws Throwable any throwable
 	 */
-	@SuppressWarnings("squid:S00112")
-	public abstract int applyAsInt(T value) throws Throwable;
+	public abstract int applyAsInt(T value) throws E;
 }

@@ -22,13 +22,14 @@ package io.earcam.unexceptional;
  * A checked parallel of {@link java.util.function.ToDoubleFunction}
  * 
  * @param <T> the argument type
+ * @param <E> the type of Throwable declared
  * 
  * @since 0.2.0
  * 
  * @see java.util.function.ToDoubleFunction
  */
 @FunctionalInterface
-public interface CheckedToDoubleFunction<T> {
+public interface CheckedToDoubleFunction<T, E extends Throwable> {
 
 	/**
 	 * See {@link java.util.function.ToDoubleFunction#applyAsDouble(Object)}
@@ -37,6 +38,5 @@ public interface CheckedToDoubleFunction<T> {
 	 * @return double result of applying argument
 	 * @throws Throwable any throwable
 	 */
-	@SuppressWarnings("squid:S00112")
-	public abstract double applyAsDouble(T value) throws Throwable;
+	public abstract double applyAsDouble(T value) throws E;
 }

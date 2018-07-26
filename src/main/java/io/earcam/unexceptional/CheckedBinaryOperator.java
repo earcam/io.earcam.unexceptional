@@ -28,13 +28,14 @@ import java.util.Objects;
  * A checked parallel of {@link java.util.function.BinaryOperator}
  * 
  * @param <T> arguments and return type
+ * @param <E> the type of Throwable declared
  * 
  * @since 0.2.0
  * 
  * @see java.util.function.BinaryOperator
  */
 @FunctionalInterface
-public interface CheckedBinaryOperator<T> extends CheckedBiFunction<T, T, T> {
+public interface CheckedBinaryOperator<T, E extends Throwable> extends CheckedBiFunction<T, T, T, E> {
 
 	/**
 	 * See {@link java.util.function.BinaryOperator#minBy(Comparator)}
@@ -46,10 +47,10 @@ public interface CheckedBinaryOperator<T> extends CheckedBiFunction<T, T, T> {
 	 * @throws NullPointerException if {@code comparator} is {@code null}
 	 */
 	@SuppressWarnings("squid:S1905") // SonarQube false positive
-	public static <T> CheckedBinaryOperator<T> minBy(/* @Nonnull */ CheckedComparator<? super T> comparator)
+	public static <T, E extends Throwable> CheckedBinaryOperator<T, E> minBy(/* @Nonnull */ CheckedComparator<? super T, E> comparator)
 	{
 		requireNonNull(comparator);
-		return (CheckedBinaryOperator<T> & Serializable) (a, b) -> comparator.compare(a, b) < 0 ? a : b;
+		return (CheckedBinaryOperator<T, E> & Serializable) (a, b) -> comparator.compare(a, b) < 0 ? a : b;
 	}
 
 
@@ -63,9 +64,9 @@ public interface CheckedBinaryOperator<T> extends CheckedBiFunction<T, T, T> {
 	 * @throws NullPointerException if {@code comparator} is {@code null}
 	 */
 	@SuppressWarnings("squid:S1905") // SonarQube false positive
-	public static <T> CheckedBinaryOperator<T> maxBy(/* @Nonnull */ CheckedComparator<? super T> comparator)
+	public static <T, E extends Throwable> CheckedBinaryOperator<T, E> maxBy(/* @Nonnull */ CheckedComparator<? super T, ? extends E> comparator)
 	{
 		Objects.requireNonNull(comparator);
-		return (CheckedBinaryOperator<T> & Serializable) (a, b) -> comparator.compare(a, b) > 0 ? a : b;
+		return (CheckedBinaryOperator<T, E> & Serializable) (a, b) -> comparator.compare(a, b) > 0 ? a : b;
 	}
 }

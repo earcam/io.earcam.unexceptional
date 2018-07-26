@@ -22,15 +22,17 @@ import java.util.Objects;
 import java.util.function.IntConsumer;
 
 /**
+ * 
+ * @param <E> the type of Throwable declared
+ * 
  * @since 0.5.0
  * 
  * @see java.util.function.IntConsumer
  */
 @FunctionalInterface
-public interface CheckedIntConsumer {
+public interface CheckedIntConsumer<E extends Throwable> {
 
-	@SuppressWarnings("squid:S00112")
-	public abstract void accept(int value) throws Throwable;
+	public abstract void accept(int value) throws E;
 
 
 	/**
@@ -41,7 +43,7 @@ public interface CheckedIntConsumer {
 	 * 
 	 * @see java.util.function.IntConsumer#andThen(IntConsumer)
 	 */
-	default CheckedIntConsumer andThen(CheckedIntConsumer after)
+	default CheckedIntConsumer<E> andThen(CheckedIntConsumer<? extends E> after)
 	{
 		Objects.requireNonNull(after);
 		return (int t) -> {

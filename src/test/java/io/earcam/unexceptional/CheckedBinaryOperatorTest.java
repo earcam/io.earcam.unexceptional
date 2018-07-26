@@ -33,9 +33,9 @@ public class CheckedBinaryOperatorTest implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final CheckedComparator<String> GOOD = new Meh();
+	private static final CheckedComparator<String, ?> GOOD = new Meh();
 
-	public static class Meh implements CheckedComparator<String>, Serializable {
+	public static class Meh implements CheckedComparator<String, Throwable>, Serializable {
 
 		private static final long serialVersionUID = 1L;
 
@@ -79,7 +79,7 @@ public class CheckedBinaryOperatorTest implements Serializable {
 	@Test
 	public void minByReturnsSecondWhenEqual() throws Throwable
 	{
-		CheckedBinaryOperator<Object> minBy = CheckedBinaryOperator.minBy((a, b) -> 0);
+		CheckedBinaryOperator<Object, ?> minBy = CheckedBinaryOperator.minBy((a, b) -> 0);
 		Object a = new Object();
 		Object b = new Object();
 
@@ -99,7 +99,7 @@ public class CheckedBinaryOperatorTest implements Serializable {
 	@Test
 	public void maxByReturnsSecondWhenEqual() throws Throwable
 	{
-		CheckedBinaryOperator<Object> maxBy = CheckedBinaryOperator.maxBy((a, b) -> 0);
+		CheckedBinaryOperator<Object, ?> maxBy = CheckedBinaryOperator.maxBy((a, b) -> 0);
 		Object a = new Object();
 		Object b = new Object();
 
@@ -112,7 +112,7 @@ public class CheckedBinaryOperatorTest implements Serializable {
 	@Test
 	public void minBy() throws Throwable
 	{
-		CheckedBinaryOperator<String> minBy = CheckedBinaryOperator.minBy(String.CASE_INSENSITIVE_ORDER::compare);
+		CheckedBinaryOperator<String, ?> minBy = CheckedBinaryOperator.minBy(String.CASE_INSENSITIVE_ORDER::compare);
 
 		assertThat(minBy.apply("a", "b"), is(equalTo("a")));
 	}
@@ -121,7 +121,7 @@ public class CheckedBinaryOperatorTest implements Serializable {
 	@Test
 	public void minByArgsReversedToCoverBranching() throws Throwable
 	{
-		CheckedBinaryOperator<String> minBy = CheckedBinaryOperator.minBy(String.CASE_INSENSITIVE_ORDER::compare);
+		CheckedBinaryOperator<String, ?> minBy = CheckedBinaryOperator.minBy(String.CASE_INSENSITIVE_ORDER::compare);
 
 		assertThat(minBy.apply("b", "a"), is(equalTo("a")));
 	}
@@ -130,7 +130,7 @@ public class CheckedBinaryOperatorTest implements Serializable {
 	@Test
 	public void maxBy() throws Throwable
 	{
-		CheckedBinaryOperator<String> maxBy = CheckedBinaryOperator.maxBy(String.CASE_INSENSITIVE_ORDER::compare);
+		CheckedBinaryOperator<String, ?> maxBy = CheckedBinaryOperator.maxBy(String.CASE_INSENSITIVE_ORDER::compare);
 
 		assertThat(maxBy.apply("a", "b"), is(equalTo("b")));
 	}
@@ -139,7 +139,7 @@ public class CheckedBinaryOperatorTest implements Serializable {
 	@Test
 	public void maxByReversedToCoverBranching() throws Throwable
 	{
-		CheckedBinaryOperator<String> maxBy = CheckedBinaryOperator.maxBy(String.CASE_INSENSITIVE_ORDER::compare);
+		CheckedBinaryOperator<String, ?> maxBy = CheckedBinaryOperator.maxBy(String.CASE_INSENSITIVE_ORDER::compare);
 
 		assertThat(maxBy.apply("b", "a"), is(equalTo("b")));
 	}
@@ -148,7 +148,7 @@ public class CheckedBinaryOperatorTest implements Serializable {
 	@Test
 	public void serializableIfComparatorIs()
 	{
-		CheckedBinaryOperator<String> op = CheckedBinaryOperator.maxBy(GOOD);
+		CheckedBinaryOperator<String, ?> op = CheckedBinaryOperator.maxBy(GOOD);
 
 		assertThat(op, is(serializable()));
 	}

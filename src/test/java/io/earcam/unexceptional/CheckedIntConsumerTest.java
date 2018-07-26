@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 
 public class CheckedIntConsumerTest {
 
-	class NiceStubCheckedIntConsumer implements CheckedIntConsumer {
+	class NiceStubCheckedIntConsumer implements CheckedIntConsumer<Throwable> {
 
 		int t;
 
@@ -44,7 +44,7 @@ public class CheckedIntConsumerTest {
 
 	}
 
-	class NastyStubCheckedIntConsumer implements CheckedIntConsumer {
+	class NastyStubCheckedIntConsumer implements CheckedIntConsumer<Throwable> {
 
 		Exception chuck;
 
@@ -68,7 +68,7 @@ public class CheckedIntConsumerTest {
 	{
 		IOException wobbly = new IOException("boom!");
 
-		CheckedIntConsumer uncheckedConsumer = new NiceStubCheckedIntConsumer().andThen(new NastyStubCheckedIntConsumer(wobbly));
+		CheckedIntConsumer<Throwable> uncheckedConsumer = new NiceStubCheckedIntConsumer().andThen(new NastyStubCheckedIntConsumer(wobbly));
 
 		try {
 			uncheckedConsumer.accept(101);
@@ -113,7 +113,7 @@ public class CheckedIntConsumerTest {
 		IOException wobbly = new IOException("goodbye");
 
 		NiceStubCheckedIntConsumer nice = new NiceStubCheckedIntConsumer();
-		CheckedIntConsumer nasty = new NastyStubCheckedIntConsumer(wobbly);
+		CheckedIntConsumer<Throwable> nasty = new NastyStubCheckedIntConsumer(wobbly);
 
 		try {
 			nice.andThen(nasty).accept(t);
@@ -131,7 +131,7 @@ public class CheckedIntConsumerTest {
 		int t = 101;
 		IOException wobbly = new IOException("goodbye");
 
-		CheckedIntConsumer nasty = new NastyStubCheckedIntConsumer(wobbly);
+		CheckedIntConsumer<Throwable> nasty = new NastyStubCheckedIntConsumer(wobbly);
 		NiceStubCheckedIntConsumer nice = new NiceStubCheckedIntConsumer();
 
 		try {

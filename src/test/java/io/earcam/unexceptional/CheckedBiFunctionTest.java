@@ -26,8 +26,8 @@ import org.junit.jupiter.api.Test;
 
 public class CheckedBiFunctionTest {
 
-	CheckedBiFunction<Integer, Integer, Double> div = (a, b) -> a / (double) b;
-	CheckedFunction<Double, Double> abs = Math::abs;
+	CheckedBiFunction<Integer, Integer, Double, Throwable> div = (a, b) -> a / (double) b;
+	CheckedFunction<Double, Double, ?> abs = Math::abs;
 
 
 	@Test
@@ -40,7 +40,7 @@ public class CheckedBiFunctionTest {
 	@Test
 	public void andThenEagerlyThrowsNullPointerExceptionWhenAfterIsNull()
 	{
-		CheckedFunction<Double, String> after = null;
+		CheckedFunction<Double, String, ?> after = null;
 		try {
 			div.andThen(after);
 			fail("should not reach here");

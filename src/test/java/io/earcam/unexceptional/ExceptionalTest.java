@@ -22,8 +22,6 @@ import static io.earcam.unexceptional.Exceptional.RETHROWING;
 import static io.earcam.unexceptional.Exceptional.SWALLOWING;
 import static io.earcam.unexceptional.Exceptional.apply;
 import static io.earcam.unexceptional.Exceptional.call;
-import static io.earcam.unexceptional.Exceptional.closeAfterAccepting;
-import static io.earcam.unexceptional.Exceptional.closeAfterApplying;
 import static io.earcam.unexceptional.Exceptional.get;
 import static io.earcam.unexceptional.Exceptional.run;
 import static io.earcam.unexceptional.Exceptional.swallow;
@@ -48,20 +46,15 @@ import static java.lang.Thread.currentThread;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.arrayContaining;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasToString;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
-import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.UncheckedIOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
@@ -69,7 +62,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.net.MalformedURLException;
-import java.net.ServerSocket;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -103,25 +95,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 public class ExceptionalTest {
-
-	private static final class ThrowsAtClosingTime implements Closeable {
-
-		private IOException exception;
-
-
-		public ThrowsAtClosingTime(IOException exception)
-		{
-			this.exception = exception;
-		}
-
-
-		@Override
-		public void close() throws IOException
-		{
-			throw exception;
-		}
-	};
-
 
 	@BeforeEach
 	public void clearInterrupt()
@@ -157,7 +130,7 @@ public class ExceptionalTest {
 		{
 			Exception kaboom = new IOException();
 
-			CheckedConsumer<String> checked = (t) -> {
+			CheckedConsumer<String, ?> checked = (t) -> {
 				throw kaboom;
 			};
 			Consumer<String> consumer = uncheckConsumer(checked);
@@ -177,7 +150,7 @@ public class ExceptionalTest {
 		{
 			Throwable kaboom = new Error();
 
-			CheckedConsumer<String> checked = (t) -> {
+			CheckedConsumer<String, ?> checked = (t) -> {
 				throw kaboom;
 			};
 			Consumer<String> consumer = uncheckConsumer(checked);
@@ -195,7 +168,7 @@ public class ExceptionalTest {
 		public void uncheckedConsumerDoesNotThrow()
 		{
 			final AtomicReference<String> accepted = new AtomicReference<String>("");
-			CheckedConsumer<String> checked = (t) -> {
+			CheckedConsumer<String, ?> checked = (t) -> {
 				accepted.set(t);
 			};
 
@@ -212,7 +185,7 @@ public class ExceptionalTest {
 		{
 			Exception kaboom = new IOException();
 
-			CheckedIntConsumer checked = (t) -> {
+			CheckedIntConsumer<?> checked = (t) -> {
 				throw kaboom;
 			};
 			IntConsumer consumer = uncheckIntConsumer(checked);
@@ -232,7 +205,7 @@ public class ExceptionalTest {
 		{
 			Throwable kaboom = new Error();
 
-			CheckedIntConsumer checked = (t) -> {
+			CheckedIntConsumer<?> checked = (t) -> {
 				throw kaboom;
 			};
 			IntConsumer consumer = uncheckIntConsumer(checked);
@@ -250,7 +223,7 @@ public class ExceptionalTest {
 		public void uncheckedIntConsumerDoesNotThrow()
 		{
 			final AtomicInteger accepted = new AtomicInteger(0);
-			CheckedIntConsumer checked = (t) -> {
+			CheckedIntConsumer<?> checked = (t) -> {
 				accepted.set(t);
 			};
 
@@ -267,7 +240,7 @@ public class ExceptionalTest {
 		{
 			Exception kaboom = new IOException();
 
-			CheckedBiConsumer<String, String> checked = (a, b) -> {
+			CheckedBiConsumer<String, String, ?> checked = (a, b) -> {
 				throw kaboom;
 			};
 			BiConsumer<String, String> consumer = uncheckBiConsumer(checked);
@@ -287,7 +260,7 @@ public class ExceptionalTest {
 		{
 			Throwable kaboom = new Error();
 
-			CheckedBiConsumer<String, String> checked = (a, b) -> {
+			CheckedBiConsumer<String, String, ?> checked = (a, b) -> {
 				throw kaboom;
 			};
 			BiConsumer<String, String> consumer = uncheckBiConsumer(checked);
@@ -305,7 +278,7 @@ public class ExceptionalTest {
 		public void uncheckedBiConsumerDoesNotThrow()
 		{
 			final StringBuilder accepted = new StringBuilder();
-			CheckedBiConsumer<String, String> checked = (a, b) -> {
+			CheckedBiConsumer<String, String, ?> checked = (a, b) -> {
 				accepted.append(a).append(b);
 			};
 
@@ -324,7 +297,7 @@ public class ExceptionalTest {
 		{
 			Exception kaboom = new IOException();
 
-			CheckedSupplier<String> checked = () -> {
+			CheckedSupplier<String, ?> checked = () -> {
 				throw kaboom;
 			};
 			Supplier<String> supplier = uncheckSupplier(checked);
@@ -344,7 +317,7 @@ public class ExceptionalTest {
 		{
 			Throwable kaboom = new Error();
 
-			CheckedSupplier<String> checked = () -> {
+			CheckedSupplier<String, ?> checked = () -> {
 				throw kaboom;
 			};
 			Supplier<String> supplier = uncheckSupplier(checked);
@@ -362,7 +335,7 @@ public class ExceptionalTest {
 		public void uncheckedSupplierDoesNotThrow()
 		{
 			final String supplied = "oh yeah";
-			CheckedSupplier<String> checked = () -> supplied;
+			CheckedSupplier<String, ?> checked = () -> supplied;
 
 			Supplier<String> unchecked = uncheckSupplier(checked);
 
@@ -378,7 +351,7 @@ public class ExceptionalTest {
 		{
 			Exception kaboom = new IOException();
 
-			CheckedBiFunction<String, String, Integer> checked = (a, b) -> {
+			CheckedBiFunction<String, String, Integer, ?> checked = (a, b) -> {
 				throw kaboom;
 			};
 			BiFunction<String, String, Integer> func = uncheckBiFunction(checked);
@@ -398,7 +371,7 @@ public class ExceptionalTest {
 		{
 			Throwable kaboom = new Error();
 
-			CheckedBiFunction<String, String, Integer> checked = (a, b) -> {
+			CheckedBiFunction<String, String, Integer, ?> checked = (a, b) -> {
 				throw kaboom;
 			};
 			BiFunction<String, String, Integer> func = uncheckBiFunction(checked);
@@ -415,7 +388,7 @@ public class ExceptionalTest {
 		@Test
 		public void uncheckedBiFunctionDoesNotThrow()
 		{
-			CheckedBiFunction<String, String, Integer> checked = (a, b) -> a.length() + b.length();
+			CheckedBiFunction<String, String, Integer, ?> checked = (a, b) -> a.length() + b.length();
 
 			BiFunction<String, String, Integer> biFunction = uncheckBiFunction(checked);
 			Integer applied = biFunction.apply("oh", "yeah");
@@ -429,7 +402,7 @@ public class ExceptionalTest {
 		{
 			Throwable kaboom = new Error();
 
-			CheckedBinaryOperator<Integer> checked = (a, b) -> {
+			CheckedBinaryOperator<Integer, ?> checked = (a, b) -> {
 				throw kaboom;
 			};
 			BinaryOperator<Integer> operator = uncheckBinaryOperator(checked);
@@ -446,7 +419,7 @@ public class ExceptionalTest {
 		@Test
 		public void uncheckedPredicateDoesNotThrow()
 		{
-			CheckedPredicate<Integer> isEven = i -> i % 2 == 0;
+			CheckedPredicate<Integer, ?> isEven = i -> i % 2 == 0;
 
 			Predicate<Integer> predicate = uncheckPredicate(isEven);
 
@@ -459,7 +432,7 @@ public class ExceptionalTest {
 		{
 			Exception kaboom = new IOException();
 
-			CheckedPredicate<Integer> checked = i -> {
+			CheckedPredicate<Integer, ?> checked = i -> {
 				throw kaboom;
 			};
 			Predicate<Integer> predicate = uncheckPredicate(checked);
@@ -479,7 +452,7 @@ public class ExceptionalTest {
 		{
 			Throwable kaboom = new Error();
 
-			CheckedPredicate<Integer> checked = i -> {
+			CheckedPredicate<Integer, ?> checked = i -> {
 				throw kaboom;
 			};
 			Predicate<Integer> predicate = uncheckPredicate(checked);
@@ -496,7 +469,7 @@ public class ExceptionalTest {
 		@Test
 		public void uncheckedBinaryOperatorDoesNotThrow()
 		{
-			CheckedBinaryOperator<Integer> add = (a, b) -> a + b;
+			CheckedBinaryOperator<Integer, ?> add = (a, b) -> a + b;
 
 			BinaryOperator<Integer> op = uncheckBinaryOperator(add);
 			Integer applied = op.apply(2, 2);
@@ -510,7 +483,7 @@ public class ExceptionalTest {
 		{
 			Exception kaboom = new IOException();
 
-			CheckedFunction<String, Integer> checked = a -> {
+			CheckedFunction<String, Integer, ?> checked = a -> {
 				throw kaboom;
 			};
 			Function<String, Integer> func = uncheckFunction(checked);
@@ -530,7 +503,7 @@ public class ExceptionalTest {
 		{
 			Throwable kaboom = new Error();
 
-			CheckedFunction<String, Integer> checked = a -> {
+			CheckedFunction<String, Integer, ?> checked = a -> {
 				throw kaboom;
 			};
 			Function<String, Integer> func = uncheckFunction(checked);
@@ -547,7 +520,7 @@ public class ExceptionalTest {
 		@Test
 		public void uncheckedFunctionDoesNotThrow()
 		{
-			CheckedFunction<String, Integer> checked = Integer::parseInt;
+			CheckedFunction<String, Integer, ?> checked = Integer::parseInt;
 
 			Function<String, Integer> function = uncheckFunction(checked);
 			Integer applied = function.apply("42");
@@ -561,7 +534,7 @@ public class ExceptionalTest {
 		{
 			Exception kaboom = new IOException();
 
-			CheckedToIntFunction<String> checked = a -> {
+			CheckedToIntFunction<String, ?> checked = a -> {
 				throw kaboom;
 			};
 			ToIntFunction<String> func = uncheckToIntFunction(checked);
@@ -581,7 +554,7 @@ public class ExceptionalTest {
 		{
 			Error kaboom = new Error();
 
-			CheckedToIntFunction<String> checked = a -> {
+			CheckedToIntFunction<String, ?> checked = a -> {
 				throw kaboom;
 			};
 
@@ -597,7 +570,7 @@ public class ExceptionalTest {
 		@Test
 		public void uncheckedToIntFunctionDoesNotThrow()
 		{
-			CheckedToIntFunction<String> checked = Integer::parseInt;
+			CheckedToIntFunction<String, ?> checked = Integer::parseInt;
 
 			ToIntFunction<String> function = uncheckToIntFunction(checked);
 			int applied = function.applyAsInt("42");
@@ -611,7 +584,7 @@ public class ExceptionalTest {
 		{
 			Exception kaboom = new IOException();
 
-			CheckedToDoubleFunction<String> checked = a -> {
+			CheckedToDoubleFunction<String, ?> checked = a -> {
 				throw kaboom;
 			};
 			ToDoubleFunction<String> func = uncheckToDoubleFunction(checked);
@@ -631,7 +604,7 @@ public class ExceptionalTest {
 		{
 			Throwable kaboom = new Error();
 
-			CheckedToDoubleFunction<String> checked = a -> {
+			CheckedToDoubleFunction<String, ?> checked = a -> {
 				throw kaboom;
 			};
 			ToDoubleFunction<String> func = uncheckToDoubleFunction(checked);
@@ -648,7 +621,7 @@ public class ExceptionalTest {
 		@Test
 		public void uncheckedToDoubleFunctionDoesNotThrow()
 		{
-			CheckedToDoubleFunction<String> checked = Double::parseDouble;
+			CheckedToDoubleFunction<String, ?> checked = Double::parseDouble;
 
 			ToDoubleFunction<String> function = uncheckToDoubleFunction(checked);
 			double applied = function.applyAsDouble("42");
@@ -662,7 +635,7 @@ public class ExceptionalTest {
 		{
 			Exception kaboom = new IOException();
 
-			CheckedToLongFunction<String> checked = a -> {
+			CheckedToLongFunction<String, ?> checked = a -> {
 				throw kaboom;
 			};
 			ToLongFunction<String> func = uncheckToLongFunction(checked);
@@ -682,7 +655,7 @@ public class ExceptionalTest {
 		{
 			Throwable kaboom = new Error();
 
-			CheckedToLongFunction<String> checked = a -> {
+			CheckedToLongFunction<String, ?> checked = a -> {
 				throw kaboom;
 			};
 			ToLongFunction<String> func = uncheckToLongFunction(checked);
@@ -699,7 +672,7 @@ public class ExceptionalTest {
 		@Test
 		public void uncheckedToLongFunctionDoesNotThrow()
 		{
-			CheckedToLongFunction<String> checked = Long::parseLong;
+			CheckedToLongFunction<String, ?> checked = Long::parseLong;
 
 			ToLongFunction<String> function = uncheckToLongFunction(checked);
 			long applied = function.applyAsLong("42");
@@ -785,7 +758,7 @@ public class ExceptionalTest {
 		{
 			final KeyManagementException thrown = new KeyManagementException("noo");
 			try {
-				CheckedRunnable action = () -> {
+				CheckedRunnable<?> action = () -> {
 					throw thrown;
 				};
 				run(action);
@@ -802,7 +775,7 @@ public class ExceptionalTest {
 		{
 			final Exception thrown = new Exception("noo");
 			try {
-				CheckedRunnable action = () -> {
+				CheckedRunnable<?> action = () -> {
 					throw thrown;
 				};
 				run(action);
@@ -853,7 +826,7 @@ public class ExceptionalTest {
 		public void runnableUncheckedThrows()
 		{
 			IllegalAccessException e = new IllegalAccessException();
-			CheckedRunnable checked = () -> {
+			CheckedRunnable<?> checked = () -> {
 				throw e;
 			};
 
@@ -872,7 +845,7 @@ public class ExceptionalTest {
 		public void runnableUncheckedThrowsError()
 		{
 			Throwable e = new Error();
-			CheckedRunnable checked = () -> {
+			CheckedRunnable<?> checked = () -> {
 				throw e;
 			};
 
@@ -904,7 +877,7 @@ public class ExceptionalTest {
 		{
 			final AtomicBoolean ran = new AtomicBoolean(false);
 
-			CheckedRunnable runnable = () -> ran.set(true);
+			CheckedRunnable<?> runnable = () -> ran.set(true);
 
 			run(runnable);
 
@@ -915,7 +888,7 @@ public class ExceptionalTest {
 		@Test
 		public void functionApplied()
 		{
-			CheckedFunction<String, Integer> function = Integer::parseInt;
+			CheckedFunction<String, Integer, ?> function = Integer::parseInt;
 
 			Integer fortyTwo = apply(function, "42");
 
@@ -926,7 +899,7 @@ public class ExceptionalTest {
 		@Test
 		public void functionThrowsUnchecked()
 		{
-			CheckedFunction<String, Integer> function = Integer::parseInt;
+			CheckedFunction<String, Integer, ?> function = Integer::parseInt;
 
 			try {
 				apply(function, "forty two");
@@ -1202,7 +1175,7 @@ public class ExceptionalTest {
 			assumeFalse(currentThread().isInterrupted());
 
 			try {
-				CheckedRunnable executable = () -> {
+				CheckedRunnable<?> executable = () -> {
 					throw new ReflectiveOperationException("Think back");
 				};
 				run(executable);
@@ -1370,155 +1343,6 @@ public class ExceptionalTest {
 			} catch(Throwable thrown) {
 				assertThat(thrown, is(sameInstance(error)));
 			}
-		}
-	}
-
-	@Deprecated
-	@Nested
-	public class Close {
-
-		@Deprecated
-		@Test
-		public void closeAfterApplyingSucceeds()
-		{
-			int openPort = closeAfterApplying(ServerSocket::new, 0, ServerSocket::getLocalPort);
-
-			assertThat(openPort, is(greaterThan(0)));
-		}
-
-
-		@Deprecated
-		@Test
-		public void closeAfterAcceptingWhenCreateThrows()
-		{
-			AtomicBoolean wasCalled = new AtomicBoolean(false);
-
-			try {
-				closeAfterAccepting(ServerSocket::new, Integer.MAX_VALUE, c -> wasCalled.set(true));
-				fail("should not reach here");
-			} catch(IllegalArgumentException e) {}
-
-			assertThat(wasCalled.get(), is(false));
-		}
-
-
-		@Deprecated
-		@Test
-		public void closeAfterAcceptingWhenCloseThrows()
-		{
-			AtomicBoolean wasCalled = new AtomicBoolean(false);
-			IOException exception = new IOException("24/7, never closes");
-
-			try {
-				closeAfterAccepting(new ThrowsAtClosingTime(exception), c -> wasCalled.set(true));
-				fail("should not reach here");
-			} catch(UncheckedIOException e) {
-				assertThat(e.getCause(), is(sameInstance(exception)));
-			}
-
-			assertThat(wasCalled.get(), is(true));
-		}
-
-
-		@Deprecated
-		@Test
-		public void closeAfterApplyingWhenCloseThrows()
-		{
-			AtomicBoolean wasCalled = new AtomicBoolean(false);
-			IOException exception = new IOException("24/7, never closes");
-
-			try {
-				closeAfterApplying(ThrowsAtClosingTime::new, exception, c -> {
-					wasCalled.set(true);
-					return null;
-				});
-				fail("should not reach here");
-			} catch(UncheckedIOException e) {
-				assertThat(e.getCause(), is(sameInstance(exception)));
-			}
-
-			assertThat(wasCalled.get(), is(true));
-		}
-
-
-		@Deprecated
-		@Test
-		public void closeAfterApplyingWhenSuccessfulThenCloses()
-		{
-			ServerSocket socket = createRandomPortServerSocket();
-			Integer freePort = closeAfterApplying(socket, ServerSocket::getLocalPort);
-
-			assertThat(socket.isClosed(), is(true));
-			assertThat(freePort, is(greaterThan(0)));
-		}
-
-
-		@Deprecated
-		@Test
-		public void closeAfterApplyingWhenThrowsThenStillCloses()
-		{
-			IOException checked = new IOException("whooosh, bang");
-			ServerSocket socket = createRandomPortServerSocket();
-			try {
-				closeAfterApplying(socket, s -> {
-					throw checked;
-				});
-				fail("should not reach here");
-			} catch(UncheckedIOException e) {
-				assertThat(e.getCause(), is(sameInstance(checked)));
-			}
-
-			assertThat(socket.isClosed(), is(true));
-		}
-
-
-		@Deprecated
-		@Test
-		public void closeAfterAcceptingSucceeds()
-		{
-			AtomicReference<ObjectOutputStream> ref = new AtomicReference<>();
-			closeAfterAccepting(ObjectOutputStream::new, new ByteArrayOutputStream(), ref::set);
-
-			assertThat(ref.get(), is(notNullValue()));
-		}
-
-
-		@Deprecated
-		@Test
-		public void closeAfterAcceptingClosesWhenConsumerThrows()
-		{
-			ServerSocket socket = createRandomPortServerSocket();
-			try {
-				closeAfterAccepting(socket, c -> {
-					throw new IOException("nay hungry, nay acceptin' that");
-				});
-				fail("should not reach here");
-			} catch(Exception e) {}
-
-			assertThat(socket.isClosed(), is(true));
-		}
-
-
-		private ServerSocket createRandomPortServerSocket()
-		{
-			return apply(ServerSocket::new, 0);
-		}
-
-
-		@Deprecated
-		@Test
-		public void closeAfterAcceptingClosesWhenConsumerThrowsInterruptAndResetsInterruptedFlag()
-		{
-			ServerSocket socket = createRandomPortServerSocket();
-			try {
-				closeAfterAccepting(socket, c -> {
-					throw new InterruptedException("'scuse me!");
-				});
-				fail("should not reach here");
-			} catch(Exception e) {}
-
-			assertThat(socket.isClosed(), is(true));
-			assertThat(Thread.currentThread().isInterrupted(), is(true));
 		}
 	}
 

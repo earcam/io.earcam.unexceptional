@@ -69,7 +69,7 @@ public interface EmeticStream<T> extends AutoCloseable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public static <T, R> EmeticStream<R> emesis(CheckedFunction<T, Stream<R>> function, T value)
+	public static <T, R> EmeticStream<R> emesis(CheckedFunction<T, Stream<R>, ?> function, T value)
 	{
 		return emesis(apply(function, value));
 	}
@@ -187,7 +187,7 @@ public interface EmeticStream<T> extends AutoCloseable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public default boolean allMatch(CheckedPredicate<? super T> predicate)
+	public default boolean allMatch(CheckedPredicate<? super T, ?> predicate)
 	{
 		return mapToStream().allMatch(uncheckPredicate(predicate));
 	}
@@ -202,7 +202,7 @@ public interface EmeticStream<T> extends AutoCloseable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public default boolean anyMatch(CheckedPredicate<? super T> predicate)
+	public default boolean anyMatch(CheckedPredicate<? super T, ?> predicate)
 	{
 		return mapToStream().anyMatch(uncheckPredicate(predicate));
 	}
@@ -237,7 +237,7 @@ public interface EmeticStream<T> extends AutoCloseable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public default <R> R collect(CheckedSupplier<R> supplier, CheckedBiConsumer<R, ? super T> accumulator, CheckedBiConsumer<R, R> combiner)
+	public default <R> R collect(CheckedSupplier<R, ?> supplier, CheckedBiConsumer<R, ? super T, ?> accumulator, CheckedBiConsumer<R, R, ?> combiner)
 	{
 		return mapToStream().collect(uncheckSupplier(supplier), uncheckBiConsumer(accumulator), uncheckBiConsumer(combiner));
 	}
@@ -251,7 +251,7 @@ public interface EmeticStream<T> extends AutoCloseable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public default EmeticStream<T> filter(CheckedPredicate<? super T> predicate)
+	public default EmeticStream<T> filter(CheckedPredicate<? super T, ?> predicate)
 	{
 		return emesis(mapToStream().filter(uncheckPredicate(predicate)));
 	}
@@ -267,7 +267,7 @@ public interface EmeticStream<T> extends AutoCloseable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public default <R> EmeticStream<R> flatMap(CheckedFunction<? super T, ? extends Stream<? extends R>> mapper)
+	public default <R> EmeticStream<R> flatMap(CheckedFunction<? super T, ? extends Stream<? extends R>, ?> mapper)
 	{
 		return emesis(mapToStream().flatMap(uncheckFunction(mapper)));
 	}
@@ -281,7 +281,7 @@ public interface EmeticStream<T> extends AutoCloseable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public default DoubleStream flatMapToDouble(CheckedFunction<? super T, ? extends DoubleStream> mapper)
+	public default DoubleStream flatMapToDouble(CheckedFunction<? super T, ? extends DoubleStream, ?> mapper)
 	{
 		return mapToStream().flatMapToDouble(uncheckFunction(mapper));
 	}
@@ -295,7 +295,7 @@ public interface EmeticStream<T> extends AutoCloseable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public default IntStream flatMapToInt(CheckedFunction<? super T, ? extends IntStream> mapper)
+	public default IntStream flatMapToInt(CheckedFunction<? super T, ? extends IntStream, ?> mapper)
 	{
 		return mapToStream().flatMapToInt(uncheckFunction(mapper));
 	}
@@ -309,7 +309,7 @@ public interface EmeticStream<T> extends AutoCloseable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public default LongStream flatMapToLong(CheckedFunction<? super T, ? extends LongStream> mapper)
+	public default LongStream flatMapToLong(CheckedFunction<? super T, ? extends LongStream, ?> mapper)
 	{
 		return mapToStream().flatMapToLong(uncheckFunction(mapper));
 	}
@@ -321,7 +321,7 @@ public interface EmeticStream<T> extends AutoCloseable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public default void forEach(CheckedConsumer<? super T> action)
+	public default void forEach(CheckedConsumer<? super T, ?> action)
 	{
 		mapToStream().forEach(uncheckConsumer(action));
 	}
@@ -333,7 +333,7 @@ public interface EmeticStream<T> extends AutoCloseable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public default void forEachOrdered(CheckedConsumer<? super T> action)
+	public default void forEachOrdered(CheckedConsumer<? super T, ?> action)
 	{
 		mapToStream().forEachOrdered(uncheckConsumer(action));
 	}
@@ -349,7 +349,7 @@ public interface EmeticStream<T> extends AutoCloseable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public default <R> EmeticStream<R> map(CheckedFunction<? super T, ? extends R> mapper)
+	public default <R> EmeticStream<R> map(CheckedFunction<? super T, ? extends R, ?> mapper)
 	{
 		return emesis(mapToStream().map(uncheckFunction(mapper)));
 	}
@@ -363,7 +363,7 @@ public interface EmeticStream<T> extends AutoCloseable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public default DoubleStream mapToDouble(CheckedToDoubleFunction<? super T> mapper)
+	public default DoubleStream mapToDouble(CheckedToDoubleFunction<? super T, ?> mapper)
 	{
 		return mapToStream().mapToDouble(uncheckToDoubleFunction(mapper));
 	}
@@ -377,7 +377,7 @@ public interface EmeticStream<T> extends AutoCloseable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public default IntStream mapToInt(CheckedToIntFunction<? super T> mapper)
+	public default IntStream mapToInt(CheckedToIntFunction<? super T, ?> mapper)
 	{
 		return mapToStream().mapToInt(uncheckToIntFunction(mapper));
 	}
@@ -391,7 +391,7 @@ public interface EmeticStream<T> extends AutoCloseable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public default LongStream mapToLong(CheckedToLongFunction<? super T> mapper)
+	public default LongStream mapToLong(CheckedToLongFunction<? super T, ?> mapper)
 	{
 		return mapToStream().mapToLong(uncheckToLongFunction(mapper));
 	}
@@ -405,7 +405,7 @@ public interface EmeticStream<T> extends AutoCloseable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public default Optional<T> max(CheckedComparator<? super T> comparator)
+	public default Optional<T> max(CheckedComparator<? super T, ?> comparator)
 	{
 		return mapToStream().max(uncheckComparator(comparator));
 	}
@@ -419,7 +419,7 @@ public interface EmeticStream<T> extends AutoCloseable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public default Optional<T> min(CheckedComparator<? super T> comparator)
+	public default Optional<T> min(CheckedComparator<? super T, ?> comparator)
 	{
 		return mapToStream().min(uncheckComparator(comparator));
 	}
@@ -435,7 +435,7 @@ public interface EmeticStream<T> extends AutoCloseable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public default boolean noneMatch(CheckedPredicate<? super T> predicate)
+	public default boolean noneMatch(CheckedPredicate<? super T, ?> predicate)
 	{
 		return mapToStream().noneMatch(uncheckPredicate(predicate));
 	}
@@ -449,7 +449,7 @@ public interface EmeticStream<T> extends AutoCloseable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public default EmeticStream<T> peek(CheckedConsumer<? super T> action)
+	public default EmeticStream<T> peek(CheckedConsumer<? super T, ?> action)
 	{
 		return emesis(mapToStream().peek(uncheckConsumer(action)));
 	}
@@ -464,7 +464,7 @@ public interface EmeticStream<T> extends AutoCloseable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public default Optional<T> reduce(CheckedBinaryOperator<T> accumulator)
+	public default Optional<T> reduce(CheckedBinaryOperator<T, ?> accumulator)
 	{
 		return mapToStream().reduce(uncheckBinaryOperator(accumulator));
 	}
@@ -480,7 +480,7 @@ public interface EmeticStream<T> extends AutoCloseable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public default T reduce(T identity, CheckedBinaryOperator<T> accumulator)
+	public default T reduce(T identity, CheckedBinaryOperator<T, ?> accumulator)
 	{
 		return mapToStream().reduce(identity, uncheckBinaryOperator(accumulator));
 	}
@@ -495,7 +495,7 @@ public interface EmeticStream<T> extends AutoCloseable {
 	 * 
 	 * @since 0.2.0
 	 */
-	public default EmeticStream<T> sorted(CheckedComparator<? super T> comparator)
+	public default EmeticStream<T> sorted(CheckedComparator<? super T, ?> comparator)
 	{
 		return emesis(mapToStream().sorted(Exceptional.uncheckComparator(comparator)));
 	}

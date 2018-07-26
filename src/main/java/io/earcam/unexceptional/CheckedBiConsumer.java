@@ -25,13 +25,14 @@ import java.util.Objects;
  * 
  * @param <T> first argument type
  * @param <U> second argument type
+ * @param <E> the type of Throwable declared
  * 
  * @since 0.2.0
  * 
  * @see java.util.function.BiConsumer
  */
 @FunctionalInterface
-public interface CheckedBiConsumer<T, U> {
+public interface CheckedBiConsumer<T, U, E extends Throwable> {
 
 	/**
 	 * See {@link java.util.function.BiConsumer#accept(Object, Object)}
@@ -40,8 +41,7 @@ public interface CheckedBiConsumer<T, U> {
 	 * @param u second argument
 	 * @throws Throwable a possible checked exception
 	 */
-	@SuppressWarnings("squid:S00112")
-	public abstract void accept(T t, U u) throws Throwable;
+	public abstract void accept(T t, U u) throws E;
 
 
 	/**
@@ -52,11 +52,11 @@ public interface CheckedBiConsumer<T, U> {
 	 * @throws NullPointerException if {@code after} is {@code null}
 	 */
 	@SuppressWarnings("squid:S1905") // SonarQube false positives
-	public default CheckedBiConsumer<T, U> andThen(CheckedBiConsumer<? super T, ? super U> after)
+	public default CheckedBiConsumer<T, U, E> andThen(CheckedBiConsumer<? super T, ? super U, ? extends E> after)
 	{
 		Objects.requireNonNull(after);
 
-		return (CheckedBiConsumer<T, U> & java.io.Serializable) (l, r) -> {
+		return (CheckedBiConsumer<T, U, E> & java.io.Serializable) (l, r) -> {
 			accept(l, r);
 			after.accept(l, r);
 		};

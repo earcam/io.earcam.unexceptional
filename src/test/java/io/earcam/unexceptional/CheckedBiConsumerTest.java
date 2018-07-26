@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 
 public class CheckedBiConsumerTest {
 
-	public class NiceBiConsumer implements CheckedBiConsumer<String, Integer> {
+	public class NiceBiConsumer implements CheckedBiConsumer<String, Integer, Throwable> {
 
 		private String t;
 		private Integer u;
@@ -96,7 +96,7 @@ public class CheckedBiConsumerTest {
 	}
 
 
-	private static Matcher<CheckedBiConsumer<String, Integer>> consumed(String t, Integer u)
+	private static Matcher<CheckedBiConsumer<String, Integer, ?>> consumed(String t, Integer u)
 	{
 		return Matchers.allOf(
 				Matchers.hasProperty("t", is(equalTo(t))),
@@ -131,7 +131,7 @@ public class CheckedBiConsumerTest {
 	@Test
 	public void andThenEagerlyThrowsNullPointerWhenAfterIsNull()
 	{
-		CheckedBiConsumer<? super String, ? super Integer> after = null;
+		CheckedBiConsumer<? super String, ? super Integer, IOException> after = null;
 		try {
 			new NiceBiConsumer().andThen(after);
 			fail("should not reach here");

@@ -25,6 +25,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.not;
 
+import java.io.IOException;
+
 import org.junit.jupiter.api.Test;
 
 public class CheckedComparatorTest {
@@ -54,7 +56,7 @@ public class CheckedComparatorTest {
 		Object amorphous;
 
 
-		public String s() throws Exception
+		public String s() throws Throwable
 		{
 			return s;
 		}
@@ -72,7 +74,7 @@ public class CheckedComparatorTest {
 		}
 
 
-		public Compound c() throws Throwable
+		public Compound c() throws IOException
 		{
 			return c;
 		}
@@ -84,7 +86,7 @@ public class CheckedComparatorTest {
 		}
 	}
 
-	private final CheckedComparator<Compared> comparator = CheckedComparator.comparing(Compared::s)
+	private final CheckedComparator<Compared, Throwable> comparator = CheckedComparator.comparing(Compared::s)
 			.thenComparingDouble(Compared::d)
 			.thenComparingLong(Compared::l)
 			.thenComparing(Compared::amorphous)
