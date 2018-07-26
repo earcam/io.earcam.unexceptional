@@ -41,6 +41,23 @@ ${h3} Brief note on `try-with-resources` branch coverage
 
 A nice side effect is the removal of, potential but often unrealistic, branches; a typical `try-with-resources` block for IO streams typically result in 8 branches - the causes of which are often misunderstood (see this old [StackOverflow post][stackoverflow-try-with-branches] - I've added a rambling answer with more detail). 
 
+
+
+${h3} Migration from versions 0.* to 1.*
+
+${h4} What changed and why
+A generic type parameter was added - this allows methods to declare specific subtypes of `Throwable`.  Such a change breaks semantic-versioning, and therefore a major version number bump was required.
+This change allowed support of cases where the consumer of a checked functional type demanded matching of specific exception type e.g. `AutoCloseable`'s `close()` method declares that it `throws Exception`.
+
+${h4} What to change to upgrade
+For existing code, currently dependent on v0.y,z, the impact is nonexistent if the only use is `Exceptional` or `EmeticStream`.  Otherwise, where using the checked equivalents of `java.util.function.*`,
+then appending a type parameter of `<?>` is sufficient (this will set the new type parameter to the upper bound of `Throwable` which is equivalent to the unparameterised form of v0.y.z).  
+
+${h4} Supplemental / Side-note
+Please note: it was never the intention that clients of this library publicly expose a dependency on `io.earcam.unexceptional`, the functional interfaces were exposed purely to allow matching of
+lambdas/method-references for immediate use with `Exceptional` or `EmeticStream`.   
+
+
 <br/><br/><br/>
 
 <ul class="nav nav-list" style="float:right;width:50%">
