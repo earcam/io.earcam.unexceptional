@@ -53,7 +53,7 @@ public class FileListExample {
 
 
 	//EARCAM_SNIPPET_BEGIN: listFiles
-	// Using vanilla Stream API, in a manner that would distress Dijkstra
+	// Vanilla Stream API, in a manner that would distress Dijkstra
 	public static List<String> listFiles(Path path)
 	{
 		List<String> a;

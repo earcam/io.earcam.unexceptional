@@ -51,7 +51,7 @@ public class FileListWithEmeticStreamExample {
 
 
 	// EARCAM_SNIPPET_BEGIN: listFiles
-	// Using EmeticStream, less efficient on GC, more efficient on the eye
+	// EmeticStream, less efficient on GC, more efficient on the eye
 	static List<String> listFiles(Path path)
 	{
 		return emesis(Files::list, path)

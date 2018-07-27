@@ -18,16 +18,16 @@
 			<div style="height:500px;background:#8E8B81;color:#FFFFFF;padding:15px">
 				<b>Example - Deserialization</b>
 				<p>Without Unexceptional, 7 lines and 8 branches:</p>
-				<div class="source" title="Before">
-					<pre class="java" style="font-size: smaller"><![CDATA[#*
+				<div title="Before">
+					<pre class="source java" style="font-size: smaller"><![CDATA[#*
 					
 *##snippet ( "/src/example/java/io/earcam/unexceptional/example/BoilerplateSerialCodecExample.java", "deserialize" )#*
 
 					*#]]></pre>
 				</div>
 				<p>With Unexceptional, 2 lines and 0 branches:</p>
-				<div class="source java" title="After">
-					<pre class="java" style="font-size: smaller"><![CDATA[#*
+				<div title="After">
+					<pre class="source java" style="font-size: smaller"><![CDATA[#*
 
 *##snippet ( "/src/test/java/io/earcam/unexceptional/SerialCodec.java", "deserialize" )#*
 
@@ -43,16 +43,16 @@
 			<div style="height:500px;background:#8E8B81;color:#FFFFFF;padding:15px">
 				<b>Example - File list</b>
 				<p>Without Unexceptional, 4 lines:</p>
-				<div class="source" title="Before">
-					<pre class="java" style="font-size: smaller"><![CDATA[#*
+				<div title="Before">
+					<pre class="source java" style="font-size: smaller"><![CDATA[#*
 
 *##snippet ( "/src/example/java/io/earcam/unexceptional/example/ExceptionalExample.java", "filelist_vanilla" )#*
 
 					*#]]></pre>
 				</div>
 				<p>With Unexceptional, 1 line:</p>
-				<div class="source java" title="After">
-					<pre class="java" style="font-size: smaller"><![CDATA[#*
+				<div title="After">
+					<pre class="source java" style="font-size: smaller"><![CDATA[#*
 
 *##snippet ( "/src/example/java/io/earcam/unexceptional/example/ExceptionalExample.java", "filelist_unexceptional" )#*
 
@@ -68,16 +68,16 @@
 			<div style="height:500px;background:#8E8B81;color:#FFFFFF;padding:15px">
 				<b>Example - new URI from String</b>
 				<p>Without Unexceptional, 4 lines:</p>
-				<div class="source" title="Before">
-					<pre class="java" style="font-size: smaller"><![CDATA[#*
+				<div title="Before">
+					<pre class="source java" style="font-size: smaller"><![CDATA[#*
 
 *##snippet ( "/src/example/java/io/earcam/unexceptional/example/ExceptionalExample.java", "uri_vanilla" )#*
 
 					*#]]></pre>
 				</div>
 				<p>With Unexceptional, 1 line:</p>
-				<div class="source java" title="After">
-					<pre class="java" style="font-size: smaller"><![CDATA[#*
+				<div title="After">
+					<pre class="source java" style="font-size: smaller"><![CDATA[#*
 
 *##snippet ( "/src/example/java/io/earcam/unexceptional/example/ExceptionalExample.java", "uri_unexceptional" )#*
 
@@ -93,16 +93,16 @@
 			<div style="height:500px;background:#8E8B81;color:#FFFFFF;padding:15px">
 				<b>Example - Free Port Finder</b>
 				<p>Without Unexceptional, 4 lines and 8 branches:</p>
-				<div class="source" title="Before">
-					<pre class="java" style="font-size: smaller"><![CDATA[#*
+				<div title="Before">
+					<pre class="source java" style="font-size: smaller"><![CDATA[#*
 
 *##snippet ( "/src/example/java/io/earcam/unexceptional/example/FreePortFinderExample.java", "vanilla" )#*
 
 					*#]]></pre>
 				</div>
 				<p>With Unexceptional, 1 line and 0 branches:</p>
-				<div class="source java" title="After">
-					<pre class="java" style="font-size: smaller"><![CDATA[#*
+				<div title="After">
+					<pre class="source java" style="font-size: smaller"><![CDATA[#*
 
 *##snippet ( "/src/example/java/io/earcam/unexceptional/example/FreePortFinderExample.java", "with" )#*
 
@@ -118,16 +118,16 @@
 			<div style="height:500px;background:#8E8B81;color:#FFFFFF;padding:15px">
 				<b>Example - Serialization</b>
 				<p>Without Unexceptional, 6 lines and 8 branches:</p>
-				<div class="source" title="Before">
-					<pre class="java" style="font-size: smaller"><![CDATA[#*
+				<div title="Before">
+					<pre class="source java" style="font-size: smaller"><![CDATA[#*
 					
 *##snippet ( "/src/example/java/io/earcam/unexceptional/example/BoilerplateSerialCodecExample.java", "serialize" )#*
 
 					*#]]></pre>
 				</div>
 				<p>With Unexceptional, 3 lines and 0 branches:</p>
-				<div class="source java" title="After">
-					<pre class="java" style="font-size: smaller"><![CDATA[#*
+				<div title="After">
+					<pre class="source java" style="font-size: smaller"><![CDATA[#*
 
 *##snippet ( "/src/test/java/io/earcam/unexceptional/SerialCodec.java", "serialize" )#*
 
@@ -143,16 +143,16 @@
 			<div style="height:500px;background:#8E8B81;color:#FFFFFF;padding:15px">
 				<b>Example - File read all bytes</b>
 				<p>Without Unexceptional, 4 lines:</p>
-				<div class="source" title="Before">
-					<pre class="java" style="font-size: smaller"><![CDATA[#*
+				<div title="Before">
+					<pre class="source java" style="font-size: smaller"><![CDATA[#*
 
 *##snippet ( "/src/example/java/io/earcam/unexceptional/example/ExceptionalExample.java", "bytes_vanilla" )#*
 
 					*#]]></pre>
 				</div>
 				<p>With Unexceptional, 1 line:</p>
-				<div class="source java" title="After">
-					<pre class="java" style="font-size: smaller"><![CDATA[#*
+				<div title="After">
+					<pre class="source java" style="font-size: smaller"><![CDATA[#*
 
 *##snippet ( "/src/example/java/io/earcam/unexceptional/example/ExceptionalExample.java", "bytes_unexceptional" )#*
 

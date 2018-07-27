@@ -53,7 +53,7 @@ public class FileListWithExceptionalExample {
 
 
 	//EARCAM_SNIPPET_BEGIN: listFiles
-	// Using static imports from Exceptional
+	// Static imports from Exceptional
 	static List<String> listFiles(Path path)
 	{
 		return apply(Files::list, path)

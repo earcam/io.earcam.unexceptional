@@ -91,7 +91,7 @@ Given the contrived `parse` method from previous example, you can use <span clas
 
 ${h3} File List
 
-Examples of calling Files::list and Stream API.
+Contrived example of calling Files::list with Stream API.
 
 ----
 
