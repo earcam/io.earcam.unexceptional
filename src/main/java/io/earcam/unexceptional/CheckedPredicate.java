@@ -39,7 +39,8 @@ public interface CheckedPredicate<T, E extends Throwable> {
 	 * 
 	 * @param t argument
 	 * @return {@code true} if predicate matches, else {@code false}
-	 * @throws Throwable any throwable
+	 * @throws E any throwable
+	 * 
 	 * @see java.util.function.Predicate#test(Object)
 	 */
 	public abstract boolean test(T t) throws E;

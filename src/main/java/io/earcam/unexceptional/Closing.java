@@ -124,6 +124,7 @@ public final class Closing {
 	 * @param <C> the auto-closeable type, will be applied and closed
 	 * @param <U> the type of second argument to bi-function apply
 	 * @param <R> the result type
+	 * @param <E> the type of Throwable declared
 	 * 
 	 * @return the result of applying {@code convert} function to the {@code closeable} argument
 	 */
@@ -234,14 +235,14 @@ public final class Closing {
 	 * 
 	 * Example usage:
 	 * <code>
-	 * 		try(AutoClosed<VirtualMachine, IOException> vm = Closing.autoClosing(getCurrentVm(), VirtualMachine::detach)) {
+	 * 		try(AutoClosed&lt;VirtualMachine, IOException&gt; vm = Closing.autoClosing(getCurrentVm(), VirtualMachine::detach)) {
 	 * 			vm.get().loadAgent(x, y);
 	 * 		}
 	 * </code>
 	 * 
-	 * @param instance
-	 * @param closeMethod
-	 * @return
+	 * @param instance the owner of {@code closeMethod}
+	 * @param closeMethod the method to invoke on {@code instance} when {@link AutoCloseable#close()} is called
+	 * @return an {@link AutoClosed} wrapping {@code instance}
 	 * 
 	 * @since 0.5.0
 	 */

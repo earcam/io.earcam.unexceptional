@@ -36,7 +36,7 @@ public interface CheckedToLongFunction<T, E extends Throwable> {
 	 * 
 	 * @param value argument
 	 * @return long result of applying argument
-	 * @throws Throwable any throwable
+	 * @throws E any throwable
 	 */
 	public abstract long applyAsLong(T value) throws E;
 }

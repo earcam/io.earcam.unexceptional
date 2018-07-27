@@ -39,7 +39,7 @@ public interface CheckedBiConsumer<T, U, E extends Throwable> {
 	 * 
 	 * @param t first argument
 	 * @param u second argument
-	 * @throws Throwable a possible checked exception
+	 * @throws E a possible checked exception
 	 */
 	public abstract void accept(T t, U u) throws E;
 

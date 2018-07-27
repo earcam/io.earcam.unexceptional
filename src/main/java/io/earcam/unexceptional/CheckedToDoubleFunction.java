@@ -36,7 +36,7 @@ public interface CheckedToDoubleFunction<T, E extends Throwable> {
 	 * 
 	 * @param value argument
 	 * @return double result of applying argument
-	 * @throws Throwable any throwable
+	 * @throws E any throwable
 	 */
 	public abstract double applyAsDouble(T value) throws E;
 }

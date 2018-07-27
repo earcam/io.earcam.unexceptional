@@ -35,7 +35,7 @@ public interface CheckedSupplier<T, E extends Throwable> {
 	 * See {@link java.util.function.Supplier#get()}
 	 * 
 	 * @return result
-	 * @throws Throwable any throwable
+	 * @throws E any throwable
 	 */
 	public abstract T get() throws E;
 }

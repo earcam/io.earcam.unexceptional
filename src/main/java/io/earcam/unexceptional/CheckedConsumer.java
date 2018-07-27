@@ -35,7 +35,7 @@ public interface CheckedConsumer<T, E extends Throwable> {
 	 * See {@link java.util.function.Consumer#accept(Object)}
 	 * 
 	 * @param t the input argument
-	 * @throws Exception a possible checked exception
+	 * @throws E a possible checked exception
 	 */
 	public abstract void accept(T t) throws E;
 

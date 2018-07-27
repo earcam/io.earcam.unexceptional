@@ -37,7 +37,7 @@ public interface CheckedFunction<T, R, E extends Throwable> {
 	 * 
 	 * @param t the function argument
 	 * @return the function result
-	 * @throws Throwable any throwable
+	 * @throws E any throwable
 	 * 
 	 * @since 0.2.0
 	 */
@@ -88,6 +88,8 @@ public interface CheckedFunction<T, R, E extends Throwable> {
 	 * See {@link java.util.function.Function#identity()}
 	 *
 	 * @param <T> argument and return type
+	 * @param <E> the type of Throwable declared
+	 * 
 	 * @return the argument as given
 	 * 
 	 * @since 0.3.0

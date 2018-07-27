@@ -39,7 +39,7 @@ public interface CheckedRunnable<E extends Throwable> {
 	/**
 	 * See {@link Runnable#run()}
 	 * 
-	 * @throws Exception a checked exception
+	 * @throws E a checked exception
 	 */
 	public abstract void run() throws E;
 

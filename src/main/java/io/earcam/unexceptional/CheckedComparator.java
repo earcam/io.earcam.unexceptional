@@ -52,7 +52,7 @@ public interface CheckedComparator<T, E extends Throwable> extends CheckedToIntB
 	 * @return a negative integer, zero, or a positive integer as the
 	 * first argument is less than, equal to, or greater than the
 	 * second, respectively.
-	 * @throws Throwable any throwable
+	 * @throws E any throwable
 	 */
 	public abstract int compare(T o1, T o2) throws E;
 
@@ -166,6 +166,7 @@ public interface CheckedComparator<T, E extends Throwable> extends CheckedToIntB
 	 * 
 	 * @param <T> the type of element to be compared
 	 * @param <U> the type of the sort key
+	 * @param <E> the type of Throwable declared
 	 * 
 	 * @param keyExtractor function used to extract sort key.
 	 * @param keyComparator comparator used to compare extracted key.
@@ -188,6 +189,8 @@ public interface CheckedComparator<T, E extends Throwable> extends CheckedToIntB
 	 * 
 	 * @param <T> the type of element to be compared.
 	 * @param <U> the type of the sort key.
+	 * @param <E> the type of Throwable declared
+	 * 
 	 * @param keyExtractor the function used to extract the sort key.
 	 * @return a comparator that compares by an extracted key.
 	 * @throws NullPointerException if the argument is {@code null}.
@@ -205,6 +208,7 @@ public interface CheckedComparator<T, E extends Throwable> extends CheckedToIntB
 	 * See {@link java.util.Comparator#comparingInt(java.util.function.ToIntFunction)}
 	 * 
 	 * @param <T> the type of element to be compared.
+	 * @param <E> the type of Throwable declared
 	 * 
 	 * @param keyExtractor the function used to extract primitive {@code int} sort key.
 	 * @return a checked comparator that compares by an extracted key.
@@ -225,6 +229,7 @@ public interface CheckedComparator<T, E extends Throwable> extends CheckedToIntB
 	 * See {@link java.util.Comparator#comparingLong(java.util.function.ToLongFunction)}
 	 * 
 	 * @param <T> the type of element to be compared.
+	 * @param <E> the type of Throwable declared
 	 * 
 	 * @param keyExtractor the function used to extract primitive {@code long} sort key.
 	 * @return a checked comparator that compares by an extracted key.
@@ -245,6 +250,7 @@ public interface CheckedComparator<T, E extends Throwable> extends CheckedToIntB
 	 * See {@link java.util.Comparator#comparingDouble(java.util.function.ToDoubleFunction)}
 	 * 
 	 * @param <T> the type of element to be compared.
+	 * @param <E> the type of Throwable declared
 	 * 
 	 * @param keyExtractor the function used to extract primitive {@code double} sort key.
 	 * @return a checked comparator that compares by an extracted key.

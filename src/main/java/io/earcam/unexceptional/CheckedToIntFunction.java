@@ -36,7 +36,7 @@ public interface CheckedToIntFunction<T, E extends Throwable> {
 	 * 
 	 * @param value argument
 	 * @return int result of applying argument
-	 * @throws Throwable any throwable
+	 * @throws E any throwable
 	 */
 	public abstract int applyAsInt(T value) throws E;
 }

@@ -41,6 +41,7 @@ public interface CheckedBinaryOperator<T, E extends Throwable> extends CheckedBi
 	 * See {@link java.util.function.BinaryOperator#minBy(Comparator)}
 	 *
 	 * @param <T> arguments and return type
+	 * @param <E> the type of Throwable declared
 	 * 
 	 * @param comparator the comparator used to determine the minimum.
 	 * @return a {@link CheckedBinaryOperator}
@@ -58,6 +59,7 @@ public interface CheckedBinaryOperator<T, E extends Throwable> extends CheckedBi
 	 * See {@link java.util.function.BinaryOperator#maxBy(Comparator)}
 	 * 
 	 * @param <T> arguments and return type
+	 * @param <E> the type of Throwable declared
 	 * 
 	 * @param comparator the comparator used to determine the maximum.
 	 * @return a {@link CheckedBinaryOperator}

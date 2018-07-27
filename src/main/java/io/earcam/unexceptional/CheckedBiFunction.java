@@ -40,7 +40,7 @@ public interface CheckedBiFunction<T, U, R, E extends Throwable> {
 	 * @param t first argument.
 	 * @param u second argument.
 	 * @return result of applying {@code this} function.
-	 * @throws Throwable a possible checked exception
+	 * @throws E a possible checked exception
 	 */
 	public abstract R apply(T t, U u) throws E;
 

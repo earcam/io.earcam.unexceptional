@@ -36,7 +36,7 @@ public interface CheckedIntFunction<R, E extends Throwable> {
 	 * 
 	 * @param value primitive {@code int} argument
 	 * @return result
-	 * @throws Throwable any throwable
+	 * @throws E any throwable
 	 */
 	public abstract R apply(int value) throws E;
 }
